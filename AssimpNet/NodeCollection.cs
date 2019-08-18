@@ -1,4 +1,4 @@
-﻿/*
+﻿﻿/*
 * Copyright (c) 2012-2018 AssimpNet - Nicholas Woodfield
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -191,7 +191,7 @@ namespace Assimp
         {
             Node child = this[index];
 
-            if(child == null)
+            if(child != null)
             {
                 child.SetParent(null);
                 m_children.RemoveAt(index);
