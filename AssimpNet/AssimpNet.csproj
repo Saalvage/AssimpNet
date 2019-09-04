@@ -10,9 +10,9 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>Nicholas Woodfield</Authors>
     <Company />
-    <Version>4.1.0</Version>
+    <Version>4.1.1</Version>
     <PackageLicenseUrl>http://opensource.org/licenses/mit-license.php</PackageLicenseUrl>
-    <Copyright>Copyright © 2012-2018 Nicholas Woodfield</Copyright>
+    <Copyright>Copyright © 2012-2019 Nicholas Woodfield</Copyright>
     <PackageIconUrl>https://bytebucket.org/Starnick/assimpnet/raw/18e2bc4dbf261221bac39741247287c4f5f373bb/logo.png</PackageIconUrl>
     <PackageProjectUrl>https://bitbucket.org/Starnick/assimpnet</PackageProjectUrl>
     <RepositoryUrl>https://bitbucket.org/Starnick/assimpnet.git</RepositoryUrl>
