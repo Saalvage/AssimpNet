@@ -305,6 +305,11 @@ namespace Assimp.Unmanaged
         /// unsigned int, method of morphing when anim meshes are specified.
         /// </summary>
         public MeshMorphingMethod MorphMethod;
+
+        /// <summary>
+        /// Axis aligned bounding box.
+        /// </summary>
+        public BoundingBox AABB;
     }
 
     /// <summary>

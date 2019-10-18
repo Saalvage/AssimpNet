@@ -44,10 +44,19 @@ namespace Assimp
         private List<Vector3D>[] m_texCoords;
         private float m_weight;
 
+        /// <summary>
+        /// Gets or sets the mesh animation name.
+        /// </summary>
         public string Name
         {
-            get => m_name;
-            set => m_name = value;
+            get
+            {
+                return m_name;
+            }
+            set
+            {
+                m_name = value;
+            }
         }
 
         /// <summary>

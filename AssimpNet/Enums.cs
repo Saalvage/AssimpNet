@@ -335,6 +335,10 @@ namespace Assimp
         /// </item>
         /// </list>
         /// <para>
+        /// This step also removes very small triangles with a surface area smaller than 10^-6. If you rely on having these small triangles, or notice holes
+        /// in your model, set the property <see cref="Configs.RemoveDegeneratePrimitivesCheckAreaConfig"/> to false.
+        /// </para>
+        /// <para>
         /// Degenerated polygons are not necessarily evil and that's why they are not removed by default. There are several
         /// file formats which do not support lines or points where exporters bypass the format specification and write
         /// them as degenerated triangles instead.
@@ -460,10 +464,33 @@ namespace Assimp
         Debone = 0x4000000,
 
         /// <summary>
-        /// This step will perform a global scale of the model. Some importers provide a mechanism to define a scaling unit for the model, which this processing step can utilize. 
-        /// Use AI_CONFIG_GLOBAL_SCALE_FACTOR_KEY to control this.
+        /// This step will perform a global scale of the model. Some importers provide a mechanism to define a scaling unit for the model, which this processing step can utilize.
+        /// Use AI_CONFIG_GLOBAL_SCALE_FACTOR_KEY to setup the global scaling factor.
         /// </summary>
-        GlobalScale = 0x8000000
+        GlobalScale = 0x8000000,
+
+        /// <summary>
+        /// A post processting step to embed textures. This will remove external data dependencies for textures. If a texture's file does not exist at the specified path (due, for instance, to
+        /// an absolute path generate on another system), it will check if a file with the same name exists at the root folder of the imported model, and if so, embeds that.
+        /// </summary>
+        EmbedTextures = 0x10000000,
+
+        /// <summary>
+        /// If the step to generate normals is set, it will not run if normals already exist. This flag will force that step to run even if normals are present.
+        /// </summary>
+        ForceGenerateNormals = 0x20000000,
+
+        /// <summary>
+        /// Drops normals for all faces of all meshes. This is ignored if no normals are present. Face normals are shared between all points of a single face,
+        /// so a single point can have multiple normals, which forces the library to duplicate vertices in some cases. <see cref="PostProcessSteps.JoinIdenticalVertices"/> is
+        /// *senseless* then. This process gives sense back to <see cref="PostProcessSteps.JoinIdenticalVertices"/>.
+        /// </summary>
+        DropNormals = 0x40000000,
+
+        /// <summary>
+        /// Generate bounding boxes for each mesh.
+        /// </summary>
+        GenerateBoundingBoxes = 0x80000000
     }
 
     /// <summary>
