@@ -71,7 +71,7 @@ namespace Assimp
     /// data or optimize the imported data.
     /// </summary>
     [Flags]
-    public enum PostProcessSteps
+    public enum PostProcessSteps : uint
     {
         /// <summary>
         /// No flags enabled.
