@@ -24,8 +24,8 @@
        
   </ItemGroup>
   
-  <!-- Copy build output -->
-  <Target Name="CopyBuildOutputForUnity" AfterTargets="AfterBuild" Condition="'$(TargetFramework)' == 'netstandard1.3'">
+  <!-- Copy build output, AFTER ILPatching finishes -->
+  <Target Name="CopyBuildOutputForUnity" AfterTargets="MemoryInteropILPatching" Condition="'$(TargetFramework)' == 'netstandard1.3'">
     <Copy SourceFiles="$(TargetDir)$(AssemblyName).dll" DestinationFolder="$(OutputPath)..\UnityPlugin\Plugins\AssimpNet\" />
     <Copy Condition="Exists('$(TargetDir)$(AssemblyName).xml')" SourceFiles="$(TargetDir)$(AssemblyName).xml" DestinationFolder="$(OutputPath)..\UnityPlugin\Plugins\AssimpNet\" />
     <Copy SourceFiles="%(UnityContent.Identity)" DestinationFiles="bin\$(Configuration)\%(UnityContent.Link)" SkipUnchangedFiles="true" Condition="'%(UnityContent.Link)' != ''" />
