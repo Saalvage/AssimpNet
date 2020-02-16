@@ -10,10 +10,10 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>Nicholas Woodfield</Authors>
     <Company />
-    <Version>4.1.0</Version>
-    <PackageLicenseUrl>http://opensource.org/licenses/mit-license.php</PackageLicenseUrl>
-    <Copyright>Copyright © 2012-2018 Nicholas Woodfield</Copyright>
-    <PackageIconUrl>https://bytebucket.org/Starnick/assimpnet/raw/18e2bc4dbf261221bac39741247287c4f5f373bb/logo.png</PackageIconUrl>
+    <Version>5.0.0</Version>
+    <PackageLicenseFile>License.txt</PackageLicenseFile>
+    <Copyright>Copyright © 2012-2020 Nicholas Woodfield</Copyright>
+    <PackageIcon>logo.png</PackageIcon>
     <PackageProjectUrl>https://bitbucket.org/Starnick/assimpnet</PackageProjectUrl>
     <RepositoryUrl>https://bitbucket.org/Starnick/assimpnet.git</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
@@ -29,6 +29,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Include="..\logo.png" Link="nuget\logo.png" PackagePath=""/>
     <Content Include="..\ChangeLog.txt" Link="nuget\ChangeLog.txt" PackagePath="" />
     <Content Include="..\License.txt" Link="nuget\License.txt" PackagePath="" />
     <Content Include="..\Docs\AssimpNet Documentation %28October 2018%29.chm" Link="nuget\AssimpNet Documentation %28October 2018%29.chm" PackagePath="" />
@@ -40,7 +41,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="MemoryInterop.ILPatcher" Version="2.0.0">
+    <PackageReference Include="MemoryInterop.ILPatcher" Version="2.2.0">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
   </ItemGroup>

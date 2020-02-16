@@ -1,5 +1,5 @@
 ﻿/*
-* Copyright (c) 2012-2018 AssimpNet - Nicholas Woodfield
+* Copyright (c) 2012-2020 AssimpNet - Nicholas Woodfield
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -32,7 +32,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Nicholas Woodfield")]
 [assembly: AssemblyProduct("AssimpNet")]
-[assembly: AssemblyCopyright("Copyright © 2012-2018 AssimpNet - Nicholas Woodfield")]
+[assembly: AssemblyCopyright("Copyright © 2012-2020 AssimpNet - Nicholas Woodfield")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

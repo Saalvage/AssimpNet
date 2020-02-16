@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2012-2018 AssimpNet - Nicholas Woodfield
+* Copyright (c) 2012-2020 AssimpNet - Nicholas Woodfield
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -29,7 +29,6 @@ namespace Assimp.Unmanaged
     /// <summary>
     /// Singleton that governs access to the unmanaged Assimp library functions.
     /// </summary>
-    [CLSCompliant(false)]
     public sealed class AssimpLibrary : UnmanagedLibrary
     {
         private static readonly Object s_sync = new Object();

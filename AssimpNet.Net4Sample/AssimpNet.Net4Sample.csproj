@@ -56,9 +56,6 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Properties\" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\AssimpNet\AssimpNet.csproj">
       <Project>{eab14bd7-4180-407a-bb55-d67c9d32f9fe}</Project>
       <Name>AssimpNet</Name>
