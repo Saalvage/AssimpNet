@@ -16,45 +16,96 @@ jobs:
   pool:
     vmImage: 'ubuntu-latest'
   steps:
-  - task: CmdLine@2
+  - checkout: self
+    clean: true
+    lfs: true
+  - task: UseDotNet@2
+    displayName: Install .Net Core 3.1.x
     inputs:
-      script: |
-        dotnet build $(project) -f netstandard1.3 -c Release    
-        dotnet build $(testProject) -c Release   
-        dotnet test $(testProject) -c Release
+      packageType: 'sdk'
+      version: '3.1.x'
+  - script: dotnet build $(project) -f netstandard1.3 -c Release  
+    displayName: Build $(project) (.Net Standard, Release)
+  - script: dotnet test $(testProject) -f netcoreapp3.1 -c Release
+    displayName: Running Tests (.Net Core App, Release)
 - job: MacOS_x64
   pool:
     vmImage: 'macOS-latest'
   steps:
-  - task: CmdLine@2
+  - checkout: self
+    clean: true
+    lfs: true
+  - task: UseDotNet@2
+    displayName: Install .Net Core 3.1.x
     inputs:
-      script: |
-        dotnet build $(project) -f netstandard1.3 -c Release   
-        dotnet build $(testProject) -c Release  
-        dotnet test $(testProject) -c Release
+      packageType: 'sdk'
+      version: '3.1.x'
+  - script: dotnet build $(project) -f netstandard1.3 -c Release  
+    displayName: Build $(project) (.Net Standard, Release)
+  - script: dotnet test $(testProject) -f netcoreapp3.1 -c Release
+    displayName: Running Tests (.Net Core App, Release)
 - job: Windows_x64
   pool:
     vmImage: 'windows-latest'
   steps:
-  - task: CmdLine@2
+  - checkout: self
+    clean: true
+    lfs: true
+  - script: dotnet build $(project) -f netstandard1.3 -c Release
+    displayName: Build $(project) (.Net Standard, Release)
+  - script: dotnet build $(project) -f net4 -c Debug
+    displayName: Build $(project) (.Net Framework 4, Debug)
+  - script: dotnet test $(testProject) -c Release -f netcoreapp3.1 -- RunConfiguration.TargetPlatform=x64
+    displayName: Running Tests (.Net Core App, Release, x64)
+  - script: dotnet test $(testProject) -c Debug -f net48 -- RunConfiguration.TargetPlatform=x86
+    displayName: Running Tests (.Net Framework 4.8, Debug, x86)
+- job: Build_Artifacts
+  pool:
+    vmImage: 'windows-latest'
+  steps:
+  - checkout: self
+    clean: true
+    lfs: true
+  - task: PowerShell@2
+    displayName: Install .Net Framework 3.5
     inputs:
-      script: |
-        dotnet build $(project)    
-        dotnet build $(testProject)   
-        dotnet test $(testProject) -c Release -f netcoreapp3.1 -- RunConfiguration.TargetPlatform=x64
-        dotnet test $(testProject) -c Debug -f net48 -- RunConfiguration.TargetPlatform=x86
+      targetType: 'inline'
+      script: 'Enable-WindowsOptionalFeature -Online -FeatureName "NetFx3"'
+  - task: NuGetCommand@2
+    displayName: Restore Nuget Dependencies
+    inputs:
+      command: 'restore'
+      restoreSolution: '**/*.sln'
+      feedsToUse: 'select'
+  - task: VSBuild@1
+    displayName: Build Nuget Packages
+    inputs:
+      solution: '$(project)/$(project).csproj'
+      vsVersion: '16.0'
+      configuration: 'Release'
+      createLogFile: true
+  - task: ArchiveFiles@2
+    displayName: Zip Unity Plugin
+    inputs:
+      rootFolderOrFile: '$(project)/bin/Release/UnityPlugin'
+      includeRootFolder: false
+      archiveType: 'zip'
+      archiveFile: '$(project)/bin/Release/UnityPlugin.zip'
+      replaceExistingArchive: true
   - task: CopyFiles@2
+    displayName: Gather Artifacts
     inputs:
-      SourceFolder: '$(project)/bin/Release'
+      SourceFolder: '$(project)/bin/Release/'
       Contents: |
         *.nupkg
         *.snupkg
-        UnityPlugin
-      TargetFolder: 'artifacts'
+        *.zip
+      TargetFolder: '_artifacts'
       CleanTargetFolder: true
       OverWrite: true
   - task: PublishBuildArtifacts@1
+    displayName: Publish Artifacts
     inputs:
-      PathtoPublish: 'artifacts'
-      ArtifactName: '$(project)'
+      PathtoPublish: '_artifacts'
+      ArtifactName: 'Release'
       publishLocation: 'Container'
