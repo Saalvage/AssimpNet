@@ -20,7 +20,7 @@
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-    <Description>A .NET Wrapper for the Open Asset Import (Assimp) library. The library is able to import dozens of different 3D model formats (e.g. OBJ, FBX, GLTF, Collada) and export to several formats (e.g. OBJ, GLTF, Collada). This release targets version 4.1.0 of the native library.</Description>
+    <Description>A .NET Wrapper for the Open Asset Import (Assimp) library. The library is able to import dozens of different 3D model formats (e.g. OBJ, FBX, GLTF, Collada) and export to several formats (e.g. OBJ, GLTF, Collada). This release targets version 5.0.1 of the native library.</Description>
     <PackageTags>Model 3D Graphics Assimp Mesh Importers Content Assets FBX Collada GLTF OBJ 3DS DXF</PackageTags>
     <RootNamespace>Assimp</RootNamespace>
     <AssemblyName>AssimpNet</AssemblyName>
