@@ -1,5 +1,5 @@
 ﻿/*
-* Copyright (c) 2012-2018 AssimpNet - Nicholas Woodfield
+* Copyright (c) 2012-2020 AssimpNet - Nicholas Woodfield
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -35,6 +35,8 @@ namespace Assimp
     public sealed class Material : IMarshalable<Material, AiMaterial>
     {
         private Dictionary<String, MaterialProperty> m_properties;
+        private PBRMaterialProperties m_pbrProperties;
+        private ShaderMaterialProperties m_shaderProperties;
 
         /// <summary>
         /// Gets the number of properties contained in the material.
@@ -82,8 +84,10 @@ namespace Assimp
                     prop = new MaterialProperty(AiMatKeys.NAME_BASE, value);
                     AddProperty(prop);
                 }
-
-                prop.SetStringValue(value);
+                else
+                {
+                    prop.SetStringValue(value);
+                }
             }
         }
 
@@ -120,8 +124,10 @@ namespace Assimp
                     prop = new MaterialProperty(AiMatKeys.TWOSIDED_BASE, value);
                     AddProperty(prop);
                 }
-
-                prop.SetBooleanValue(value);
+                else
+                {
+                    prop.SetBooleanValue(value);
+                }
             }
         }
 
@@ -158,8 +164,10 @@ namespace Assimp
                     prop = new MaterialProperty(AiMatKeys.SHADING_MODEL_BASE, (int) value);
                     AddProperty(prop);
                 }
-
-                prop.SetIntegerValue((int) value);
+                else
+                {
+                    prop.SetIntegerValue((int) value);
+                }
             }
         }
 
@@ -196,8 +204,10 @@ namespace Assimp
                     prop = new MaterialProperty(AiMatKeys.ENABLE_WIREFRAME_BASE, value);
                     AddProperty(prop);
                 }
-
-                prop.SetBooleanValue(value);
+                else
+                {
+                    prop.SetBooleanValue(value);
+                }
             }
         }
 
@@ -234,8 +244,10 @@ namespace Assimp
                     prop = new MaterialProperty(AiMatKeys.BLEND_FUNC_BASE, (int) value);
                     AddProperty(prop);
                 }
-
-                prop.SetIntegerValue((int) value);
+                else
+                {
+                    prop.SetIntegerValue((int) value);
+                }
             }
         }
 
@@ -272,8 +284,50 @@ namespace Assimp
                     prop = new MaterialProperty(AiMatKeys.OPACITY_BASE, value);
                     AddProperty(prop);
                 }
+                else
+                {
+                    prop.SetFloatValue(value);
+                }
+            }
+        }
 
-                prop.SetFloatValue(value);
+        /// <summary>
+        /// Checks if the material has a transparency factor property.
+        /// </summary>
+        public bool HasTransparencyFactor
+        {
+            get
+            {
+                return HasProperty(AiMatKeys.TRANSPARENCYFACTOR);
+            }
+        }
+
+        /// <summary>
+        /// Gets the transparency factor.  This is used to make a surface more or less opaque (0 = opaque, 1 = transparent). Default value is 0.0f.
+        /// </summary>
+        public float TransparencyFactor
+        {
+            get
+            {
+                MaterialProperty prop = GetProperty(AiMatKeys.TRANSPARENCYFACTOR);
+                if(prop != null)
+                    return prop.GetFloatValue();
+
+                return 0.0f;
+            }
+            set
+            {
+                MaterialProperty prop = GetProperty(AiMatKeys.TRANSPARENCYFACTOR);
+
+                if(prop == null)
+                {
+                    prop = new MaterialProperty(AiMatKeys.TRANSPARENCYFACTOR_BASE, value);
+                    AddProperty(prop);
+                }
+                else
+                {
+                    prop.SetFloatValue(value);
+                }
             }
         }
 
@@ -310,8 +364,10 @@ namespace Assimp
                     prop = new MaterialProperty(AiMatKeys.BUMPSCALING_BASE, value);
                     AddProperty(prop);
                 }
-
-                prop.SetFloatValue(value);
+                else
+                {
+                    prop.SetFloatValue(value);
+                }
             }
         }
 
@@ -348,8 +404,10 @@ namespace Assimp
                     prop = new MaterialProperty(AiMatKeys.SHININESS_BASE, value);
                     AddProperty(prop);
                 }
-
-                prop.SetFloatValue(value);
+                else
+                {
+                    prop.SetFloatValue(value);
+                }
             }
         }
 
@@ -386,8 +444,10 @@ namespace Assimp
                     prop = new MaterialProperty(AiMatKeys.SHININESS_STRENGTH_BASE, value);
                     AddProperty(prop);
                 }
-
-                prop.SetFloatValue(value);
+                else
+                {
+                    prop.SetFloatValue(value);
+                }
             }
         }
 
@@ -425,8 +485,10 @@ namespace Assimp
                     prop = new MaterialProperty(AiMatKeys.REFLECTIVITY_BASE, value);
                     AddProperty(prop);
                 }
-
-                prop.SetFloatValue(value);
+                else
+                {
+                    prop.SetFloatValue(value);
+                }
             }
         }
 
@@ -463,8 +525,10 @@ namespace Assimp
                     prop = new MaterialProperty(AiMatKeys.COLOR_DIFFUSE_BASE, value);
                     AddProperty(prop);
                 }
-
-                prop.SetColor4DValue(value);
+                else
+                {
+                    prop.SetColor4DValue(value);
+                }
             }
         }
 
@@ -501,8 +565,10 @@ namespace Assimp
                     prop = new MaterialProperty(AiMatKeys.COLOR_AMBIENT_BASE, value);
                     AddProperty(prop);
                 }
-
-                prop.SetColor4DValue(value);
+                else
+                {
+                    prop.SetColor4DValue(value);
+                }
             }
         }
 
@@ -539,8 +605,10 @@ namespace Assimp
                     prop = new MaterialProperty(AiMatKeys.COLOR_SPECULAR_BASE, value);
                     AddProperty(prop);
                 }
-
-                prop.SetColor4DValue(value);
+                else
+                {
+                    prop.SetColor4DValue(value);
+                }
             }
         }
 
@@ -577,8 +645,10 @@ namespace Assimp
                     prop = new MaterialProperty(AiMatKeys.COLOR_EMISSIVE_BASE, value);
                     AddProperty(prop);
                 }
-
-                prop.SetColor4DValue(value);
+                else
+                {
+                    prop.SetColor4DValue(value);
+                }
             }
         }
 
@@ -615,8 +685,10 @@ namespace Assimp
                     prop = new MaterialProperty(AiMatKeys.COLOR_TRANSPARENT_BASE, value);
                     AddProperty(prop);
                 }
-
-                prop.SetColor4DValue(value);
+                else
+                {
+                    prop.SetColor4DValue(value);
+                }
             }
         }
 
@@ -653,8 +725,10 @@ namespace Assimp
                     prop = new MaterialProperty(AiMatKeys.COLOR_REFLECTIVE_BASE, value);
                     AddProperty(prop);
                 }
-
-                prop.SetColor4DValue(value);
+                else
+                {
+                    prop.SetColor4DValue(value);
+                }
             }
         }
 
@@ -688,7 +762,7 @@ namespace Assimp
             set
             {
                 if(value.TextureIndex == 0 && value.TextureType == TextureType.Diffuse)
-                    AddMaterialTexture(ref value);
+                    AddMaterialTexture(value);
             }
         }
 
@@ -718,7 +792,7 @@ namespace Assimp
             set
             {
                 if(value.TextureIndex == 0 && value.TextureType == TextureType.Specular)
-                    AddMaterialTexture(ref value);
+                    AddMaterialTexture(value);
             }
         }
 
@@ -748,7 +822,7 @@ namespace Assimp
             set
             {
                 if(value.TextureIndex == 0 && value.TextureType == TextureType.Ambient)
-                    AddMaterialTexture(ref value);
+                    AddMaterialTexture(value);
             }
         }
 
@@ -778,7 +852,7 @@ namespace Assimp
             set
             {
                 if(value.TextureIndex == 0 && value.TextureType == TextureType.Emissive)
-                    AddMaterialTexture(ref value);
+                    AddMaterialTexture(value);
             }
         }
 
@@ -808,7 +882,7 @@ namespace Assimp
             set
             {
                 if(value.TextureIndex == 0 && value.TextureType == TextureType.Height)
-                    AddMaterialTexture(ref value);
+                    AddMaterialTexture(value);
             }
         }
 
@@ -838,7 +912,7 @@ namespace Assimp
             set
             {
                 if(value.TextureIndex == 0 && value.TextureType == TextureType.Normals)
-                    AddMaterialTexture(ref value);
+                    AddMaterialTexture(value);
             }
         }
 
@@ -868,7 +942,7 @@ namespace Assimp
             set
             {
                 if(value.TextureIndex == 0 && value.TextureType == TextureType.Opacity)
-                    AddMaterialTexture(ref value);
+                    AddMaterialTexture(value);
             }
         }
 
@@ -898,7 +972,7 @@ namespace Assimp
             set
             {
                 if(value.TextureIndex == 0 && value.TextureType == TextureType.Displacement)
-                    AddMaterialTexture(ref value);
+                    AddMaterialTexture(value);
             }
         }
 
@@ -928,7 +1002,37 @@ namespace Assimp
             set
             {
                 if(value.TextureIndex == 0 && value.TextureType == TextureType.Lightmap)
-                    AddMaterialTexture(ref value);
+                    AddMaterialTexture(value);
+            }
+        }
+
+        /// <summary>
+        /// Gets if the material has an ambient occlusion map in in the first texture index.
+        /// </summary>
+        public bool HasTextureAmbientOcclusion
+        {
+            get
+            {
+                return HasProperty(AiMatKeys.TEXTURE_BASE, TextureType.AmbientOcclusion, 0);
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets ambient occlusion texture properties in the first texture index.
+        /// </summary>
+        public TextureSlot TextureAmbientOcclusion
+        {
+            get
+            {
+                TextureSlot tex;
+                GetMaterialTexture(TextureType.AmbientOcclusion, 0, out tex);
+
+                return tex;
+            }
+            set
+            {
+                if(value.TextureIndex == 0 && value.TextureType == TextureType.AmbientOcclusion)
+                    AddMaterialTexture(value);
             }
         }
 
@@ -958,7 +1062,61 @@ namespace Assimp
             set
             {
                 if(value.TextureIndex == 0 && value.TextureType == TextureType.Reflection)
-                    AddMaterialTexture(ref value);
+                    AddMaterialTexture(value);
+            }
+        }
+
+        #endregion
+
+        #region PBR Properties
+
+        /// <summary>
+        /// Determines if the material is part of a PBR workflow or not.
+        /// </summary>
+        public bool IsPBRMaterial
+        {
+            get
+            {
+                PBRMaterialProperties pbr = m_pbrProperties;
+                return pbr.HasTextureBaseColor || pbr.HasTextureMetalness || pbr.HasTextureRoughness || pbr.HasTextureNormalCamera || pbr.HasTextureEmissionColor;
+            }
+        }
+
+        /// <summary>
+        /// Gets a group accessor for any PBR properties in the material.
+        /// </summary>
+        public PBRMaterialProperties PBR
+        {
+            get
+            {
+                return m_pbrProperties;
+            }
+        }
+
+        #endregion
+
+        #region Shader Properties
+
+        /// <summary>
+        /// Gets if the material has embedded shader source code.
+        /// </summary>
+        public bool HasShaders
+        {
+            get
+            {
+                ShaderMaterialProperties shaders = m_shaderProperties;
+                return shaders.HasShaderLanguageType && (shaders.HasVertexShader || shaders.HasFragmentShader || shaders.HasGeometryShader || shaders.HasTesselationShader || shaders.HasPrimitiveShader || shaders.HasComputeShader);
+            }
+        }
+
+        /// <summary>
+        /// Gets a group accessor for any embedded shader source code in the material.
+        /// </summary>
+        public ShaderMaterialProperties Shaders
+        {
+            get
+            {
+                return m_shaderProperties;
             }
         }
 
@@ -970,6 +1128,8 @@ namespace Assimp
         public Material()
         {
             m_properties = new Dictionary<String, MaterialProperty>();
+            m_pbrProperties = new PBRMaterialProperties(this);
+            m_shaderProperties = new ShaderMaterialProperties(this);
         }
 
         /// <summary>
@@ -1201,9 +1361,9 @@ namespace Assimp
         /// </summary>
         /// <param name="texture">Texture to add</param>
         /// <returns>True if the texture properties were added or modified</returns>
-        public bool AddMaterialTexture(ref TextureSlot texture)
+        public bool AddMaterialTexture(in TextureSlot texture)
         {
-            return AddMaterialTexture(ref texture, false);
+            return AddMaterialTexture(in texture, false);
         }
 
         /// <summary>
@@ -1214,7 +1374,7 @@ namespace Assimp
         /// <param name="texture">Texture to add</param>
         /// <param name="onlySetFilePath">True to only set the texture's file path, false otherwise</param>
         /// <returns>True if the texture properties were added or modified</returns>
-        public bool AddMaterialTexture(ref TextureSlot texture, bool onlySetFilePath)
+        public bool AddMaterialTexture(in TextureSlot texture, bool onlySetFilePath)
         {
             if(String.IsNullOrEmpty(texture.FilePath))
                 return false;
@@ -1294,7 +1454,7 @@ namespace Assimp
         /// </summary>
         /// <param name="texture">Texture to remove</param>
         /// <returns>True if the texture was removed, false otherwise.</returns>
-        public bool RemoveMaterialTexture(ref TextureSlot texture)
+        public bool RemoveMaterialTexture(in TextureSlot texture)
         {
             if(String.IsNullOrEmpty(texture.FilePath))
                 return false;
@@ -1475,6 +1635,403 @@ namespace Assimp
 
             if(freeNative)
                 MemoryHelper.FreeMemory(nativeValue);
+        }
+
+        #endregion
+
+
+        #region Property Group Accessors
+
+        /// <summary>
+        /// Groups all PBR workflow properties into a single accessor.
+        /// </summary>
+        public sealed class PBRMaterialProperties
+        {
+            private Material m_parent;
+
+            /// <summary>
+            /// Gets if the material has a base color map (albedo/diffuse) texture in the first texture index.
+            /// </summary>
+            public bool HasTextureBaseColor
+            {
+                get
+                {
+                    return m_parent.HasProperty(AiMatKeys.TEXTURE_BASE, TextureType.BaseColor, 0);
+                }
+            }
+
+            /// <summary>
+            /// Gets or sets the base color map (albedo/diffuse) texture properties in the first texture index.
+            /// </summary>
+            public TextureSlot TextureBaseColor
+            {
+                get
+                {
+                    TextureSlot tex;
+                    m_parent.GetMaterialTexture(TextureType.BaseColor, 0, out tex);
+
+                    return tex;
+                }
+                set
+                {
+                    if(value.TextureIndex == 0 && value.TextureType == TextureType.BaseColor)
+                        m_parent.AddMaterialTexture(value);
+                }
+            }
+
+            /// <summary>
+            /// Gets if the material has a normal map texture in the first texture index.
+            /// </summary>
+            public bool HasTextureNormalCamera
+            {
+                get
+                {
+                    return m_parent.HasProperty(AiMatKeys.TEXTURE_BASE, TextureType.NormalCamera, 0);
+                }
+            }
+
+            /// <summary>
+            /// Gets or sets the normal map texture properties in the first texture index.
+            /// </summary>
+            public TextureSlot TextureNormalCamera
+            {
+                get
+                {
+                    TextureSlot tex;
+                    m_parent.GetMaterialTexture(TextureType.NormalCamera, 0, out tex);
+
+                    return tex;
+                }
+                set
+                {
+                    if(value.TextureIndex == 0 && value.TextureType == TextureType.NormalCamera)
+                        m_parent.AddMaterialTexture(value);
+                }
+            }
+
+            /// <summary>
+            /// Gets if the material has an emission color map texture in the first texture index.
+            /// </summary>
+            public bool HasTextureEmissionColor
+            {
+                get
+                {
+                    return m_parent.HasProperty(AiMatKeys.TEXTURE_BASE, TextureType.EmissionColor, 0);
+                }
+            }
+
+            /// <summary>
+            /// Gets or sets the emission color map texture properties in the first texture index.
+            /// </summary>
+            public TextureSlot TextureEmissionColor
+            {
+                get
+                {
+                    TextureSlot tex;
+                    m_parent.GetMaterialTexture(TextureType.EmissionColor, 0, out tex);
+
+                    return tex;
+                }
+                set
+                {
+                    if(value.TextureIndex == 0 && value.TextureType == TextureType.EmissionColor)
+                        m_parent.AddMaterialTexture(value);
+                }
+            }
+
+            /// <summary>
+            /// Gets if the material has a metalness map texture in the first texture index.
+            /// </summary>
+            public bool HasTextureMetalness
+            {
+                get
+                {
+                    return m_parent.HasProperty(AiMatKeys.TEXTURE_BASE, TextureType.Metalness, 0);
+                }
+            }
+
+            /// <summary>
+            /// Gets or sets the metalness map texture properties in the first texture index.
+            /// </summary>
+            public TextureSlot TextureMetalness
+            {
+                get
+                {
+                    TextureSlot tex;
+                    m_parent.GetMaterialTexture(TextureType.Metalness, 0, out tex);
+
+                    return tex;
+                }
+                set
+                {
+                    if(value.TextureIndex == 0 && value.TextureType == TextureType.Metalness)
+                        m_parent.AddMaterialTexture(value);
+                }
+            }
+
+            /// <summary>
+            /// Gets if the material has a roughness map texture in the first texture index.
+            /// </summary>
+            public bool HasTextureRoughness
+            {
+                get
+                {
+                    return m_parent.HasProperty(AiMatKeys.TEXTURE_BASE, TextureType.Roughness, 0);
+                }
+            }
+
+            /// <summary>
+            /// Gets or sets the roughness map texture properties in the first texture index.
+            /// </summary>
+            public TextureSlot TextureRoughness
+            {
+                get
+                {
+                    TextureSlot tex;
+                    m_parent.GetMaterialTexture(TextureType.Roughness, 0, out tex);
+
+                    return tex;
+                }
+                set
+                {
+                    if(value.TextureIndex == 0 && value.TextureType == TextureType.Roughness)
+                        m_parent.AddMaterialTexture(value);
+                }
+            }
+
+            /// <summary>
+            /// Constructs new property group accessor.
+            /// </summary>
+            /// <param name="parent">Material</param>
+            internal PBRMaterialProperties(Material parent)
+            {
+                m_parent = parent;
+            }
+        }
+
+        /// <summary>
+        /// Groups all the properties for shader sources in a single accessor.
+        /// </summary>
+        public sealed class ShaderMaterialProperties
+        {
+            private Material m_parent;
+
+            /// <summary>
+            /// Gets if the material has a property for shader language type.
+            /// </summary>
+            public bool HasShaderLanguageType
+            {
+                get
+                {
+                    return m_parent.HasProperty(AiMatKeys.GLOBAL_SHADERLANG);
+                }
+            }
+
+            /// <summary>
+            /// Gets or sets what language (HLSL, GLSL, etc) any shader source code in this material is of.
+            /// </summary>
+            public String ShaderLanguageType
+            {
+                get
+                {
+                    return GetStringProperty(AiMatKeys.GLOBAL_SHADERLANG);
+                }
+                set
+                {
+                    SetStringProperty(AiMatKeys.GLOBAL_SHADERLANG, AiMatKeys.GLOBAL_SHADERLANG_BASE, value);
+                }
+            }
+
+            /// <summary>
+            /// Gets if the material has a property for vertex shader source code.
+            /// </summary>
+            public bool HasVertexShader
+            {
+                get
+                {
+                    return m_parent.HasProperty(AiMatKeys.SHADER_VERTEX);
+                }
+            }
+
+            /// <summary>
+            /// Gets or sets vertex shader source code.
+            /// </summary>
+            public String VertexShader
+            {
+                get
+                {
+                    return GetStringProperty(AiMatKeys.SHADER_VERTEX);
+                }
+                set
+                {
+                    SetStringProperty(AiMatKeys.SHADER_VERTEX, AiMatKeys.SHADER_VERTEX_BASE, value);
+                }
+            }
+
+            /// <summary>
+            /// Gets if the material has a property for fragment (pixel) shader source code.
+            /// </summary>
+            public bool HasFragmentShader
+            {
+                get
+                {
+                    return m_parent.HasProperty(AiMatKeys.SHADER_FRAGMENT);
+                }
+            }
+
+            /// <summary>
+            /// Gets or sets fragment (pixel) shader source code.
+            /// </summary>
+            public String FragmentShader
+            {
+                get
+                {
+                    return GetStringProperty(AiMatKeys.SHADER_FRAGMENT);
+                }
+                set
+                {
+                    SetStringProperty(AiMatKeys.SHADER_FRAGMENT, AiMatKeys.SHADER_FRAGMENT_BASE, value);
+                }
+            }
+
+            /// <summary>
+            /// Gets if the material has a property for geometry shader source code.
+            /// </summary>
+            public bool HasGeometryShader
+            {
+                get
+                {
+                    return m_parent.HasProperty(AiMatKeys.SHADER_GEO);
+                }
+            }
+
+            /// <summary>
+            /// Gets or sets geometry shader source code.
+            /// </summary>
+            public String GeometryShader
+            {
+                get
+                {
+                    return GetStringProperty(AiMatKeys.SHADER_GEO);
+                }
+                set
+                {
+                    SetStringProperty(AiMatKeys.SHADER_GEO, AiMatKeys.SHADER_GEO_BASE, value);
+                }
+            }
+
+            /// <summary>
+            /// Gets if the material has a property for tesselation shader source code.
+            /// </summary>
+            public bool HasTesselationShader
+            {
+                get
+                {
+                    return m_parent.HasProperty(AiMatKeys.SHADER_TESSELATION);
+                }
+            }
+
+            /// <summary>
+            /// Gets or sets tesselation shader source code.
+            /// </summary>
+            public String TesselationShader
+            {
+                get
+                {
+                    return GetStringProperty(AiMatKeys.SHADER_TESSELATION);
+                }
+                set
+                {
+                    SetStringProperty(AiMatKeys.SHADER_TESSELATION, AiMatKeys.SHADER_TESSELATION_BASE, value);
+                }
+            }
+
+            /// <summary>
+            /// Gets if the material has a property for primitive (domain) shader source code.
+            /// </summary>
+            public bool HasPrimitiveShader
+            {
+                get
+                {
+                    return m_parent.HasProperty(AiMatKeys.SHADER_PRIMITIVE);
+                }
+            }
+
+            /// <summary>
+            /// Gets or sets primitive (domain) shader source code.
+            /// </summary>
+            public String PrimitiveShader
+            {
+                get
+                {
+                    return GetStringProperty(AiMatKeys.SHADER_PRIMITIVE);
+                }
+                set
+                {
+                    SetStringProperty(AiMatKeys.SHADER_PRIMITIVE, AiMatKeys.SHADER_PRIMITIVE_BASE, value);
+                }
+            }
+
+            /// <summary>
+            /// Gets if the material has a property for compute shader source code.
+            /// </summary>
+            public bool HasComputeShader
+            {
+                get
+                {
+                    return m_parent.HasProperty(AiMatKeys.SHADER_COMPUTE);
+                }
+            }
+
+            /// <summary>
+            /// Gets or sets compute shader source code.
+            /// </summary>
+            public String ComputeShader
+            {
+                get
+                {
+                    return GetStringProperty(AiMatKeys.SHADER_COMPUTE);
+                }
+                set
+                {
+                    SetStringProperty(AiMatKeys.SHADER_COMPUTE, AiMatKeys.SHADER_COMPUTE_BASE, value);
+                }
+            }
+
+            /// <summary>
+            /// Constructs new property group accessor.
+            /// </summary>
+            /// <param name="parent">Material</param>
+            internal ShaderMaterialProperties(Material parent)
+            {
+                m_parent = parent;
+            }
+
+            private String GetStringProperty(string fullName)
+            {
+                MaterialProperty prop = m_parent.GetProperty(fullName);
+                if(prop != null)
+                    return prop.GetStringValue();
+
+                return String.Empty;
+            }
+
+            private void SetStringProperty(String fullName, String baseName, String value)
+            {
+                if(String.IsNullOrEmpty(value))
+                    value = String.Empty;
+
+                MaterialProperty prop = m_parent.GetProperty(fullName);
+                if(prop == null)
+                {
+                    prop = new MaterialProperty(baseName, value);
+                    m_parent.AddProperty(prop);
+                }
+                else
+                {
+                    prop.SetStringValue(value);
+                }
+            }
         }
 
         #endregion

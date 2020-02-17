@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2012-2018 AssimpNet - Nicholas Woodfield
+* Copyright (c) 2012-2020 AssimpNet - Nicholas Woodfield
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -29,7 +29,6 @@ namespace Assimp.Unmanaged
     /// <summary>
     /// Singleton that governs access to the unmanaged Assimp library functions.
     /// </summary>
-    [CLSCompliant(false)]
     public sealed class AssimpLibrary : UnmanagedLibrary
     {
         private static readonly Object s_sync = new Object();
@@ -997,6 +996,24 @@ namespace Assimp.Unmanaged
         }
 
         /// <summary>
+        /// Returns the branchname of the Assimp runtime.
+        /// </summary>
+        /// <returns>The current branch name.</returns>
+        public String GetBranchName()
+        {
+            LoadIfNotLoaded();
+
+            Functions.aiGetBranchName func = GetFunction<Functions.aiGetBranchName>(FunctionNames.aiGetBranchName);
+
+            IntPtr ptr = func();
+
+            if(ptr == IntPtr.Zero)
+                return String.Empty;
+
+            return Marshal.PtrToStringAnsi(ptr);
+        }
+
+        /// <summary>
         /// Gets the native Assimp DLL's current version number as "major.minor.revision" string. This is the
         /// version of Assimp that this wrapper is currently using.
         /// </summary>
@@ -1132,6 +1149,7 @@ namespace Assimp.Unmanaged
             public const String aiGetVersionMajor = "aiGetVersionMajor";
             public const String aiGetVersionRevision = "aiGetVersionRevision";
             public const String aiGetCompileFlags = "aiGetCompileFlags";
+            public const String aiGetBranchName = "aiGetBranchName";
 
             #endregion
         }
@@ -1332,6 +1350,9 @@ namespace Assimp.Unmanaged
 
             [UnmanagedFunctionPointer(CallingConvention.Cdecl), UnmanagedFunctionName(FunctionNames.aiGetVersionRevision)]
             public delegate uint aiGetVersionRevision();
+            
+            [UnmanagedFunctionPointer(CallingConvention.Cdecl), UnmanagedFunctionName(FunctionNames.aiGetBranchName)]
+            public delegate IntPtr aiGetBranchName();
 
             [UnmanagedFunctionPointer(CallingConvention.Cdecl), UnmanagedFunctionName(FunctionNames.aiGetCompileFlags)]
             public delegate uint aiGetCompileFlags();

@@ -1,5 +1,5 @@
 ﻿/*
-* Copyright (c) 2012-2018 AssimpNet - Nicholas Woodfield
+* Copyright (c) 2012-2020 AssimpNet - Nicholas Woodfield
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -29,7 +29,7 @@ namespace Assimp
     /// <summary>
     /// Represents a single bone of a mesh. A bone has a name which allows it to be found in the frame
     /// hierarchy and by which it can be addressed by animations. In addition it has a number of
-    /// influences on vertices.
+    /// influences on vertices and a matrix relating the mesh position to the position of the bone at the time of binding.
     /// </summary>
     public sealed class Bone : IMarshalable<Bone, AiBone>
     {
@@ -75,7 +75,7 @@ namespace Assimp
         }
 
         /// <summary>
-        /// Gets the vertex weights owned by the bone.
+        /// Gets the influence weights of this bone, by vertex index.
         /// </summary>
         public List<VertexWeight> VertexWeights
         {
@@ -86,7 +86,11 @@ namespace Assimp
         }
 
         /// <summary>
-        /// Gets or sets the matrix that transforms from mesh space to bone space in bind pose.
+        /// Gets or sets the matrix that transforms from bone space to mesh space in bind pose. This matrix describes the
+        /// position of the mesh in the local space of this bone when the skeleton was bound. Thus it can be used directly to determine a desired vertex
+        /// position, given the world-space transform of the bone when animated, and the position of the vertex in mesh space.
+        /// 
+        /// It is sometimes called an inverse-bind matrix or inverse-bind pose matrix.
         /// </summary>
         public Matrix4x4 OffsetMatrix
         {

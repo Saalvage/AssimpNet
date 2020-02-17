@@ -1,5 +1,5 @@
 ﻿/*
-* Copyright (c) 2012-2018 AssimpNet - Nicholas Woodfield
+* Copyright (c) 2012-2020 AssimpNet - Nicholas Woodfield
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -1051,6 +1051,32 @@ namespace Assimp.Configs
     }
 
     /// <summary>
+    /// Configuration for the <see cref="PostProcessSteps.FindInvalidData"/> step. Set to true to
+    /// ignore texture coordinates. This may be useful if you have to assign different kinds of textures,
+    /// like seasonally variable ones - one for summer and one for winter. Default is false.
+    /// </summary>
+    public sealed class IgnoreTextureCoordinatesConfig : BooleanPropertyConfig
+    {
+        /// <summary>
+        /// Gets the string name used by IgnoreTextureCoordinatesConfig.
+        /// </summary>
+        public static String IgnoreTextureCoordinatesConfigName
+        {
+            get
+            {
+                return AiConfigs.AI_CONFIG_PP_FID_IGNORE_TEXTURECOORDS;
+            }
+        }
+
+        /// <summary>
+        /// Constructs a new IgnoreTextureCoordinatesConfig.
+        /// </summary>
+        /// <param name="ignoreTexCoords">True if texture coordinates should be ignored, false otherwise.</param>
+        public IgnoreTextureCoordinatesConfig(bool ignoreTexCoords)
+            : base(IgnoreTextureCoordinatesConfigName, ignoreTexCoords, false) { }
+    }
+
+    /// <summary>
     /// Configuration for the <see cref="PostProcessSteps.TransformUVCoords"/> step that
     /// specifies which UV transformations are to be evaluated. The default value
     /// is for all combinations (scaling, rotation, translation).
@@ -1248,7 +1274,7 @@ namespace Assimp.Configs
 
     /// <summary>
     /// Configures the <see cref="PostProcessSteps.GlobalScale"/> step to scale the entire scene by a certain amount. Some importers provide a mechanism to define a scaling unit for the model,
-    /// which this processing step can utilize.
+    /// which this processing step can utilize. Default is 1.0.
     /// </summary>
     /// <seealso cref="Assimp.Configs.FloatPropertyConfig" />
     public sealed class GlobalScaleConfig : FloatPropertyConfig
@@ -1270,6 +1296,30 @@ namespace Assimp.Configs
         /// <param name="globalScale">Value to scale the entire scene by.</param>
         public GlobalScaleConfig(float globalScale)
             : base(GlobalScaleConfigName, globalScale, 1.0f) { }
+    }
+
+    /// <summary>
+    /// Applies an application-specific scaling to the <see cref="GlobalScaleConfig"/> to allow for backwards compatibility. Default is 1.0.
+    /// </summary>
+    public sealed class AppScaleConfig : FloatPropertyConfig
+    {
+        /// <summary>
+        /// Gets the string name used by AppScaleConfig.
+        /// </summary>
+        public static String AppScaleConfigName
+        {
+            get
+            {
+                return AiConfigs.AI_CONFIG_APP_SCALE_KEY;
+            }
+        }
+
+        /// <summary>
+        /// Constructs a new AppScaleConfig.
+        /// </summary>
+        /// <param name="appScale">Value to scale the global scale by.</param>
+        public AppScaleConfig(float appScale)
+            : base(AppScaleConfigName, appScale, 1.0f) { }
     }
 
     #endregion
@@ -1996,6 +2046,32 @@ namespace Assimp.Configs
     }
 
     /// <summary>
+    /// Specifies whether the Collada loader should use Collada names as node names.
+    /// If this property is set to true, the Collada names will be used as the node name. The behavior is to use the id tag (resp. sid tag, if no id tag is present) instead.
+    /// Default is false.
+    /// </summary>
+    public sealed class ColladaUseColladaNamesConfig : BooleanPropertyConfig
+    {
+        /// <summary>
+        /// Gets the string name used by ColladaUseColladaNamesConfig.
+        /// </summary>
+        public static String ColladaUseColladaNamesConfigName
+        {
+            get
+            {
+                return AiConfigs.AI_CONFIG_IMPORT_COLLADA_USE_COLLADA_NAMES;
+            }
+        }
+
+        /// <summary>
+        /// Constructs a new ColladaUseColladaNamesConfig.
+        /// </summary>
+        /// <param name="useColladaNames">True if collada names should be used as node names, false otherwise.</param>
+        public ColladaUseColladaNamesConfig(bool useColladaNames)
+            : base(ColladaUseColladaNamesConfigName, useColladaNames, false) { }
+    }
+
+    /// <summary>
     /// Specifies whether the FBX importer will merge all geometry layers present in the source file or import only the first. Default is true.
     /// </summary>
     public sealed class FBXImportAllGeometryLayersConfig : BooleanPropertyConfig
@@ -2096,16 +2172,16 @@ namespace Assimp.Configs
     /// <summary>
     /// Specifies if the FBX importer should search for embedded loaded textures, where no embedded texture data is provided. Default is false.
     /// </summary>
-    public sealed class FBXImportSearchEmbeddedTexturesConfig : BooleanPropertyConfig
+    public sealed class FBXImportEmbeddedTexturesLegacyNamingConfig : BooleanPropertyConfig
     {
         /// <summary>
         /// Gets the string name used by FBXImportSearchEmbeddedTexturesConfig.
         /// </summary>
-        public static String FBXImportSearchEmbeddedTexturesConfigName
+        public static String FBXImportEmbeddedTexturesLegacyNamingConfigName
         {
             get
             {
-                return AiConfigs.AI_CONFIG_IMPORT_FBX_SEARCH_EMBEDDED_TEXTURES;
+                return AiConfigs.AI_CONFIG_IMPORT_FBX_EMBEDDED_TEXTURES_LEGACY_NAMING;
             }
         }
 
@@ -2113,8 +2189,8 @@ namespace Assimp.Configs
         /// Constructs a new FBXImportSearchEmbeddedTexturesConfig.
         /// </summary>
         /// <param name="searchEmbeddedTextures">True if the FBX importer should search for embedded loaded textures, where no embedded texture data is provided.</param>
-        public FBXImportSearchEmbeddedTexturesConfig(bool searchEmbeddedTextures)
-            : base(FBXImportSearchEmbeddedTexturesConfigName, searchEmbeddedTextures, false) { }
+        public FBXImportEmbeddedTexturesLegacyNamingConfig(bool searchEmbeddedTextures)
+            : base(FBXImportEmbeddedTexturesLegacyNamingConfigName, searchEmbeddedTextures, false) { }
     }
 
     /// <summary>
@@ -2265,6 +2341,79 @@ namespace Assimp.Configs
             : base(FBXOptimizeEmptyAnimationCurvesConfigName, optimizeEmptyAnimations, true) { }
     }
 
+    /// <summary>
+    /// Specifies whether the importer shall convert the unit from centimeter (cm) to meter (m). Default value is false.
+    /// </summary>
+    public sealed class FBXConvertToMetersConfig : BooleanPropertyConfig
+    {
+        /// <summary>
+        /// Gets the string name used by FBXConvertToMetersConfig.
+        /// </summary>
+        public static String FBXConvertToMetersConfigName
+        {
+            get
+            {
+                return AiConfigs.AI_CONFIG_FBX_CONVERT_TO_M;
+            }
+        }
+
+        /// <summary>
+        /// Constructs a new FBXConvertToMetersConfig.
+        /// </summary>
+        /// <param name="convertToMeters">True if the importer converts the unit from cm to m, false if do not do a conversion.</param>
+        public FBXConvertToMetersConfig(bool convertToMeters)
+            : base(FBXConvertToMetersConfigName, convertToMeters, false) { }
+    }
+
+    /// <summary>
+    /// Specifies whether the importer will load multiple animations. Default value is true.
+    /// </summary>
+    public sealed class SmdLoadAnimationListConfig : BooleanPropertyConfig
+    {
+        /// <summary>
+        /// Gets the string name used by SmdLoadAnimationListConfig.
+        /// </summary>
+        public static String SmdLoadAnimationListConfigName
+        {
+            get
+            {
+                return AiConfigs.AI_CONFIG_IMPORT_SMD_LOAD_ANIMATION_LIST;
+            }
+        }
+
+        /// <summary>
+        /// Constructs a new SmdLoadAnimationListConfig.
+        /// </summary>
+        /// <param name="loadAnimList">True if the importer should load multiple animations, false if only one animation should be loaded.</param>
+        public SmdLoadAnimationListConfig(bool loadAnimList)
+            : base(SmdLoadAnimationListConfigName, loadAnimList, true) { }
+    }
+
+    /// <summary>
+    /// Specifies whether the importer removes empty bones or not. Empty bones are often used to define connections for other models (e.g.
+    /// attachment points). Default value is true.
+    /// </summary>
+    public sealed class RemoveEmptyBonesConfig : BooleanPropertyConfig
+    {
+        /// <summary>
+        /// Gets the string name used by RemoveEmptyBonesConfig.
+        /// </summary>
+        public static String RemoveEmptyBonesConfigName
+        {
+            get
+            {
+                return AiConfigs.AI_CONFIG_IMPORT_REMOVE_EMPTY_BONES;
+            }
+        }
+
+        /// <summary>
+        /// Constructs a new RemoveEmptyBonesConfig.
+        /// </summary>
+        /// <param name="removeEmptyBones">True if the importer should remove empty bones, false if they should be kept.</param>
+        public RemoveEmptyBonesConfig(bool removeEmptyBones)
+            : base(RemoveEmptyBonesConfigName, removeEmptyBones, true) { }
+    }
+
     #endregion
 
     #region Exporter Settings
@@ -2291,6 +2440,31 @@ namespace Assimp.Configs
         /// <param name="useDoubles">True if the x file uses 64-bit double values rather than 32-bit float values.</param>
         public XFileUseDoublesConfig(bool useDoubles)
             : base(XFileUseDoublesConfigName, useDoubles, false) { }
+    }
+
+    /// <summary>
+    /// Specifies if the export process should disable a validation step that would remove data that does not contain faces. This will
+    /// enable point cloud data to be exported, since the 3D data is a collection of vertices without face data.
+    /// </summary>
+    public sealed class ExportPointCloudsConfig : BooleanPropertyConfig
+    {
+        /// <summary>
+        /// Gets the string name used by ExportPointCloudsConfig.
+        /// </summary>
+        public static String ExportPointCloudsConfigName
+        {
+            get
+            {
+                return AiConfigs.AI_CONFIG_EXPORT_POINT_CLOUDS;
+            }
+        }
+
+        /// <summary>
+        /// Constructs a new ExportPointCloudConfig.
+        /// </summary>
+        /// <param name="exportPointCloud">True if the exporter should treat vertices not grouped in faces as point clouds, false otherwise.</param>
+        public ExportPointCloudsConfig(bool exportPointCloud)
+            : base(ExportPointCloudsConfigName, exportPointCloud, false) { }
     }
 
     #endregion

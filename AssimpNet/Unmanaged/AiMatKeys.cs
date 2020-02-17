@@ -1,5 +1,5 @@
 ﻿/*
-* Copyright (c) 2012-2018 AssimpNet - Nicholas Woodfield
+* Copyright (c) 2012-2020 AssimpNet - Nicholas Woodfield
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -92,6 +92,16 @@ namespace Assimp.Unmanaged
         /// Opacity (float)
         /// </summary>
         public const String OPACITY = "$mat.opacity,0,0";
+
+        /// <summary>
+        /// Transparency Factor (float)
+        /// </summary>
+        public const String TRANSPARENCYFACTOR_BASE = "$mat.transparencyfactor";
+
+        /// <summary>
+        /// Transparency Factor (float)
+        /// </summary>
+        public const String TRANSPARENCYFACTOR = "$mat.transparencyfactor,0,0";
 
         /// <summary>
         /// Bumpscaling (float)
@@ -262,6 +272,76 @@ namespace Assimp.Unmanaged
         /// Texture flags base name
         /// </summary>
         public const String TEXFLAGS_BASE = "$tex.flags";
+
+        /// <summary>
+        /// Shader language type (string)
+        /// </summary>
+        public const String GLOBAL_SHADERLANG_BASE = "?sh.lang";
+
+        /// <summary>
+        /// Shader language type (string)
+        /// </summary>
+        public const String GLOBAL_SHADERLANG = "?sh.lang,0,0";
+
+        /// <summary>
+        /// Vertex shader source code (string)
+        /// </summary>
+        public const String SHADER_VERTEX_BASE = "?sh.vs";
+
+        /// <summary>
+        /// Vertex shader source code (string)
+        /// </summary>
+        public const String SHADER_VERTEX = "?sh.vs,0,0";
+
+        /// <summary>
+        /// Fragment/Pixel shader source code (string)
+        /// </summary>
+        public const String SHADER_FRAGMENT_BASE = "?sh.fs";
+
+        /// <summary>
+        /// Fragment/Pixel shader source code (string)
+        /// </summary>
+        public const String SHADER_FRAGMENT = "?sh.fs,0,0";
+
+        /// <summary>
+        /// Geometry shader source code (string)
+        /// </summary>
+        public const String SHADER_GEO_BASE = "?sh.gs";
+
+        /// <summary>
+        /// Geometry shader source code (string)
+        /// </summary>
+        public const String SHADER_GEO = "?sh.gs,0,0";
+
+        /// <summary>
+        /// Tesselation shader source code (string)
+        /// </summary>
+        public const String SHADER_TESSELATION_BASE = "?sh.ts";
+
+        /// <summary>
+        /// Tesselation shader source code (string)
+        /// </summary>
+        public const String SHADER_TESSELATION = "?sh.ts,0,0";
+
+        /// <summary>
+        /// Primitive/Domain shader source code (string)
+        /// </summary>
+        public const String SHADER_PRIMITIVE_BASE = "?sh.ps";
+
+        /// <summary>
+        /// Primitive/Domain shader source code (string)
+        /// </summary>
+        public const String SHADER_PRIMITIVE = "?sh.ps,0,0";
+
+        /// <summary>
+        /// Compute shader source code (string)
+        /// </summary>
+        public const String SHADER_COMPUTE_BASE = "?sh.cs";
+
+        /// <summary>
+        /// Compute shader source code (string)
+        /// </summary>
+        public const String SHADER_COMPUTE = "?sh.cs,0,0";
 
         /// <summary>
         /// Helper function to get the fully qualified name of a texture property type name. Takes

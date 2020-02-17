@@ -1,5 +1,5 @@
 ﻿/*
-* Copyright (c) 2012-2018 AssimpNet - Nicholas Woodfield
+* Copyright (c) 2012-2020 AssimpNet - Nicholas Woodfield
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -45,6 +45,7 @@ namespace Assimp
         private List<Bone> m_bones;
         private List<MeshAnimationAttachment> m_meshAttachments;
         private MeshMorphingMethod m_morphMethod;
+        private BoundingBox m_boundingBox;
 
         /// <summary>
         /// Gets or sets the mesh name. This tends to be used
@@ -382,6 +383,21 @@ namespace Assimp
         }
 
         /// <summary>
+        /// Gets or sets the axis aligned bounding box that contains the extents of the mesh.
+        /// </summary>
+        public BoundingBox BoundingBox
+        {
+            get
+            {
+                return m_boundingBox;
+            }
+            set
+            {
+                m_boundingBox = value;
+            }
+        }
+
+        /// <summary>
         /// Constructs a new instance of the <see cref="Mesh"/> class.
         /// </summary>
         public Mesh() : this(String.Empty, PrimitiveType.Triangle) { }
@@ -529,7 +545,6 @@ namespace Assimp
         /// array as unsigned integers (the default from Assimp, if you need them).
         /// </summary>
         /// <returns>uint index array</returns>
-        [CLSCompliant(false)]
         public uint[] GetUnsignedIndices()
         {
             if(HasFaces)
@@ -655,6 +670,7 @@ namespace Assimp
             nativeValue.NumFaces = (uint) FaceCount;
             nativeValue.NumAnimMeshes = (uint) MeshAnimationAttachmentCount;
             nativeValue.MorphMethod = m_morphMethod;
+            nativeValue.AABB = m_boundingBox;
 
             if(nativeValue.NumVertices > 0)
             {
@@ -735,6 +751,7 @@ namespace Assimp
             m_name = AiString.GetString(nativeValue.Name); //Avoid struct copy
             m_materialIndex = (int) nativeValue.MaterialIndex;
             m_morphMethod = nativeValue.MorphMethod;
+            m_boundingBox = nativeValue.AABB;
 
             //Load Per-vertex components
             if(vertexCount > 0)

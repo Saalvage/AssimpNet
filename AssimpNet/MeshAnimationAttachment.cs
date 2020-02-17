@@ -1,5 +1,5 @@
 ﻿/*
-* Copyright (c) 2012-2018 AssimpNet - Nicholas Woodfield
+* Copyright (c) 2012-2020 AssimpNet - Nicholas Woodfield
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -35,6 +35,7 @@ namespace Assimp
     /// </summary>
     public sealed class MeshAnimationAttachment : IMarshalable<MeshAnimationAttachment, AiAnimMesh>
     {
+        private String m_name;
         private List<Vector3D> m_vertices;
         private List<Vector3D> m_normals;
         private List<Vector3D> m_tangents;
@@ -42,6 +43,21 @@ namespace Assimp
         private List<Color4D>[] m_colors;
         private List<Vector3D>[] m_texCoords;
         private float m_weight;
+
+        /// <summary>
+        /// Gets or sets the mesh animation name.
+        /// </summary>
+        public string Name
+        {
+            get
+            {
+                return m_name;
+            }
+            set
+            {
+                m_name = value;
+            }
+        }
 
         /// <summary>
         /// Gets the number of vertices in this mesh. This is a replacement
@@ -331,6 +347,7 @@ namespace Assimp
         /// <param name="nativeValue">Output native value</param>
         void IMarshalable<MeshAnimationAttachment, AiAnimMesh>.ToNative(IntPtr thisPtr, out AiAnimMesh nativeValue)
         {
+            nativeValue.Name = new AiString(m_name);
             nativeValue.Vertices = IntPtr.Zero;
             nativeValue.Normals = IntPtr.Zero;
             nativeValue.Tangents = IntPtr.Zero;
@@ -397,6 +414,8 @@ namespace Assimp
         {
             ClearBuffers();
 
+            m_name = AiString.GetString(nativeValue.Name); //Avoid struct copy
+            
             int vertexCount = (int) nativeValue.NumVertices;
             m_weight = nativeValue.Weight;
 

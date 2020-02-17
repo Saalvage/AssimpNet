@@ -1,5 +1,5 @@
 ﻿/*
-* Copyright (c) 2012-2018 AssimpNet - Nicholas Woodfield
+* Copyright (c) 2012-2020 AssimpNet - Nicholas Woodfield
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -71,7 +71,7 @@ namespace Assimp
     /// data or optimize the imported data.
     /// </summary>
     [Flags]
-    public enum PostProcessSteps
+    public enum PostProcessSteps : uint
     {
         /// <summary>
         /// No flags enabled.
@@ -335,6 +335,10 @@ namespace Assimp
         /// </item>
         /// </list>
         /// <para>
+        /// This step also removes very small triangles with a surface area smaller than 10^-6. If you rely on having these small triangles, or notice holes
+        /// in your model, set the property <see cref="Configs.RemoveDegeneratePrimitivesCheckAreaConfig"/> to false.
+        /// </para>
+        /// <para>
         /// Degenerated polygons are not necessarily evil and that's why they are not removed by default. There are several
         /// file formats which do not support lines or points where exporters bypass the format specification and write
         /// them as degenerated triangles instead.
@@ -460,10 +464,33 @@ namespace Assimp
         Debone = 0x4000000,
 
         /// <summary>
-        /// This step will perform a global scale of the model. Some importers provide a mechanism to define a scaling unit for the model, which this processing step can utilize. 
-        /// Use AI_CONFIG_GLOBAL_SCALE_FACTOR_KEY to control this.
+        /// This step will perform a global scale of the model. Some importers provide a mechanism to define a scaling unit for the model, which this processing step can utilize.
+        /// Use AI_CONFIG_GLOBAL_SCALE_FACTOR_KEY to setup the global scaling factor.
         /// </summary>
-        GlobalScale = 0x8000000
+        GlobalScale = 0x8000000,
+
+        /// <summary>
+        /// A post processting step to embed textures. This will remove external data dependencies for textures. If a texture's file does not exist at the specified path (due, for instance, to
+        /// an absolute path generate on another system), it will check if a file with the same name exists at the root folder of the imported model, and if so, embeds that.
+        /// </summary>
+        EmbedTextures = 0x10000000,
+
+        /// <summary>
+        /// If the step to generate normals is set, it will not run if normals already exist. This flag will force that step to run even if normals are present.
+        /// </summary>
+        ForceGenerateNormals = 0x20000000,
+
+        /// <summary>
+        /// Drops normals for all faces of all meshes. This is ignored if no normals are present. Face normals are shared between all points of a single face,
+        /// so a single point can have multiple normals, which forces the library to duplicate vertices in some cases. <see cref="PostProcessSteps.JoinIdenticalVertices"/> is
+        /// *senseless* then. This process gives sense back to <see cref="PostProcessSteps.JoinIdenticalVertices"/>.
+        /// </summary>
+        DropNormals = 0x40000000,
+
+        /// <summary>
+        /// Generate bounding boxes for each mesh.
+        /// </summary>
+        GenerateBoundingBoxes = 0x80000000
     }
 
     /// <summary>
@@ -925,75 +952,105 @@ namespace Assimp
         /// <summary>
         /// No texture, but the value can be used as a 'texture semantic'.
         /// </summary>
-        None = 0x0,
+        None = 0,
 
         /// <summary>
         /// A diffuse texture that is combined with the result of the diffuse lighting equation.
         /// </summary>
-        Diffuse = 0x1,
+        Diffuse = 1,
 
         /// <summary>
         /// A specular texture that is combined with the result of the specular lighting equation.
         /// </summary>
-        Specular = 0x2,
+        Specular = 2,
 
         /// <summary>
         /// An ambient texture that is combined with the ambient lighting equation.
         /// </summary>
-        Ambient = 0x3,
+        Ambient = 3,
 
         /// <summary>
         /// An emissive texture that is added to the result of the lighting calculation. It is not influenced
         /// by incoming light, instead it represents the light that the object is naturally emitting.
         /// </summary>
-        Emissive = 0x4,
+        Emissive = 4,
 
         /// <summary>
         /// A height map texture. by convention, higher gray-scale values stand for
         /// higher elevations from some base height.
         /// </summary>
-        Height = 0x5,
+        Height = 5,
 
         /// <summary>
         /// A tangent-space normal map. There are several conventions for normal maps
         /// and Assimp does (intentionally) not distinguish here.
         /// </summary>
-        Normals = 0x6,
+        Normals = 6,
 
         /// <summary>
         /// A texture that defines the glossiness of the material. This is the exponent of the specular (phong)
         /// lighting equation. Usually there is a conversion function defined to map the linear color values
         /// in the texture to a suitable exponent.
         /// </summary>
-        Shininess = 0x7,
+        Shininess = 7,
 
         /// <summary>
         /// The texture defines per-pixel opacity. usually 'white' means opaque and 'black' means 'transparency. Or quite
         /// the opposite.
         /// </summary>
-        Opacity = 0x8,
+        Opacity = 8,
 
         /// <summary>
         /// A displacement texture. The exact purpose and format is application-dependent. Higher color values stand for higher vertex displacements.
         /// </summary>
-        Displacement = 0x9,
+        Displacement = 9,
 
         /// <summary>
         /// A lightmap texture (aka Ambient occlusion). Both 'lightmaps' and dedicated 'ambient occlusion maps' are covered by this material property. The
         /// texture contains a scaling value for the final color value of a pixel. Its intensity is not affected by incoming light.
         /// </summary>
-        Lightmap = 0xA,
+        Lightmap = 10,
 
         /// <summary>
         /// A reflection texture. Contains the color of a perfect mirror reflection. This is rarely used, almost never for real-time applications.
         /// </summary>
-        Reflection = 0xB,
+        Reflection = 11,
+
+        /// <summary>
+        /// PBR texture property. Diffuse/albedo map containing base color regardless of the object surface type.
+        /// </summary>
+        BaseColor = 12,
+
+        /// <summary>
+        /// PBR texture property. This is not documented in assimp native, but is a normal map in a PBR workflow.
+        /// </summary>
+        NormalCamera = 13,
+
+        /// <summary>
+        /// PBR texture property. Emissive color map, similar to <see cref="TextureType.Emissive"/>.
+        /// </summary>
+        EmissionColor = 14,
+
+        /// <summary>
+        /// PBR texture property. Describes how reflective the object surface is.
+        /// </summary>
+        Metalness = 15,
+
+        /// <summary>
+        /// PBR texture property. Describes how rough or smooth the object surface is.
+        /// </summary>
+        Roughness = 16,
+
+        /// <summary>
+        /// Dedicated ambient occlusion map, some older formats may set this as a <see cref="TextureType.Lightmap"/> texture.
+        /// </summary>
+        AmbientOcclusion = 17,
 
         /// <summary>
         /// An unknown texture that does not mention any of the defined texture type definitions. It is still imported, but is excluded from any
         /// further postprocessing.
         /// </summary>
-        Unknown = 0xC
+        Unknown = 18
     }
 
     /// <summary>
