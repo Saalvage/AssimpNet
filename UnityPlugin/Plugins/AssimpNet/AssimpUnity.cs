@@ -30,6 +30,9 @@ namespace Assimp
     /// AssimpNet Unity integration. This handles one-time initialization (before scene load) of the AssimpLibrary instance, setting DLL probing paths to load the correct native
     /// dependencies, if the current platform is supported.
     /// </summary>
+#if UNITY_EDITOR
+    [UnityEditor.InitializeOnLoad]
+#endif
     public class AssimpUnity
     {
         private static bool s_triedLoading = false;
@@ -44,6 +47,11 @@ namespace Assimp
             {
                 return s_assimpAvailable;
             }
+        }
+
+        static AssimpUnity()
+        {
+            InitializePlugin();
         }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
@@ -66,6 +74,16 @@ namespace Assimp
             //First time initialization, need to set a probing path (at least in editor) to resolve the native dependencies
             string pluginsFolder = Path.Combine(Application.dataPath, "Plugins");
             string editorPluginNativeFolder = Path.Combine(pluginsFolder, "AssimpNet", "Native");
+
+            if(!Directory.Exists(editorPluginNativeFolder))
+            {
+                // Get directory that contains this file.
+                string pluginFolder = Path.GetDirectoryName(GetCallerFilePath());
+
+                pluginsFolder = Directory.GetParent(pluginFolder).FullName;
+                editorPluginNativeFolder = Path.Combine(pluginFolder, "Native");
+            }
+
             string native64LibPath = null;
             string native32LibPath = null;
 
@@ -152,6 +170,11 @@ namespace Assimp
 
             //Turn exceptions back on
             libInstance.ThrowOnLoadFailure = true;
+        }
+        
+        private static string GetCallerFilePath([System.Runtime.CompilerServices.CallerFilePath] string filepath = "")
+        {
+            return filepath;
         }
     }
 }
