@@ -1,4 +1,4 @@
-﻿/*
+/*
 * Copyright (c) 2012-2020 AssimpNet - Nicholas Woodfield
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -27,56 +27,6 @@ using System.Runtime.InteropServices;
 
 namespace Assimp.Unmanaged
 {
-    /// <summary>
-    /// Enumerates supported platforms.
-    /// </summary>
-    public enum Platform
-    {
-        /// <summary>
-        /// Windows platform.
-        /// </summary>
-        Windows,
-
-        /// <summary>
-        /// Linux platform.
-        /// </summary>
-        Linux,
-
-        /// <summary>
-        /// Mac platform.
-        /// </summary>
-        Mac
-    }
-
-    /// <summary>
-    /// An attribute that represents the name of an unmanaged function to import.
-    /// </summary>
-    [AttributeUsage(AttributeTargets.Delegate)]
-    public class UnmanagedFunctionNameAttribute : Attribute
-    {
-        private String m_unmanagedFunctionName;
-
-        /// <summary>
-        /// Name of the unmanaged function.
-        /// </summary>
-        public String UnmanagedFunctionName
-        {
-            get
-            {
-                return m_unmanagedFunctionName;
-            }
-        }
-
-        /// <summary>
-        /// Constructs a new <see cref="UnmanagedFunctionName"/>.
-        /// </summary>
-        /// <param name="unmanagedFunctionName">Name of the function.</param>
-        public UnmanagedFunctionNameAttribute(String unmanagedFunctionName)
-        {
-            m_unmanagedFunctionName = unmanagedFunctionName;
-        }
-    }
-
     /// <summary>
     /// Represents management and access to an unmanaged library. An unmanaged library can be loaded and unloaded dynamically. The library then searches for a list
     /// of exported functions to create managed delegates for, allowing callers to access the library. Each OS platform has its own implementation to determine how to load
@@ -328,428 +278,103 @@ namespace Assimp.Unmanaged
         {
             Platform platform = GetPlatform();
             m_resolver = new UnmanagedLibraryResolver(platform);
+            m_impl = CreateRuntimeImplementationForPlatform(platform, defaultLibName, unmanagedFunctionDelegateTypes);
+        }
 
+        private UnmanagedLibraryImplementation CreateRuntimeImplementationForPlatform(Platform platform, String defaultLibName, Type[] unmanagedFunctionDelegateTypes)
+        {
             switch(platform)
             {
                 case Platform.Windows:
-                    m_impl = new UnmanagedWindowsLibraryImplementation(defaultLibName, unmanagedFunctionDelegateTypes);
-                    break;
+                    return CreateRuntimeImplementationForWindowsPlatform(defaultLibName, unmanagedFunctionDelegateTypes);
                 case Platform.Linux:
-                    m_impl = new UnmanagedLinuxLibraryImplementation(defaultLibName, unmanagedFunctionDelegateTypes);
-                    break;
+                    return CreateRuntimeImplementationForLinuxPlatform(defaultLibName, unmanagedFunctionDelegateTypes);
                 case Platform.Mac:
-                    m_impl = new UnmanagedMacLibraryImplementation(defaultLibName, unmanagedFunctionDelegateTypes);
-                    break;
-                default:
-                    throw new PlatformNotSupportedException();
+                    return CreateRuntimeImplementationForMacPlatform(defaultLibName, unmanagedFunctionDelegateTypes);
             }
+
+            throw new PlatformNotSupportedException();
         }
 
-        #region Base Implementation
-
-        internal abstract class UnmanagedLibraryImplementation : IDisposable
+        private UnmanagedLibraryImplementation CreateRuntimeImplementationForWindowsPlatform(String defaultLibName, Type[] unmanagedFunctionDelegateTypes)
         {
-            private String m_defaultLibName;
-            private Type[] m_unmanagedFunctionDelegateTypes;
-            private Dictionary<String, Delegate> m_nameToUnmanagedFunction;
-            private IntPtr m_libraryHandle;
-            private bool m_isDisposed;
-            private bool m_throwOnLoadFailure;
-
-            public bool IsLibraryLoaded
-            {
-                get
-                {
-                    return m_libraryHandle != IntPtr.Zero;
-                }
-            }
-
-            public bool IsDisposed
-            {
-                get
-                {
-                    return m_isDisposed;
-                }
-            }
-
-            public String DefaultLibraryName
-            {
-                get
-                {
-                    return m_defaultLibName;
-                }
-            }
-
-            public bool ThrowOnLoadFailure
-            {
-                get
-                {
-                    return m_throwOnLoadFailure;
-                }
-                set
-                {
-                    m_throwOnLoadFailure = value;
-                }
-            }
-
-            public abstract String DllExtension { get; }
-
-            public virtual String DllPrefix { get { return String.Empty; } }
-
-            public UnmanagedLibraryImplementation(String defaultLibName, Type[] unmanagedFunctionDelegateTypes)
-            {
-                m_defaultLibName = DllPrefix + Path.ChangeExtension(defaultLibName, DllExtension);
-
-                m_unmanagedFunctionDelegateTypes = unmanagedFunctionDelegateTypes;
-
-                m_nameToUnmanagedFunction = new Dictionary<String, Delegate>();
-                m_isDisposed = false;
-                m_libraryHandle = IntPtr.Zero;
-
-                m_throwOnLoadFailure = true;
-            }
-
-            ~UnmanagedLibraryImplementation()
-            {
-                Dispose(false);
-            }
-
-            public T GetFunction<T>(String functionName) where T : class
-            {
-                if(String.IsNullOrEmpty(functionName))
-                    return null;
-
-                Delegate function;
-                if(!m_nameToUnmanagedFunction.TryGetValue(functionName, out function))
-                    return null;
-
-                Object obj = (Object) function;
-
-                return (T) obj;
-            }
-
-            public bool LoadLibrary(String path)
-            {
-                FreeLibrary(true);
-
-                m_libraryHandle = NativeLoadLibrary(path);
-
-                if(m_libraryHandle != IntPtr.Zero)
-                    LoadFunctions();
-
-                return m_libraryHandle != IntPtr.Zero;
-            }
-
-            public bool FreeLibrary()
-            {
-                return FreeLibrary(true);
-            }
-
-            private bool FreeLibrary(bool clearFunctions)
-            {
-                if(m_libraryHandle != IntPtr.Zero)
-                {
-                    NativeFreeLibrary(m_libraryHandle);
-                    m_libraryHandle = IntPtr.Zero;
-
-                    if(clearFunctions)
-                        m_nameToUnmanagedFunction.Clear();
-
-                    return true;
-                }
-
-                return false;
-            }
-
-            private void LoadFunctions()
-            {
-                foreach(Type funcType in m_unmanagedFunctionDelegateTypes)
-                {
-                    String funcName = GetUnmanagedName(funcType);
-                    if(String.IsNullOrEmpty(funcName))
-                    {
-                        System.Diagnostics.Debug.Assert(false, String.Format("No UnmanagedFunctionNameAttribute on {0} type.", funcType.AssemblyQualifiedName));
-                        continue;
-                    }
-
-                    IntPtr procAddr = NativeGetProcAddress(m_libraryHandle, funcName);
-                    if(procAddr == IntPtr.Zero)
-                    {
-                        System.Diagnostics.Debug.Assert(false, String.Format("No unmanaged function found for {0} type.", funcType.AssemblyQualifiedName));
-                        continue;
-                    }
-
-                    Delegate function;
-                    if(!m_nameToUnmanagedFunction.TryGetValue(funcName, out function))
-                    {
-                        function = PlatformHelper.GetDelegateForFunctionPointer(procAddr, funcType);
-                        m_nameToUnmanagedFunction.Add(funcName, function);
-                    }
-                }
-            }
-
-            private String GetUnmanagedName(Type funcType)
-            {
-                object[] attributes = PlatformHelper.GetCustomAttributes(funcType, typeof(UnmanagedFunctionNameAttribute), false);
-                foreach(object attr in attributes)
-                {
-                    if(attr is UnmanagedFunctionNameAttribute)
-                        return (attr as UnmanagedFunctionNameAttribute).UnmanagedFunctionName;
-                }
-
-                return null;
-            }
-
-            protected abstract IntPtr NativeLoadLibrary(String path);
-            protected abstract void NativeFreeLibrary(IntPtr handle);
-            protected abstract IntPtr NativeGetProcAddress(IntPtr handle, String functionName);
-
-            public void Dispose()
-            {
-                Dispose(true);
-
-                GC.SuppressFinalize(this);
-            }
-
-            protected virtual void Dispose(bool isDisposing)
-            {
-                if(!m_isDisposed)
-                {
-                    FreeLibrary(isDisposing);
-
-                    m_isDisposed = true;
-                }
-            }
-        }
-
-        #endregion
-
-        #region Windows Implementation
-
-        internal sealed class UnmanagedWindowsLibraryImplementation : UnmanagedLibraryImplementation
-        {
-            public override String DllExtension
-            {
-                get
-                {
-                    return ".dll";
-                }
-            }
-
-            public UnmanagedWindowsLibraryImplementation(String defaultLibName, Type[] unmanagedFunctionDelegateTypes)
-                : base(defaultLibName, unmanagedFunctionDelegateTypes)
-            {
-            }
-
-            protected override IntPtr NativeLoadLibrary(String path)
-            {
-                IntPtr libraryHandle = WinLoadLibrary(path);
-
-                if(libraryHandle == IntPtr.Zero && ThrowOnLoadFailure)
-                {
-                    Exception innerException = null;
-
-                    //Keep the try-catch in case we're running on Mono. We're providing our own implementation of "Marshal.GetHRForLastWin32Error" which is NOT implemented
-                    //in mono, but let's just be cautious.
-                    try
-                    {
-                        int hr = GetHRForLastWin32Error();
-                        innerException = Marshal.GetExceptionForHR(hr);
-                    }
-                    catch(Exception) { }
-
-                    if(innerException != null)
-                        throw new AssimpException(String.Format("Error loading unmanaged library from path: {0}\n\n{1}", path, innerException.Message), innerException);
-                    else
-                        throw new AssimpException(String.Format("Error loading unmanaged library from path: {0}", path));
-                }
-
-                return libraryHandle;
-            }
-
-            protected override IntPtr NativeGetProcAddress(IntPtr handle, String functionName)
-            {
-                return GetProcAddress(handle, functionName);
-            }
-
-            protected override void NativeFreeLibrary(IntPtr handle)
-            {
-                FreeLibrary(handle);
-            }
-
-            private int GetHRForLastWin32Error()
-            {
-                //Mono, for some reason, throws in Marshal.GetHRForLastWin32Error(), but it should implement GetLastWin32Error, which is recommended than
-                //p/invoking it ourselves when SetLastError is set in DllImport
-                int dwLastError = Marshal.GetLastWin32Error();
-
-                if((dwLastError & 0x80000000) == 0x80000000)
-                    return dwLastError;
-                else
-                    return (dwLastError & 0x0000FFFF) | unchecked((int) 0x80070000);
-            }
-
-            #region Native Methods
-
             [DllImport("kernel32.dll", CharSet = CharSet.Ansi, BestFitMapping = false, SetLastError = true, EntryPoint = "LoadLibrary")]
-            private static extern IntPtr WinLoadLibrary(String fileName);
+            static extern IntPtr WinNativeLoadLibrary(String fileName);
 
-            [DllImport("kernel32.dll", SetLastError = true)]
-            [return: MarshalAs(UnmanagedType.Bool)]
-            private static extern bool FreeLibrary(IntPtr hModule);
+            try
+            {
+                WinNativeLoadLibrary("non-existent-dll-that-is-never-used.dll");
 
-            [DllImport("kernel32.dll")]
-            private static extern IntPtr GetProcAddress(IntPtr hModule, String procName);
+                return new UnmanagedWin32LibraryImplementation(defaultLibName, unmanagedFunctionDelegateTypes);
+            }
+            catch (DllNotFoundException)
+            {
+                // Continue with fallback.
+            }
 
-            #endregion
+            [DllImport("api-ms-win-core-libraryloader-l2-1-0.dll", SetLastError = true, EntryPoint = "LoadPackagedLibrary")]
+            static extern IntPtr WinUwpLoadLibrary([MarshalAs(UnmanagedType.LPWStr)] string libraryName, int reserved = 0);
+
+            try
+            {
+                //If we're running in an UWP context, we need to use LoadPackagedLibrary. On non-UWP contexts, this
+                //will fail with APPMODEL_ERROR_NO_PACKAGE, so fall back to LoadLibrary.
+                WinUwpLoadLibrary("non-existent-dll-that-is-never-used.dll");
+            }
+            catch (DllNotFoundException)
+            {
+                // Continue with fallback.
+            }
+
+            throw new PlatformNotSupportedException(
+                "Windows system detected, but neither Win32 LoadLibrary nor UWP LoadPackagedLibrary could be " +
+                "called, which are necessary to load the Assimp DLL. Your version of Windows is likely not supported."
+            );
         }
 
-        #endregion
-
-        #region Linux Implementation
-
-        internal sealed class UnmanagedLinuxLibraryImplementation : UnmanagedLibraryImplementation
+        private UnmanagedLibraryImplementation CreateRuntimeImplementationForMacPlatform(String defaultLibName, Type[] unmanagedFunctionDelegateTypes)
         {
-            public override String DllExtension
-            {
-                get
-                {
-                    return ".so";
-                }
-            }
-
-            public override String DllPrefix
-            {
-                get
-                {
-                    return "lib";
-                }
-            }
-
-            public UnmanagedLinuxLibraryImplementation(String defaultLibName, Type[] unmanagedFunctionDelegateTypes)
-                : base(defaultLibName, unmanagedFunctionDelegateTypes)
-            {
-            }
-
-            protected override IntPtr NativeLoadLibrary(String path)
-            {
-                IntPtr libraryHandle = dlopen(path, RTLD_NOW);
-
-                if(libraryHandle == IntPtr.Zero &&  ThrowOnLoadFailure)
-                {
-                    IntPtr errPtr = dlerror();
-                    String msg = Marshal.PtrToStringAnsi(errPtr);
-                    if(!String.IsNullOrEmpty(msg))
-                        throw new AssimpException(String.Format("Error loading unmanaged library from path: {0}\n\n{1}", path, msg));
-                    else
-                        throw new AssimpException(String.Format("Error loading unmanaged library from path: {0}", path));
-                }
-
-                return libraryHandle;
-            }
-
-            protected override IntPtr NativeGetProcAddress(IntPtr handle, String functionName)
-            {
-                return dlsym(handle, functionName);
-            }
-
-            protected override void NativeFreeLibrary(IntPtr handle)
-            {
-                dlclose(handle);
-            }
-
-            #region Native Methods
-
-            [DllImport("libdl.so")]
-            private static extern IntPtr dlopen(String fileName, int flags);
-
-            [DllImport("libdl.so")]
-            private static extern IntPtr dlsym(IntPtr handle, String functionName);
-
-            [DllImport("libdl.so")]
-            private static extern int dlclose(IntPtr handle);
-
-            [DllImport("libdl.so")]
-            private static extern IntPtr dlerror();
-
-            private const int RTLD_NOW = 2;
-
-            #endregion
+            return new UnmanagedMacLibraryImplementation(defaultLibName, unmanagedFunctionDelegateTypes);
         }
 
-        #endregion
-
-        #region Mac Implementation
-
-        internal sealed class UnmanagedMacLibraryImplementation : UnmanagedLibraryImplementation
+        private UnmanagedLibraryImplementation CreateRuntimeImplementationForLinuxPlatform(String defaultLibName, Type[] unmanagedFunctionDelegateTypes)
         {
-            public override String DllExtension
+            [DllImport("libc.so.6", EntryPoint = "dlerror")]
+            static extern IntPtr libc6_dlerror();
+
+            try 
             {
-                get
-                {
-                    return ".dylib";
-                }
+                libc6_dlerror();
+
+                return new UnmanagedLinuxLibc6LibraryImplementation(defaultLibName, unmanagedFunctionDelegateTypes);
+            }
+            catch (DllNotFoundException)
+            {
+                // Continue with fallback.
             }
 
-            public override String DllPrefix
+            [DllImport("libdl.so", EntryPoint = "dlerror")]
+            static extern IntPtr libdl_dlerror();
+
+            try
             {
-                get
-                {
-                    return "lib";
-                }
+                //Recent versions of glibc include the dl* symbols in the main library, and the C library is pretty much
+                //always present in applications. Older versions glibc don't include these symbols in libc.so, and
+                //require loading libdl separately instead.
+                libdl_dlerror();
+
+                return new UnmanagedLinuxLibdlLibraryImplementation(defaultLibName, unmanagedFunctionDelegateTypes);
+            }
+            catch (DllNotFoundException)
+            {
+                // Continue with fallback.
             }
 
-            public UnmanagedMacLibraryImplementation(String defaultLibName, Type[] unmanagedFunctionDelegateTypes)
-                : base(defaultLibName, unmanagedFunctionDelegateTypes)
-            {
-            }
-
-            protected override IntPtr NativeLoadLibrary(String path)
-            {
-                IntPtr libraryHandle = dlopen(path, RTLD_NOW);
-
-                if(libraryHandle == IntPtr.Zero && ThrowOnLoadFailure)
-                {
-                    IntPtr errPtr = dlerror();
-                    String msg = Marshal.PtrToStringAnsi(errPtr);
-                    if(!String.IsNullOrEmpty(msg))
-                        throw new AssimpException(String.Format("Error loading unmanaged library from path: {0}\n\n{1}", path, msg));
-                    else
-                        throw new AssimpException(String.Format("Error loading unmanaged library from path: {0}", path));
-                }
-
-                return libraryHandle;
-            }
-
-            protected override IntPtr NativeGetProcAddress(IntPtr handle, String functionName)
-            {
-                return dlsym(handle, functionName);
-            }
-
-            protected override void NativeFreeLibrary(IntPtr handle)
-            {
-                dlclose(handle);
-            }
-
-            #region Native Methods
-
-            [DllImport("libSystem.B.dylib")]
-            private static extern IntPtr dlopen(String fileName, int flags);
-
-            [DllImport("libSystem.B.dylib")]
-            private static extern IntPtr dlsym(IntPtr handle, String functionName);
-
-            [DllImport("libSystem.B.dylib")]
-            private static extern int dlclose(IntPtr handle);
-
-            [DllImport("libSystem.B.dylib")]
-            private static extern IntPtr dlerror();
-
-            private const int RTLD_NOW = 2;
-
-            #endregion
+            throw new PlatformNotSupportedException(
+                "Linux system detected, but neither libc.so.6 nor libdl.so contains symbol " +
+                "'dlopen' necessary to load Assimp DLL. Check that either of these so files are " +
+                "present on your (Linux) system and correctly expose this symbol."
+            );
         }
-
-        #endregion
     }
 }

@@ -32,12 +32,6 @@ namespace Assimp
     /// </summary>
     public abstract class IOStream : IDisposable
     {
-        private AiFileWriteProc m_writeProc;
-        private AiFileReadProc m_readProc;
-        private AiFileTellProc m_tellProc;
-        private AiFileTellProc m_fileSizeProc;
-        private AiFileSeek m_seekProc;
-        private AiFileFlushProc m_flushProc;
         private IntPtr m_filePtr;
         private bool m_isDiposed;
         private String m_pathToFile;
@@ -99,26 +93,54 @@ namespace Assimp
         /// </summary>
         /// <param name="pathToFile">Path to file given by Assimp</param>
         /// <param name="fileMode">Desired file access mode</param>
-        public IOStream(String pathToFile, FileIOMode fileMode)
+        /// <param name="initialize"></param>
+        public IOStream(String pathToFile, FileIOMode fileMode, bool initialize = true)
         {
             m_pathToFile = pathToFile;
             m_fileMode = fileMode;
 
-            m_writeProc = OnAiFileWriteProc;
-            m_readProc = OnAiFileReadProc;
-            m_tellProc = OnAiFileTellProc;
-            m_fileSizeProc = OnAiFileSizeProc;
-            m_seekProc = OnAiFileSeekProc;
-            m_flushProc = OnAiFileFlushProc;
+            if (initialize)
+            {
+                Initialize(
+                    OnAiFileWriteProc,
+                    OnAiFileReadProc,
+                    OnAiFileTellProc,
+                    OnAiFileSizeProc,
+                    OnAiFileSeekProc,
+                    OnAiFileFlushProc,
+                    IntPtr.Zero
+                );
+            }
+        }
 
+        /// <summary>
+        /// Initializes the system by setting up native pointers for Assimp to the specified functions.
+        /// </summary>
+        /// <param name="aiFileWriteProc"></param>
+        /// <param name="aiFileReadProc"></param>
+        /// <param name="aiFileTellProc"></param>
+        /// <param name="aiFileSizeProc"></param>
+        /// <param name="aiFileSeek"></param>
+        /// <param name="aiFileFlushProc"></param>
+        /// <param name="userData"></param>
+        protected void Initialize(
+            AiFileWriteProc aiFileWriteProc,
+            AiFileReadProc aiFileReadProc,
+            AiFileTellProc aiFileTellProc,
+            AiFileTellProc aiFileSizeProc,
+            AiFileSeek aiFileSeek,
+            AiFileFlushProc aiFileFlushProc,
+            IntPtr userData
+        )
+        {
             AiFile file;
-            file.WriteProc = Marshal.GetFunctionPointerForDelegate(m_writeProc);
-            file.ReadProc = Marshal.GetFunctionPointerForDelegate(m_readProc);
-            file.TellProc = Marshal.GetFunctionPointerForDelegate(m_tellProc);
-            file.FileSizeProc = Marshal.GetFunctionPointerForDelegate(m_fileSizeProc);
-            file.SeekProc = Marshal.GetFunctionPointerForDelegate(m_seekProc);
-            file.FlushProc = Marshal.GetFunctionPointerForDelegate(m_flushProc);
-            file.UserData = IntPtr.Zero;
+            file.WriteProc = Marshal.GetFunctionPointerForDelegate(aiFileWriteProc);
+            file.ReadProc = Marshal.GetFunctionPointerForDelegate(aiFileReadProc);
+            file.TellProc = Marshal.GetFunctionPointerForDelegate(aiFileTellProc);
+            file.FileSizeProc = Marshal.GetFunctionPointerForDelegate(aiFileSizeProc);
+            file.SeekProc = Marshal.GetFunctionPointerForDelegate(aiFileSeek);
+            file.FlushProc = Marshal.GetFunctionPointerForDelegate(aiFileFlushProc);
+            file.UserData = userData;
 
             m_filePtr = MemoryHelper.AllocateMemory(MemoryHelper.SizeOf<AiFile>());
             Marshal.StructureToPtr(file, m_filePtr, false);
@@ -153,16 +175,6 @@ namespace Assimp
                 {
                     MemoryHelper.FreeMemory(m_filePtr);
                     m_filePtr = IntPtr.Zero;
-                }
-
-                if(disposing)
-                {
-                    m_writeProc = null;
-                    m_readProc = null;
-                    m_tellProc = null;
-                    m_fileSizeProc = null;
-                    m_seekProc = null;
-                    m_flushProc = null;
                 }
 
                 m_isDiposed = true;
@@ -219,7 +231,15 @@ namespace Assimp
             Dispose();
         }
 
-        private UIntPtr OnAiFileWriteProc(IntPtr file, IntPtr dataToWrite, UIntPtr sizeOfElemInBytes, UIntPtr numElements)
+        /// <summary>
+        /// Callback for Assimp that handles writes.
+        /// </summary>
+        /// <param name="file"></param>
+        /// <param name="dataToWrite"></param>
+        /// <param name="sizeOfElemInBytes"></param>
+        /// <param name="numElements"></param>
+        /// <returns></returns>
+        protected UIntPtr OnAiFileWriteProc(IntPtr file, IntPtr dataToWrite, UIntPtr sizeOfElemInBytes, UIntPtr numElements)
         {
             if(m_filePtr != file)
                 return UIntPtr.Zero;
@@ -245,7 +265,15 @@ namespace Assimp
             return new UIntPtr((ulong) actualCount / (ulong) longSize);
         }
 
-        private UIntPtr OnAiFileReadProc(IntPtr file, IntPtr dataRead, UIntPtr sizeOfElemInBytes, UIntPtr numElements)
+        /// <summary>
+        /// Callback for Assimp that handles reads.
+        /// </summary>
+        /// <param name="file"></param>
+        /// <param name="dataRead"></param>
+        /// <param name="sizeOfElemInBytes"></param>
+        /// <param name="numElements"></param>
+        /// <returns></returns>
+        protected UIntPtr OnAiFileReadProc(IntPtr file, IntPtr dataRead, UIntPtr sizeOfElemInBytes, UIntPtr numElements)
         {
             if(m_filePtr != file)
                 return UIntPtr.Zero;
@@ -270,7 +298,12 @@ namespace Assimp
             return new UIntPtr((ulong) actualCount / (ulong) longSize);
         }
 
-        private UIntPtr OnAiFileTellProc(IntPtr file)
+        /// <summary>
+        /// Callback for Assimp that handles tell requests.
+        /// </summary>
+        /// <param name="file"></param>
+        /// <returns></returns>
+        protected UIntPtr OnAiFileTellProc(IntPtr file)
         {
             if(m_filePtr != file)
                 return UIntPtr.Zero;
@@ -286,7 +319,12 @@ namespace Assimp
             return new UIntPtr((ulong) pos);
         }
 
-        private UIntPtr OnAiFileSizeProc(IntPtr file)
+        /// <summary>
+        /// Callback for Assimp that handles size requests.
+        /// </summary>
+        /// <param name="file"></param>
+        /// <returns></returns>
+        protected UIntPtr OnAiFileSizeProc(IntPtr file)
         {
             if(m_filePtr != file)
                 return UIntPtr.Zero;
@@ -302,7 +340,14 @@ namespace Assimp
             return new UIntPtr((ulong) fileSize);
         }
 
-        private ReturnCode OnAiFileSeekProc(IntPtr file, UIntPtr offset, Origin seekOrigin)
+        /// <summary>
+        /// Callback for Assimp that handles seeks.
+        /// </summary>
+        /// <param name="file"></param>
+        /// <param name="offset"></param>
+        /// <param name="seekOrigin"></param>
+        /// <returns></returns>
+        protected ReturnCode OnAiFileSeekProc(IntPtr file, UIntPtr offset, Origin seekOrigin)
         {
             if(m_filePtr != file)
                 return ReturnCode.Failure;
@@ -318,7 +363,9 @@ namespace Assimp
             return code;
         }
 
-        private void OnAiFileFlushProc(IntPtr file)
+        /// <summary>Callback for Assimp that handles flushes.</summary>
+        /// <param name="file"></param>
+        protected void OnAiFileFlushProc(IntPtr file)
         {
             if(m_filePtr != file)
                 return;

@@ -33,8 +33,6 @@ namespace Assimp
     /// </summary>
     public abstract class IOSystem : IDisposable
     {
-        private AiFileOpenProc m_openProc;
-        private AiFileCloseProc m_closeProc;
         private IntPtr m_fileIOPtr;
         private bool m_isDisposed;
         private Dictionary<IntPtr, IOStream> m_openedFiles;
@@ -72,20 +70,35 @@ namespace Assimp
         /// <summary>
         /// Constructs a new IOSystem.
         /// </summary>
-        public IOSystem()
+        /// <param name="initialize">
+        /// Whether to immediately initialize the system by setting up native pointers. Set this to
+        /// false if you want to manually initialize and use custom function pointers for advanced use cases.
+        /// </param>
+        public IOSystem(bool initialize = true)
         {
-            m_openProc = OnAiFileOpenProc;
-            m_closeProc = OnAiFileCloseProc;
+            if (initialize)
+            {
+                Initialize(OnAiFileOpenProc, OnAiFileCloseProc, IntPtr.Zero);
+            }
 
+            m_openedFiles = new Dictionary<IntPtr, IOStream>();
+        }
+
+        /// <summary>
+        /// Initializes the system by setting up native pointers for Assimp to the specified functions.
+        /// </summary>
+        /// <param name="fileOpenProc"></param>
+        /// <param name="fileCloseProc"></param>
+        /// <param name="userData"></param>
+        protected void Initialize(AiFileOpenProc fileOpenProc, AiFileCloseProc fileCloseProc, IntPtr userData)
+        {
             AiFileIO fileIO;
-            fileIO.OpenProc = Marshal.GetFunctionPointerForDelegate(m_openProc);
-            fileIO.CloseProc = Marshal.GetFunctionPointerForDelegate(m_closeProc);
-            fileIO.UserData = IntPtr.Zero;
+            fileIO.OpenProc = Marshal.GetFunctionPointerForDelegate(fileOpenProc);
+            fileIO.CloseProc = Marshal.GetFunctionPointerForDelegate(fileCloseProc);
+            fileIO.UserData = userData;
 
             m_fileIOPtr = MemoryHelper.AllocateMemory(MemoryHelper.SizeOf<AiFileIO>());
             Marshal.StructureToPtr(fileIO, m_fileIOPtr, false);
-
-            m_openedFiles = new Dictionary<IntPtr, IOStream>();
         }
 
         /// <summary>
@@ -160,15 +173,20 @@ namespace Assimp
 
                 if(disposing)
                 {
-                    m_openProc = null;
-                    m_closeProc = null;
                     CloseAllFiles();
                 }
                 m_isDisposed = true;
             }
         }
 
-        private IntPtr OnAiFileOpenProc(IntPtr fileIO, String pathToFile, String mode)
+        /// <summary>
+        /// Callback for Assimp that handles a file being opened.
+        /// </summary>
+        /// <param name="fileIO"></param>
+        /// <param name="pathToFile"></param>
+        /// <param name="mode"></param>
+        /// <returns></returns>
+        protected IntPtr OnAiFileOpenProc(IntPtr fileIO, String pathToFile, String mode)
         {
             if(m_fileIOPtr != fileIO)
                 return IntPtr.Zero;
@@ -193,7 +211,12 @@ namespace Assimp
             return aiFilePtr;
         }
 
-        private void OnAiFileCloseProc(IntPtr fileIO, IntPtr file)
+        /// <summary>
+        /// Callback for Assimp that handles a file being closed.
+        /// </summary>
+        /// <param name="fileIO"></param>
+        /// <param name="file"></param>
+        protected void OnAiFileCloseProc(IntPtr fileIO, IntPtr file)
         {
             if(m_fileIOPtr != fileIO)
                 return;

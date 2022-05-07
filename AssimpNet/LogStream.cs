@@ -45,7 +45,6 @@ namespace Assimp
         private static List<LogStream> s_activeLogstreams = new List<LogStream>();
 
         private LoggingCallback m_logCallback;
-        private AiLogStreamCallback m_assimpCallback;
         private IntPtr m_logstreamPtr;
         private String m_userData;
         private bool m_isDisposed;
@@ -114,15 +113,26 @@ namespace Assimp
         /// <summary>
         /// Constructs a new LogStream.
         /// </summary>
-        protected LogStream() : this("") { }
+        /// <param name="initialize">
+        /// Whether to immediately initialize the system by setting up native pointers. Set this to
+        /// false if you want to manually initialize and use custom function pointers for advanced use cases.
+        /// </param>
+        protected LogStream(bool initialize = true) : this("", initialize) { }
 
         /// <summary>
         /// Constructs a new LogStream.
         /// </summary>
         /// <param name="userData">User-supplied data</param>
-        protected LogStream(String userData)
+        /// <param name="initialize">
+        /// Whether to immediately initialize the system by setting up native pointers. Set this to
+        /// false if you want to manually initialize and use custom function pointers for advanced use cases.
+        /// </param>
+        protected LogStream(String userData, bool initialize = true)
         {
-            Initialize(null, userData);
+            if (initialize)
+            {
+                Initialize(OnAiLogStreamCallback, null, userData, IntPtr.Zero);
+            }
         }
 
         /// <summary>
@@ -131,7 +141,7 @@ namespace Assimp
         /// <param name="callback">Logging callback that is called when messages are received by the log stream.</param>
         public LogStream(LoggingCallback callback)
         {
-            Initialize(callback, String.Empty);
+            Initialize(OnAiLogStreamCallback, callback, String.Empty, IntPtr.Zero);
         }
 
         /// <summary>
@@ -141,7 +151,7 @@ namespace Assimp
         /// <param name="userData">User-supplied data</param>
         public LogStream(LoggingCallback callback, String userData)
         {
-            Initialize(callback, userData);
+            Initialize(OnAiLogStreamCallback, callback, userData, IntPtr.Zero);
         }
 
         /// <summary>
@@ -257,11 +267,6 @@ namespace Assimp
                     m_logstreamPtr = IntPtr.Zero;
                 }
 
-                if(disposing)
-                {
-                    m_assimpCallback = null;
-                }
-
                 m_isDisposed = true;
             }
         }
@@ -285,7 +290,12 @@ namespace Assimp
         /// </summary>
         protected virtual void OnDetach() { }
 
-        private void OnAiLogStreamCallback(String msg, IntPtr userData)
+        /// <summary>
+        /// Callback for Assimp that handles a message being logged.
+        /// </summary>
+        /// <param name="msg"></param>
+        /// <param name="userData"></param>
+        protected void OnAiLogStreamCallback(String msg, IntPtr userData)
         {
             if(m_logCallback != null)
             {
@@ -297,18 +307,29 @@ namespace Assimp
             }
         }
 
-        private void Initialize(LoggingCallback callback, String userData)
+        /// <summary>
+        /// Initializes the stream by setting up native pointers for Assimp to the specified functions.
+        /// </summary>
+        /// <param name="aiLogStreamCallback"></param>
+        /// <param name="callback"></param>
+        /// <param name="userData"></param>
+        /// <param name="assimpUserData"></param>
+        protected void Initialize(
+            AiLogStreamCallback aiLogStreamCallback,
+            LoggingCallback callback,
+            String userData,
+            IntPtr assimpUserData
+        )
         {
             if(userData == null)
                 userData = String.Empty;
 
-            m_assimpCallback = OnAiLogStreamCallback;
             m_logCallback = callback;
             m_userData = userData;
 
             AiLogStream logStream;
-            logStream.Callback = Marshal.GetFunctionPointerForDelegate(m_assimpCallback);
-            logStream.UserData = IntPtr.Zero;
+            logStream.Callback = Marshal.GetFunctionPointerForDelegate(aiLogStreamCallback);
+            logStream.UserData = assimpUserData;
 
             m_logstreamPtr = MemoryHelper.AllocateMemory(MemoryHelper.SizeOf<AiLogStream>());
             Marshal.StructureToPtr(logStream, m_logstreamPtr, false);

@@ -43,6 +43,7 @@ namespace Assimp
         private List<Animation> m_animations;
         private List<Material> m_materials;
         private Metadata m_metadata;
+        private String m_name;
 
         /// <summary>
         /// Gets or sets the state of the imported scene. By default no flags are set, but
@@ -291,6 +292,21 @@ namespace Assimp
         }
 
         /// <summary>
+        /// Gets or sets the name of the scene.
+        /// </summary>
+        public String Name
+        {
+            get
+            {
+                return m_name;
+            }
+            set
+            {
+                m_name = value;
+            }
+        }
+
+        /// <summary>
         /// Constructs a new instance of the <see cref="Scene"/> class.
         /// </summary>
         public Scene()
@@ -304,6 +320,17 @@ namespace Assimp
             m_animations = new List<Animation>();
             m_materials = new List<Material>();
             m_metadata = new Metadata();
+            m_name = String.Empty;
+        }
+
+        /// <summary>
+        /// Constructs a new instance of the <see cref="Scene"/> class.
+        /// </summary>
+        /// <param name="name">Name of the scene</param>
+        public Scene(String name)
+            : this()
+        {
+            m_name = name;
         }
 
         /// <summary>
@@ -421,7 +448,7 @@ namespace Assimp
             nativeValue.Textures = IntPtr.Zero;
             nativeValue.Animations = IntPtr.Zero;
             nativeValue.Metadata = IntPtr.Zero;
-            nativeValue.PrivateData = IntPtr.Zero;
+            nativeValue.Name = new AiString(m_name);
 
             nativeValue.NumMaterials = (uint) MaterialCount;
             nativeValue.NumMeshes = (uint) MeshCount;
@@ -472,6 +499,7 @@ namespace Assimp
             Clear();
 
             m_flags = nativeValue.Flags;
+            m_name = AiString.GetString(nativeValue.Name); //Avoid struct copy
 
             //Read materials
             if(nativeValue.NumMaterials > 0 && nativeValue.Materials != IntPtr.Zero)

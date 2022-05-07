@@ -145,11 +145,22 @@ namespace Assimp
                         override32LibName = bundlelibName;
                     }
                     break;
-                //TODO: Add more platforms if you have binaries that can run on it
+                case RuntimePlatform.WSAPlayerARM:
+                case RuntimePlatform.WSAPlayerX86:
+                case RuntimePlatform.WSAPlayerX64:
+                    {
+                        // Needs special treatment, see below.
+                        native64LibPath = "";
+                        native64LibPath = "";
+
+                        override64LibName = "assimp.dll";
+                        override32LibName = "assimp.dll";
+                    }
+                //TODO: Add more platforms if you have binaries that can run on it, examples:
             }
 
             //If both null, then we do not support the platform
-            if(native64LibPath == null && native32LibPath == null)
+            if(native64LibPath is null && native32LibPath is null)
             {
                 Debug.Log(string.Format("Assimp does not support platform: {0}", Application.platform.ToString()));
                 s_assimpAvailable = false;
@@ -164,7 +175,22 @@ namespace Assimp
             libInstance.ThrowOnLoadFailure = false;
 
             //Try and load the native library, if failed we won't get an exception
-            bool success = libInstance.LoadLibrary();
+            bool success;
+            
+            if (Application.platform == RuntimePlatform.WSAPlayerARM ||
+                Application.platform == RuntimePlatform.WSAPlayerX86 ||
+                Application.platform == RuntimePlatform.WSAPlayerX64)
+            {
+                //On UWP, the folder hierarchy is flattened, making the DLL end up next to the executable. This location
+                //is already in the DLL search path, so we don't need an absolute path (we wouldn't know which one to
+                //provide either). You have to set the DLLs to only be included on the appropriate platform in Unity,
+                //to ensure only the right library is included in your build.
+                success = libInstance.LoadLibrary(override64LibName);
+            }
+            else
+            {
+                success = libInstance.LoadLibrary();
+            }
             s_assimpAvailable = success;
             s_triedLoading = true;
 
