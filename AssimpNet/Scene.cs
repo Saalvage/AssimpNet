@@ -449,6 +449,7 @@ namespace Assimp
             nativeValue.Animations = IntPtr.Zero;
             nativeValue.Metadata = IntPtr.Zero;
             nativeValue.Name = new AiString(m_name);
+            nativeValue.Private = IntPtr.Zero;
 
             nativeValue.NumMaterials = (uint) MaterialCount;
             nativeValue.NumMeshes = (uint) MeshCount;
