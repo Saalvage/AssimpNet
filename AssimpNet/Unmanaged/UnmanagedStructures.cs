@@ -115,6 +115,9 @@ namespace Assimp.Unmanaged
         /// The name of the scene itself.
         /// </summary>
         public AiString Name;
+
+        // Internal data, do not touch
+        public IntPtr Private;
     }
 
     /// <summary>
