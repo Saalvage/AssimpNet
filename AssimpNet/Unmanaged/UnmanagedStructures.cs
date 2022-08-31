@@ -310,9 +310,9 @@ namespace Assimp.Unmanaged
         public BoundingBox AABB;
 
         /// <summary>
-        /// aiString[Max_Value], array of texture coordinate names. Max_Value is defined as <see cref="AiDefines.AI_MAX_NUMBER_OF_TEXTURECOORDS"/>.
+        /// aiString[Max_Value], pointer to array of texture coordinate names. Max_Value is defined as <see cref="AiDefines.AI_MAX_NUMBER_OF_TEXTURECOORDS"/>.
         /// </summary>
-        public AiMeshTextureCoordinateNamesArray TextureCoordsNames;
+        public IntPtr TextureCoordsNames;
     }
 
     /// <summary>
@@ -1442,90 +1442,6 @@ namespace Assimp.Unmanaged
                         return m_ptr7;
                     default:
                         return IntPtr.Zero;
-                }
-            }
-            set
-            {
-                switch(index)
-                {
-                    case 0:
-                        m_ptr0 = value;
-                        break;
-                    case 1:
-                        m_ptr1 = value;
-                        break;
-                    case 2:
-                        m_ptr2 = value;
-                        break;
-                    case 3:
-                        m_ptr3 = value;
-                        break;
-                    case 4:
-                        m_ptr4 = value;
-                        break;
-                    case 5:
-                        m_ptr5 = value;
-                        break;
-                    case 6:
-                        m_ptr6 = value;
-                        break;
-                    case 7:
-                        m_ptr7 = value;
-                        break;
-                }
-            }
-        }
-    }
-
-    /// <summary>
-    /// Fixed length array for representing the texture coordinate names of a mesh. Length is equal
-    /// to <see cref="AiDefines.AI_MAX_NUMBER_OF_TEXTURECOORDS"/>.
-    /// </summary>
-    [StructLayout(LayoutKind.Sequential)]
-    public unsafe struct AiMeshTextureCoordinateNamesArray
-    {
-        //No fixed size intptrs
-        private AiString m_ptr0, m_ptr1, m_ptr2, m_ptr3, m_ptr4, m_ptr5, m_ptr6, m_ptr7;
-
-        /// <summary>
-        /// Gets the length of the array.
-        /// </summary>
-        public int Length
-        {
-            get
-            {
-                return AiDefines.AI_MAX_NUMBER_OF_TEXTURECOORDS;
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets an array value at the specified index.
-        /// </summary>
-        /// <param name="index">Zero-based index.</param>
-        public AiString this[int index]
-        {
-            get
-            {
-                switch(index)
-                {
-                    case 0:
-                        return m_ptr0;
-                    case 1:
-                        return m_ptr1;
-                    case 2:
-                        return m_ptr2;
-                    case 3:
-                        return m_ptr3;
-                    case 4:
-                        return m_ptr4;
-                    case 5:
-                        return m_ptr5;
-                    case 6:
-                        return m_ptr6;
-                    case 7:
-                        return m_ptr7;
-                    default:
-                        return new AiString();
                 }
             }
             set

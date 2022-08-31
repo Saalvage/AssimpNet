@@ -671,7 +671,7 @@ namespace Assimp
             nativeValue.NumAnimMeshes = (uint) MeshAnimationAttachmentCount;
             nativeValue.MorphMethod = m_morphMethod;
             nativeValue.AABB = m_boundingBox;
-            nativeValue.TextureCoordsNames = new AiMeshTextureCoordinateNamesArray();
+            nativeValue.TextureCoordsNames = IntPtr.Zero;
 
             if(nativeValue.NumVertices > 0)
             {
