@@ -320,6 +320,8 @@ namespace Assimp.Unmanaged
                 //If we're running in an UWP context, we need to use LoadPackagedLibrary. On non-UWP contexts, this
                 //will fail with APPMODEL_ERROR_NO_PACKAGE, so fall back to LoadLibrary.
                 WinUwpLoadLibrary("non-existent-dll-that-is-never-used.dll");
+
+                return new UnmanagedUwpLibraryImplementation(defaultLibName, unmanagedFunctionDelegateTypes);
             }
             catch (DllNotFoundException)
             {
