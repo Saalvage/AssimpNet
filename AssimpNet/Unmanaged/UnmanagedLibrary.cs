@@ -148,6 +148,13 @@ namespace Assimp.Unmanaged
             if(RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
                 return Platform.Mac;
 
+            //UWP targets in Unity 2021.3.0 with IL2CPP (HoloLens 2, ...) are picked up as being "Microsoft Windows NT
+            //xx.y.zzzzz.w", but _not_ as RuntimePlatform Windows above. Should be fixed in 2021.3.2, see:
+            //https://issuetracker.unity3d.com/issues/windows-fails-to-identify-as-windows-when-building-the-project-using-il2cpp-scripting-backend
+            //https://issuetracker.unity3d.com/issues/uwp-os-version-detection-is-wrong-on-some-windows-versions
+            if(RuntimeInformation.OSDescription.Contains("Microsoft Windows"))
+                return Platform.Windows;
+
             throw new InvalidOperationException("Cannot determine OS-specific implementation.");
         }
 
