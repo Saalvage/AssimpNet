@@ -126,7 +126,9 @@ namespace Assimp.Unmanaged
         /// </summary>
         public IntPtr Skeletons;
 
-        // Internal data, do not touch
+        /// <summary>
+        /// Internal data, do not touch
+        /// </summary>
         public IntPtr Private;
     }
 
