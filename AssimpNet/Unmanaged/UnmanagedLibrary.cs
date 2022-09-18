@@ -305,12 +305,10 @@ namespace Assimp.Unmanaged
 
         private UnmanagedLibraryImplementation CreateRuntimeImplementationForWindowsPlatform(String defaultLibName, Type[] unmanagedFunctionDelegateTypes)
         {
-            [DllImport("kernel32.dll", CharSet = CharSet.Ansi, BestFitMapping = false, SetLastError = true, EntryPoint = "LoadLibrary")]
-            static extern IntPtr WinNativeLoadLibrary(String fileName);
-
             try
             {
-                WinNativeLoadLibrary("non-existent-dll-that-is-never-used.dll");
+                // If we can't load regular DLLs this will error
+                NativeMethods.WinNativeLoadLibrary("non-existent-dll-that-is-never-used.dll");
 
                 return new UnmanagedWin32LibraryImplementation(defaultLibName, unmanagedFunctionDelegateTypes);
             }
@@ -319,14 +317,11 @@ namespace Assimp.Unmanaged
                 // Continue with fallback.
             }
 
-            [DllImport("api-ms-win-core-libraryloader-l2-1-0.dll", SetLastError = true, EntryPoint = "LoadPackagedLibrary")]
-            static extern IntPtr WinUwpLoadLibrary([MarshalAs(UnmanagedType.LPWStr)] string libraryName, int reserved = 0);
-
             try
             {
                 //If we're running in an UWP context, we need to use LoadPackagedLibrary. On non-UWP contexts, this
                 //will fail with APPMODEL_ERROR_NO_PACKAGE, so fall back to LoadLibrary.
-                WinUwpLoadLibrary("non-existent-dll-that-is-never-used.dll");
+                NativeMethods.WinUwpLoadLibrary("non-existent-dll-that-is-never-used.dll");
 
                 return new UnmanagedUwpLibraryImplementation(defaultLibName, unmanagedFunctionDelegateTypes);
             }
@@ -348,12 +343,9 @@ namespace Assimp.Unmanaged
 
         private UnmanagedLibraryImplementation CreateRuntimeImplementationForLinuxPlatform(String defaultLibName, Type[] unmanagedFunctionDelegateTypes)
         {
-            [DllImport("libc.so.6", EntryPoint = "dlerror")]
-            static extern IntPtr libc6_dlerror();
-
             try 
             {
-                libc6_dlerror();
+                NativeMethods.libc6_dlerror();
 
                 return new UnmanagedLinuxLibc6LibraryImplementation(defaultLibName, unmanagedFunctionDelegateTypes);
             }
@@ -362,15 +354,12 @@ namespace Assimp.Unmanaged
                 // Continue with fallback.
             }
 
-            [DllImport("libdl.so", EntryPoint = "dlerror")]
-            static extern IntPtr libdl_dlerror();
-
             try
             {
                 //Recent versions of glibc include the dl* symbols in the main library, and the C library is pretty much
                 //always present in applications. Older versions glibc don't include these symbols in libc.so, and
                 //require loading libdl separately instead.
-                libdl_dlerror();
+                NativeMethods.libdl_dlerror();
 
                 return new UnmanagedLinuxLibdlLibraryImplementation(defaultLibName, unmanagedFunctionDelegateTypes);
             }
@@ -384,6 +373,21 @@ namespace Assimp.Unmanaged
                 "'dlopen' necessary to load Assimp DLL. Check that either of these so files are " +
                 "present on your (Linux) system and correctly expose this symbol."
             );
+        }
+
+        private static class NativeMethods
+        {
+            [DllImport("kernel32.dll", CharSet = CharSet.Ansi, BestFitMapping = false, SetLastError = true, EntryPoint = "LoadLibrary")]
+            public static extern IntPtr WinNativeLoadLibrary(String fileName);
+
+            [DllImport("api-ms-win-core-libraryloader-l2-1-0.dll", SetLastError = true, EntryPoint = "LoadPackagedLibrary")]
+            public static extern IntPtr WinUwpLoadLibrary([MarshalAs(UnmanagedType.LPWStr)] string libraryName, int reserved = 0);
+
+            [DllImport("libdl.so", EntryPoint = "dlerror")]
+            public static extern IntPtr libdl_dlerror();
+
+            [DllImport("libc.so.6", EntryPoint = "dlerror")]
+            public static extern IntPtr libc6_dlerror();
         }
     }
 }
