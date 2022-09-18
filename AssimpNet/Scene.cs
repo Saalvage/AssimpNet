@@ -449,6 +449,7 @@ namespace Assimp
             nativeValue.Animations = IntPtr.Zero;
             nativeValue.Metadata = IntPtr.Zero;
             nativeValue.Name = new AiString(m_name);
+            nativeValue.Skeletons = IntPtr.Zero;
             nativeValue.Private = IntPtr.Zero;
 
             nativeValue.NumMaterials = (uint) MaterialCount;
@@ -457,9 +458,10 @@ namespace Assimp
             nativeValue.NumCameras = (uint) CameraCount;
             nativeValue.NumTextures = (uint) TextureCount;
             nativeValue.NumAnimations = (uint) AnimationCount;
+            nativeValue.NumSkeletons = 0;
 
             //Write materials
-            if(nativeValue.NumMaterials > 0)
+            if (nativeValue.NumMaterials > 0)
                 nativeValue.Materials = MemoryHelper.ToNativeArray<Material, AiMaterial>(m_materials.ToArray(), true);
 
             //Write scenegraph

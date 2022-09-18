@@ -116,6 +116,16 @@ namespace Assimp.Unmanaged
         /// </summary>
         public AiString Name;
 
+        /// <summary>
+        /// Number of skeletons contained.
+        /// </summary>
+        public uint NumSkeletons;
+
+        /// <summary>
+        /// aiSkeleton**, skeletons in the scene.
+        /// </summary>
+        public IntPtr Skeletons;
+
         // Internal data, do not touch
         public IntPtr Private;
     }
