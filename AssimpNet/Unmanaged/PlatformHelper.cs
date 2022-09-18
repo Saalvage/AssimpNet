@@ -63,6 +63,9 @@ namespace Assimp.Unmanaged
         {
             return s_platform == osPlat;
         }
+
+        // Non-net standard will be windows only
+        public static string OSDescription { get { return "Microsoft Windows"; } }
     }
 #endif
 

@@ -753,6 +753,7 @@ namespace Assimp
             m_materialIndex = (int) nativeValue.MaterialIndex;
             m_morphMethod = nativeValue.MorphMethod;
             m_boundingBox = nativeValue.AABB;
+            m_primitiveType = nativeValue.PrimitiveTypes;       
 
             //Load Per-vertex components
             if(vertexCount > 0)
