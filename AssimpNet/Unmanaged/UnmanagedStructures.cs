@@ -917,7 +917,7 @@ namespace Assimp.Unmanaged
             {
                 Length = 0;
                 fixed(byte* bytePtr = Data)
-                    MemoryHelper.ClearMemory(new IntPtr(bytePtr), 0, AiDefines.MAX_LENGTH);
+                    MemoryHelper.ClearMemory(new IntPtr(bytePtr), AiDefines.MAX_LENGTH);
 
                 return true;
             }

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.3;net35;net4;</TargetFrameworks>
+    <TargetFrameworks>netstandard2.1</TargetFrameworks>
     <LangVersion>latest</LangVersion>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -34,7 +34,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="..\logo.png" Link="nuget\logo.png" PackagePath=""/>
+    <Content Include="..\logo.png" Link="nuget\logo.png" PackagePath="" />
     <Content Include="..\ChangeLog.txt" Link="nuget\ChangeLog.txt" PackagePath="" />
     <Content Include="..\License.txt" Link="nuget\License.txt" PackagePath="" />
     <Content Include="..\Docs\AssimpNet Documentation %28October 2018%29.chm" Link="nuget\AssimpNet Documentation %28October 2018%29.chm" PackagePath="" />
@@ -46,9 +46,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="MemoryInterop.ILPatcher" Version="2.2.1">
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
+    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.0.0" />
   </ItemGroup>
 
   <!-- Copies Unity plugin files into a folder with Release build DLLs which can be drag n dropped into a unity project -->
