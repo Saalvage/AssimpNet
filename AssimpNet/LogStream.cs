@@ -45,6 +45,8 @@ namespace Assimp
     private static List<LogStream> s_activeLogstreams = new List<LogStream>();
 
     private LoggingCallback m_logCallback;
+
+    // Don't delete this, holding onto the callbacks prevent them from being GC'ed inappropiately
     private AiLogStreamCallback m_assimpCallback;
     private IntPtr m_logstreamPtr;
     private String m_userData;
@@ -129,7 +131,7 @@ namespace Assimp
     protected LogStream(String userData, bool initialize = true)
     {
       if (initialize)
-        Initialize(OnAiLogStreamCallback, null, userData, IntPtr.Zero);
+        Initialize(OnAiLogStreamCallback, null, userData);
     }
 
     /// <summary>
@@ -138,7 +140,7 @@ namespace Assimp
     /// <param name="callback">Logging callback that is called when messages are received by the log stream.</param>
     public LogStream(LoggingCallback callback)
     {
-      Initialize(OnAiLogStreamCallback, callback, String.Empty, IntPtr.Zero);
+      Initialize(OnAiLogStreamCallback, callback);
     }
 
     /// <summary>
@@ -148,7 +150,7 @@ namespace Assimp
     /// <param name="userData">User-supplied data</param>
     public LogStream(LoggingCallback callback, String userData)
     {
-      Initialize(OnAiLogStreamCallback, callback, userData, IntPtr.Zero);
+      Initialize(OnAiLogStreamCallback, callback, userData);
     }
 
     /// <summary>
