@@ -71,12 +71,13 @@ jobs:
     inputs:
       targetType: 'inline'
       script: 'Enable-WindowsOptionalFeature -Online -FeatureName "NetFx3"'
-  - task: NuGetCommand@2
+  - task: DotNetCoreCLI@2
     displayName: Restore Nuget Dependencies
     inputs:
       command: 'restore'
-      restoreSolution: '**/*.sln'
+      projects: '$(project)/$(project).csproj'
       feedsToUse: 'select'
+      includeNuGetOrg: true
   - task: VSBuild@1
     displayName: Build Nuget Packages
     inputs:
