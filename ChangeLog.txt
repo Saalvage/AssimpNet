@@ -2,6 +2,10 @@
 CHANGELOG
 ----------------------------------------------------------------------
 
+5.0.0 (9-26-2022)
+
+  - Update to Assimp native 5.2.5, unmanaged structures updated to match but not all features are yet exposed to the .NET wrapper
+
 4.1.0 (10-28-2018)
 
   - Updated to target .Net Standard 1.3 (additional .Net 3.5 and .Net 4 targets)
