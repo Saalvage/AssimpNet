@@ -32,6 +32,7 @@ namespace Assimp
   /// </summary>
   public abstract class IOStream : IDisposable
   {
+    // Don't delete these, holding onto the callbacks prevent them from being GC'ed inappropiately
     private AiFileWriteProc m_writeProc;
     private AiFileReadProc m_readProc;
     private AiFileTellProc m_tellProc;
@@ -114,7 +115,7 @@ namespace Assimp
       m_fileMode = fileMode;
 
       if (initialize)
-        Initialize(OnAiFileWriteProc, OnAiFileReadProc, OnAiFileTellProc, OnAiFileSizeProc, OnAiFileSeekProc, OnAiFileFlushProc, IntPtr.Zero);
+        Initialize(OnAiFileWriteProc, OnAiFileReadProc, OnAiFileTellProc, OnAiFileSizeProc, OnAiFileSeekProc, OnAiFileFlushProc);
     }
 
     /// <summary>
