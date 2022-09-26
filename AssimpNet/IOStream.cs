@@ -130,12 +130,12 @@ namespace Assimp
     /// <param name="userData">Additional user data, if any.</param>
     protected void Initialize(AiFileWriteProc aiFileWriteProc, AiFileReadProc aiFileReadProc, AiFileTellProc aiFileTellProc, AiFileTellProc aiFileSizeProc, AiFileSeek aiFileSeek, AiFileFlushProc aiFileFlushProc, IntPtr userData = default)
     {
-      m_writeProc = OnAiFileWriteProc;
-      m_readProc = OnAiFileReadProc;
-      m_tellProc = OnAiFileTellProc;
-      m_fileSizeProc = OnAiFileSizeProc;
-      m_seekProc = OnAiFileSeekProc;
-      m_flushProc = OnAiFileFlushProc;
+      m_writeProc = aiFileWriteProc;
+      m_readProc = aiFileReadProc;
+      m_tellProc = aiFileTellProc;
+      m_fileSizeProc = aiFileSizeProc;
+      m_seekProc = aiFileSeek;
+      m_flushProc = aiFileFlushProc;
 
       AiFile file;
       file.WriteProc = Marshal.GetFunctionPointerForDelegate(aiFileWriteProc);
