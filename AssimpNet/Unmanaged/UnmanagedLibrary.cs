@@ -312,7 +312,7 @@ namespace Assimp.Unmanaged
 
                 return new UnmanagedWin32LibraryImplementation(defaultLibName, unmanagedFunctionDelegateTypes);
             }
-            catch (DllNotFoundException)
+            catch (Exception e) when (e is DllNotFoundException || e is EntryPointNotFoundException)
             {
                 // Continue with fallback.
             }
@@ -325,7 +325,7 @@ namespace Assimp.Unmanaged
 
                 return new UnmanagedUwpLibraryImplementation(defaultLibName, unmanagedFunctionDelegateTypes);
             }
-            catch (DllNotFoundException)
+            catch (Exception e) when (e is DllNotFoundException || e is EntryPointNotFoundException)
             {
                 // Continue with fallback.
             }
@@ -349,7 +349,7 @@ namespace Assimp.Unmanaged
 
                 return new UnmanagedLinuxLibc6LibraryImplementation(defaultLibName, unmanagedFunctionDelegateTypes);
             }
-            catch (DllNotFoundException)
+            catch (Exception e) when (e is DllNotFoundException || e is EntryPointNotFoundException) 
             {
                 // Continue with fallback.
             }
@@ -363,7 +363,7 @@ namespace Assimp.Unmanaged
 
                 return new UnmanagedLinuxLibdlLibraryImplementation(defaultLibName, unmanagedFunctionDelegateTypes);
             }
-            catch (DllNotFoundException)
+            catch (Exception e) when (e is DllNotFoundException || e is EntryPointNotFoundException)
             {
                 // Continue with fallback.
             }
