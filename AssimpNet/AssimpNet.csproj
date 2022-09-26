@@ -34,7 +34,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="..\logo.png" Link="nuget\logo.png" PackagePath=""/>
+    <Content Include="..\logo.png" Link="nuget\logo.png" PackagePath="" />
     <Content Include="..\ChangeLog.txt" Link="nuget\ChangeLog.txt" PackagePath="" />
     <Content Include="..\License.txt" Link="nuget\License.txt" PackagePath="" />
     <Content Include="..\Docs\AssimpNet Documentation %28October 2018%29.chm" Link="nuget\AssimpNet Documentation %28October 2018%29.chm" PackagePath="" />
@@ -46,7 +46,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="MemoryInterop.ILPatcher" Version="2.2.1">
+    <PackageReference Include="MemoryInterop.ILPatcher" Version="2.2.0">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
   </ItemGroup>
