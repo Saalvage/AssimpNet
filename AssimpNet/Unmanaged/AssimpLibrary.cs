@@ -22,6 +22,7 @@
 
 using System;
 using System.IO;
+using System.Numerics;
 using System.Runtime.InteropServices;
 
 namespace Assimp.Unmanaged
@@ -476,8 +477,8 @@ namespace Assimp.Unmanaged
         /// <param name="key">Ai mat key (base) name to search for</param>
         /// <param name="texType">Texture Type semantic, always zero for non-texture properties</param>
         /// <param name="texIndex">Texture index, always zero for non-texture properties</param>
-        /// <returns>The color if it exists. If not, the default Color4D value is returned.</returns>
-        public Color4D GetMaterialColor(ref AiMaterial mat, String key, TextureType texType, uint texIndex)
+        /// <returns>The color if it exists. If not, the default Vector4 value is returned.</returns>
+        public Vector4 GetMaterialColor(ref AiMaterial mat, String key, TextureType texType, uint texIndex)
         {
             LoadIfNotLoaded();
 
@@ -486,11 +487,11 @@ namespace Assimp.Unmanaged
             IntPtr ptr = IntPtr.Zero;
             try
             {
-                ptr = MemoryHelper.AllocateMemory(MemoryHelper.SizeOf<Color4D>());
+                ptr = MemoryHelper.AllocateMemory(MemoryHelper.SizeOf<Vector4>());
                 ReturnCode code = func(ref mat, key, (uint) texType, texIndex, ptr);
-                Color4D color = new Color4D();
+                Vector4 color = new Vector4();
                 if(code == ReturnCode.Success && ptr != IntPtr.Zero)
-                    color = MemoryHelper.Read<Color4D>(ptr);
+                    color = MemoryHelper.Read<Vector4>(ptr);
 
                 return color;
             }
@@ -817,7 +818,7 @@ namespace Assimp.Unmanaged
         /// <param name="scaling">Scaling vector</param>
         /// <param name="rotation">Quaternion containing the rotation</param>
         /// <param name="position">Translation vector</param>
-        public void DecomposeMatrix(ref Matrix4x4 mat, out Vector3D scaling, out Quaternion rotation, out Vector3D position)
+        public void DecomposeMatrix(ref Matrix4x4 mat, out Vector3 scaling, out Quaternion rotation, out Vector3 position)
         {
             LoadIfNotLoaded();
 
@@ -857,7 +858,7 @@ namespace Assimp.Unmanaged
         /// </summary>
         /// <param name="vec">Vector to transform</param>
         /// <param name="mat">Rotation matrix</param>
-        public void TransformVecByMatrix3(ref Vector3D vec, ref Matrix3x3 mat)
+        public void TransformVecByMatrix3(ref Vector3 vec, ref Matrix3x3 mat)
         {
             LoadIfNotLoaded();
 
@@ -871,7 +872,7 @@ namespace Assimp.Unmanaged
         /// </summary>
         /// <param name="vec">Vector to transform</param>
         /// <param name="mat">Matrix transformation</param>
-        public void TransformVecByMatrix4(ref Vector3D vec, ref Matrix4x4 mat)
+        public void TransformVecByMatrix4(ref Vector3 vec, ref Matrix4x4 mat)
         {
             LoadIfNotLoaded();
 
@@ -1286,7 +1287,7 @@ namespace Assimp.Unmanaged
             public delegate void aiCreateQuaternionFromMatrix(out Quaternion quat, ref Matrix3x3 mat);
 
             [UnmanagedFunctionPointer(CallingConvention.Cdecl), UnmanagedFunctionName(FunctionNames.aiDecomposeMatrix)]
-            public delegate void aiDecomposeMatrix(ref Matrix4x4 mat, out Vector3D scaling, out Quaternion rotation, out Vector3D position);
+            public delegate void aiDecomposeMatrix(ref Matrix4x4 mat, out Vector3 scaling, out Quaternion rotation, out Vector3 position);
 
             [UnmanagedFunctionPointer(CallingConvention.Cdecl), UnmanagedFunctionName(FunctionNames.aiTransposeMatrix4)]
             public delegate void aiTransposeMatrix4(ref Matrix4x4 mat);
@@ -1295,10 +1296,10 @@ namespace Assimp.Unmanaged
             public delegate void aiTransposeMatrix3(ref Matrix3x3 mat);
 
             [UnmanagedFunctionPointer(CallingConvention.Cdecl), UnmanagedFunctionName(FunctionNames.aiTransformVecByMatrix3)]
-            public delegate void aiTransformVecByMatrix3(ref Vector3D vec, ref Matrix3x3 mat);
+            public delegate void aiTransformVecByMatrix3(ref Vector3 vec, ref Matrix3x3 mat);
 
             [UnmanagedFunctionPointer(CallingConvention.Cdecl), UnmanagedFunctionName(FunctionNames.aiTransformVecByMatrix4)]
-            public delegate void aiTransformVecByMatrix4(ref Vector3D vec, ref Matrix4x4 mat);
+            public delegate void aiTransformVecByMatrix4(ref Vector3 vec, ref Matrix4x4 mat);
 
             [UnmanagedFunctionPointer(CallingConvention.Cdecl), UnmanagedFunctionName(FunctionNames.aiMultiplyMatrix4)]
             public delegate void aiMultiplyMatrix4(ref Matrix4x4 dst, ref Matrix4x4 src);

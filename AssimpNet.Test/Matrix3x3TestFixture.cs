@@ -21,6 +21,7 @@
 */
 
 using System;
+using System.Numerics;
 using NUnit.Framework;
 using TK = OpenTK;
 
@@ -89,7 +90,7 @@ namespace Assimp.Test
         public void TestFromAngleAxis()
         {
             TK.Matrix4 tkM = TK.Matrix4.CreateFromAxisAngle(TK.Vector3.UnitY, TK.MathHelper.Pi);
-            Matrix3x3 m = Matrix3x3.FromAngleAxis(TK.MathHelper.Pi, new Vector3D(0, 1, 0));
+            Matrix3x3 m = Matrix3x3.FromAngleAxis(TK.MathHelper.Pi, new Vector3(0, 1, 0));
 
             TestHelper.AssertEquals(tkM, m, "Testing from angle axis");
         }
@@ -103,7 +104,7 @@ namespace Assimp.Test
 
             TK.Matrix4 tkM = TK.Matrix4.CreateRotationX(x) * TK.Matrix4.CreateRotationZ(z);
             Matrix3x3 m = Matrix3x3.FromEulerAnglesXYZ(x, y, z);
-            Matrix3x3 m2 = Matrix3x3.FromEulerAnglesXYZ(new Vector3D(x, y, z));
+            Matrix3x3 m2 = Matrix3x3.FromEulerAnglesXYZ(new Vector3(x, y, z));
 
             TestHelper.AssertEquals(tkM, m, "Testing create from euler angles");
             Assert.IsTrue(m == m2, "Testing if create from euler angle as a vector is the same as floats.");
@@ -150,7 +151,7 @@ namespace Assimp.Test
             float z = 3.0f;
 
             TK.Matrix4 tkM = TK.Matrix4.CreateScale(x, y, z);
-            Matrix3x3 m = Matrix3x3.FromScaling(new Vector3D(x, y, z));
+            Matrix3x3 m = Matrix3x3.FromScaling(new Vector3(x, y, z));
 
             TestHelper.AssertEquals(tkM, m, "Testing from scaling");
         }
@@ -158,8 +159,8 @@ namespace Assimp.Test
         [Test]
         public void TestFromToMatrix()
         {
-            Vector3D from = new Vector3D(1, 0, 0);
-            Vector3D to = new Vector3D(0, 1, 0);
+            Vector3 from = new Vector3(1, 0, 0);
+            Vector3 to = new Vector3(0, 1, 0);
 
             TK.Matrix4 tkM = TK.Matrix4.CreateRotationZ(-TK.MathHelper.PiOver2);
             Matrix3x3 m = Matrix3x3.FromToMatrix(to, from);
@@ -170,14 +171,13 @@ namespace Assimp.Test
         [Test]
         public void TestToFromQuaternion()
         {
-            Vector3D axis = new Vector3D(.25f, .5f, 0.0f);
-            axis.Normalize();
+            Vector3 axis = Vector3.Normalize(new Vector3(.25f, .5f, 0.0f));
 
             float angle = (float) Math.PI;
 
             Quaternion q = new Quaternion(axis, angle);
-            Matrix3x3 m = q.GetMatrix();
-            Quaternion q2 = new Quaternion(m);
+            Matrix3x3 m = Matrix4x4.CreateFromQuaternion(q);
+            Quaternion q2 = Quaternion.CreateFromRotationMatrix(m);
 
             TestHelper.AssertEquals(q.X, q.Y, q.Z, q.W, q2, "Testing Quaternion->Matrix->Quaternion");
         }

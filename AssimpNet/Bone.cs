@@ -22,6 +22,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Numerics;
 using Assimp.Unmanaged;
 
 namespace Assimp
@@ -110,7 +111,7 @@ namespace Assimp
         public Bone()
         {
             m_name = null;
-            m_offsetMatrix = Matrix3x3.Identity;
+            m_offsetMatrix = Matrix4x4.Identity;
             m_weights = new List<VertexWeight>();
         }
 

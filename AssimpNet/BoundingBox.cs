@@ -22,6 +22,7 @@
 
 using System;
 using System.Globalization;
+using System.Numerics;
 using System.Runtime.InteropServices;
 
 namespace Assimp
@@ -35,19 +36,19 @@ namespace Assimp
         /// <summary>
         /// Minimum point of the bounding box.
         /// </summary>
-        public Vector3D Min;
+        public Vector3 Min;
         
         /// <summary>
         /// Maximum point of the bounding box.
         /// </summary>
-        public Vector3D Max;
+        public Vector3 Max;
 
         /// <summary>
         /// Constructs a new BoundingBox.
         /// </summary>
         /// <param name="min">Minimum point.</param>
         /// <param name="max">Maximum point.</param>
-        public BoundingBox(Vector3D min, Vector3D max)
+        public BoundingBox(Vector3 min, Vector3 max)
         {
             Min = min;
             Max = max;

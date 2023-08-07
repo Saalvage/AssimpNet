@@ -80,54 +80,54 @@ namespace Assimp.Sample
                             : "300.glsles";
         }
 
-        public static void ToNumerics(in Assimp.Matrix4x4 matIn, out SN.Matrix4x4 matOut)
+        public static void ToNumerics(in SN.Matrix4x4 matIn, out SN.Matrix4x4 matOut)
         {
             //Assimp matrices are column vector, so X,Y,Z axes are columns 1-3 and 4th column is translation.
             //Columns => Rows to make it compatible with numerics
-            matOut = new System.Numerics.Matrix4x4(matIn.A1, matIn.B1, matIn.C1, matIn.D1, //X
-                                                   matIn.A2, matIn.B2, matIn.C2, matIn.D2, //Y
-                                                   matIn.A3, matIn.B3, matIn.C3, matIn.D3, //Z
-                                                   matIn.A4, matIn.B4, matIn.C4, matIn.D4); //Translation
+            matOut = new System.Numerics.Matrix4x4(matIn.M11, matIn.M21, matIn.M31, matIn.M41, //X
+                                                   matIn.M12, matIn.M22, matIn.M32, matIn.M42, //Y
+                                                   matIn.M13, matIn.M23, matIn.M33, matIn.M43, //Z
+                                                   matIn.M14, matIn.M24, matIn.M34, matIn.M44); //Translation
         }
 
-        public static void FromNumerics(in SN.Matrix4x4 matIn, out Assimp.Matrix4x4 matOut)
+        public static void FromNumerics(in SN.Matrix4x4 matIn, out SN.Matrix4x4 matOut)
         {
             //Numerics matrix are row vector, so X,Y,Z axes are rows 1-3 and 4th row is translation.
             //Rows => Columns to make it compatible with assimp
 
             //X
-            matOut.A1 = matIn.M11;
-            matOut.B1 = matIn.M12;
-            matOut.C1 = matIn.M13;
-            matOut.D1 = matIn.M14;
+            matOut.M11 = matIn.M11;
+            matOut.M21 = matIn.M12;
+            matOut.M31 = matIn.M13;
+            matOut.M41 = matIn.M14;
 
             //Y
-            matOut.A2 = matIn.M21;
-            matOut.B2 = matIn.M22;
-            matOut.C2 = matIn.M23;
-            matOut.D2 = matIn.M24;
+            matOut.M12 = matIn.M21;
+            matOut.M22 = matIn.M22;
+            matOut.M32 = matIn.M23;
+            matOut.M42 = matIn.M24;
 
             //Z
-            matOut.A3 = matIn.M31;
-            matOut.B3 = matIn.M32;
-            matOut.C3 = matIn.M33;
-            matOut.D3 = matIn.M34;
+            matOut.M13 = matIn.M31;
+            matOut.M23 = matIn.M32;
+            matOut.M33 = matIn.M33;
+            matOut.M43 = matIn.M34;
 
             //Translation
-            matOut.A4 = matIn.M41;
-            matOut.B4 = matIn.M42;
-            matOut.C4 = matIn.M43;
-            matOut.D4 = matIn.M44;
+            matOut.M14 = matIn.M41;
+            matOut.M24 = matIn.M42;
+            matOut.M34 = matIn.M43;
+            matOut.M44 = matIn.M44;
         }
 
-        public static void FromNumerics(in SN.Vector3 vIn, out Assimp.Vector3D vOut)
+        public static void FromNumerics(in SN.Vector3 vIn, out SN.Vector3 vOut)
         {
             vOut.X = vIn.X;
             vOut.Y = vIn.Y;
             vOut.Z = vIn.Z;
         }
 
-        public static void ToNumerics(in Assimp.Vector3D vIn, out SN.Vector3 vOut)
+        public static void ToNumerics(in SN.Vector3 vIn, out SN.Vector3 vOut)
         {
             vOut.X = vIn.X;
             vOut.Y = vIn.Y;

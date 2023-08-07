@@ -21,6 +21,7 @@
 */
 
 using System;
+using System.Numerics;
 using Assimp.Unmanaged;
 
 namespace Assimp
@@ -35,9 +36,9 @@ namespace Assimp
     public sealed class Camera : IMarshalable<Camera, AiCamera>
     {
         private String m_name;
-        private Vector3D m_position;
-        private Vector3D m_up;
-        private Vector3D m_direction;
+        private Vector3 m_position;
+        private Vector3 m_up;
+        private Vector3 m_direction;
         private float m_fieldOfView;
         private float m_clipPlaneNear;
         private float m_clipPlaneFar;
@@ -64,7 +65,7 @@ namespace Assimp
         /// Gets or sets the position of the camera relative to the coordinate space defined by
         /// the corresponding node. THe default value is 0|0|0.
         /// </summary>
-        public Vector3D Position
+        public Vector3 Position
         {
             get
             {
@@ -81,7 +82,7 @@ namespace Assimp
         /// corresponding node. The 'right' vector of the camera is the cross product of the up
         /// and direction vectors. The default value is 0|1|0.
         /// </summary>
-        public Vector3D Up
+        public Vector3 Up
         {
             get
             {
@@ -97,7 +98,7 @@ namespace Assimp
         /// Gets or sets the viewing direction of the camera, relative to the coordinate space defined by the corresponding node.
         /// The default value is 0|0|1.
         /// </summary>
-        public Vector3D Direction
+        public Vector3 Direction
         {
             get
             {
@@ -184,35 +185,32 @@ namespace Assimp
         {
             get
             {
-                Vector3D zAxis = m_direction;
-                zAxis.Normalize();
-                Vector3D yAxis = m_up;
-                yAxis.Normalize();
-                Vector3D xAxis = Vector3D.Cross(m_up, m_direction);
-                zAxis.Normalize();
+                Vector3 zAxis = Vector3.Normalize(m_direction);
+                Vector3 yAxis = Vector3.Normalize(m_up);
+                Vector3 xAxis = Vector3.Normalize(Vector3.Cross(m_up, m_direction));
 
                 //Assimp docs *say* they deal with Row major matrices,
                 //but aiCamera.h has this calc done with translation in the 4th column
                 Matrix4x4 mat;
-                mat.A1 = xAxis.X;
-                mat.A2 = xAxis.Y;
-                mat.A3 = xAxis.Z;
-                mat.A4 = 0;
+                mat.M11 = xAxis.X;
+                mat.M12 = xAxis.Y;
+                mat.M13 = xAxis.Z;
+                mat.M14 = 0;
 
-                mat.B1 = yAxis.X;
-                mat.B2 = yAxis.Y;
-                mat.B3 = yAxis.Z;
-                mat.B4 = 0;
+                mat.M21 = yAxis.X;
+                mat.M22 = yAxis.Y;
+                mat.M23 = yAxis.Z;
+                mat.M24 = 0;
 
-                mat.C1 = zAxis.X;
-                mat.C2 = zAxis.Y;
-                mat.C3 = zAxis.Z;
-                mat.C4 = 0;
+                mat.M31 = zAxis.X;
+                mat.M32 = zAxis.Y;
+                mat.M33 = zAxis.Z;
+                mat.M34 = 0;
 
-                mat.D1 = -(Vector3D.Dot(xAxis, m_position));
-                mat.D2 = -(Vector3D.Dot(yAxis, m_position));
-                mat.D3 = -(Vector3D.Dot(zAxis, m_position));
-                mat.D4 = 1.0f;
+                mat.M41 = -(Vector3.Dot(xAxis, m_position));
+                mat.M42 = -(Vector3.Dot(yAxis, m_position));
+                mat.M43 = -(Vector3.Dot(zAxis, m_position));
+                mat.M44 = 1.0f;
 
                 return mat;
             }

@@ -28,6 +28,7 @@ using System.Runtime.InteropServices;
 
 namespace Assimp.Unmanaged
 {
+  /*
 #if !NETSTANDARD1_3
     internal enum OSPlatform
     {
@@ -68,41 +69,28 @@ namespace Assimp.Unmanaged
         public static string OSDescription { get { return "Microsoft Windows"; } }
     }
 #endif
-
+  */
     //Helper class for making it easier to access certain reflection methods on types between .Net framework and .Net standard (pre-netstandard 2.0)
     internal class PlatformHelper
     {
         public static String GetInformationalVersion()
         {
-#if NETSTANDARD1_3
-            AssemblyInformationalVersionAttribute attr = typeof(PlatformHelper).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>();
-            return (attr != null) ? attr.InformationalVersion : null;
-#else
             object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyInformationalVersionAttribute), false);
             if(attributes == null || attributes.Length == 0)
                 return null;
 
             AssemblyInformationalVersionAttribute attr = attributes[0] as AssemblyInformationalVersionAttribute;
             return (attr != null) ? attr.InformationalVersion : null;
-#endif
         }
 
         public static String GetAssemblyName()
         {
-#if NETSTANDARD1_3
-            return typeof(PlatformHelper).GetTypeInfo().Assembly.GetName().Name;
-#else
             return Assembly.GetExecutingAssembly().GetName().Name;
-#endif
         }
 
         public static String GetAppBaseDirectory()
         {
-#if NETSTANDARD1_3
             return AppContext.BaseDirectory;
-#else
-            return AppDomain.CurrentDomain.BaseDirectory;
-#endif
         }
 
         public static bool IsAssignable(Type baseType, Type subType)
@@ -110,11 +98,7 @@ namespace Assimp.Unmanaged
             if(baseType == null || subType == null)
                 return false;
 
-#if NETSTANDARD1_3
-            return baseType.GetTypeInfo().IsAssignableFrom(subType.GetTypeInfo());
-#else
             return baseType.IsAssignableFrom(subType);
-#endif
         }
 
         public static Type[] GetNestedTypes(Type type)
@@ -122,16 +106,7 @@ namespace Assimp.Unmanaged
             if(type == null)
                 return new Type[0];
 
-#if NETSTANDARD1_3
-            IEnumerable<TypeInfo> typeInfos = type.GetTypeInfo().DeclaredNestedTypes;
-            List<Type> types = new List<Type>();
-            foreach(TypeInfo typeInfo in typeInfos)
-                types.Add(typeInfo.AsType());
-
-            return types.ToArray();
-#else
             return type.GetNestedTypes();
-#endif
         }
 
         public static Object[] GetCustomAttributes(Type type, Type attributeType, bool inherit)
@@ -139,21 +114,11 @@ namespace Assimp.Unmanaged
             if(type == null || attributeType == null)
                 return new Object[0];
 
-#if NETSTANDARD1_3
-            IEnumerable<Attribute> attributes = type.GetTypeInfo().GetCustomAttributes(attributeType, inherit);
-            List<Object> list = new List<Object>();
-            list.AddRange(attributes);
-
-            return list.ToArray();
-#else
             return type.GetCustomAttributes(attributeType, inherit);
-#endif
         }
 
-        //These methods are marked obsolete in netstandard and net451+
-#if NETSTANDARD1_3
+//These methods are marked obsolete in netstandard and net451+
 #pragma warning disable CS0618
-#endif
 
         public static Delegate GetDelegateForFunctionPointer(IntPtr procAddress, Type delegateType)
         {
@@ -171,8 +136,6 @@ namespace Assimp.Unmanaged
             return Marshal.GetFunctionPointerForDelegate(func);
         }
 
-#if NETSTANDARD1_3
 #pragma warning restore CS0618
-#endif
     }
 }

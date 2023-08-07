@@ -21,6 +21,7 @@
 */
 
 using System;
+using System.Numerics;
 using Assimp.Unmanaged;
 
 namespace Assimp
@@ -43,13 +44,13 @@ namespace Assimp
         private float m_attConstant;
         private float m_attLinear;
         private float m_attQuadratic;
-        private Vector3D m_position;
-        private Vector3D m_direction;
-        private Vector3D m_up;
-        private Color3D m_diffuse;
-        private Color3D m_specular;
-        private Color3D m_ambient;
-        private Vector2D m_areaSize;
+        private Vector3 m_position;
+        private Vector3 m_direction;
+        private Vector3 m_up;
+        private Vector3 m_diffuse;
+        private Vector3 m_specular;
+        private Vector3 m_ambient;
+        private Vector2 m_areaSize;
 
         /// <summary>
         /// Gets or sets the name of the light source. This corresponds to a node present in the scenegraph.
@@ -171,7 +172,7 @@ namespace Assimp
         /// transformation of the node corresponding to the light. This is undefined for
         /// directional lights.
         /// </summary>
-        public Vector3D Position
+        public Vector3 Position
         {
             get
             {
@@ -187,7 +188,7 @@ namespace Assimp
         /// Gets or sets the direction of the light source in space, relative to the transformation
         /// of the node corresponding to the light. This is undefined for point lights.
         /// </summary>
-        public Vector3D Direction
+        public Vector3 Direction
         {
             get
             {
@@ -203,7 +204,7 @@ namespace Assimp
         /// Gets or sets the up vector of the light source in space, relative to the transformation of the node corresponding to the light.
         /// This is undefined for point lights.
         /// </summary>
-        public Vector3D Up
+        public Vector3 Up
         {
             get
             {
@@ -219,7 +220,7 @@ namespace Assimp
         /// Gets or sets the diffuse color of the light source.  The diffuse light color is multiplied with
         /// the diffuse material color to obtain the final color that contributes to the diffuse shading term.
         /// </summary>
-        public Color3D ColorDiffuse
+        public Vector3 ColorDiffuse
         {
             get
             {
@@ -235,7 +236,7 @@ namespace Assimp
         /// Gets or sets the specular color of the light source. The specular light color is multiplied with the
         /// specular material color to obtain the final color that contributes to the specular shading term.
         /// </summary>
-        public Color3D ColorSpecular
+        public Vector3 ColorSpecular
         {
             get
             {
@@ -251,7 +252,7 @@ namespace Assimp
         /// Gets or sets the ambient color of the light source. The ambient light color is multiplied with the ambient
         /// material color to obtain the final color that contributes to the ambient shading term.
         /// </summary>
-        public Color3D ColorAmbient
+        public Vector3 ColorAmbient
         {
             get
             {
@@ -266,7 +267,7 @@ namespace Assimp
         /// <summary>
         /// Gets or sets the Width (X) and Height (Y) of the area that represents an <see cref="LightSourceType.Area"/> light.
         /// </summary>
-        public Vector2D AreaSize
+        public Vector2 AreaSize
         {
             get
             {
@@ -289,7 +290,7 @@ namespace Assimp
             m_attQuadratic = 0.0f;
             m_angleInnerCone = (float) Math.PI * 2.0f;
             m_angleOuterCone = (float) Math.PI * 2.0f;
-            m_areaSize = new Vector2D(0.0f, 0.0f);
+            m_areaSize = new Vector2(0.0f, 0.0f);
         }
 
         #region IMarshalable Implementation

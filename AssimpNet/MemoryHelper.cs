@@ -27,6 +27,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using Assimp.Unmanaged;
+using System.Runtime.CompilerServices;
 
 namespace Assimp
 {
@@ -556,9 +557,9 @@ namespace Assimp
         /// <typeparam name="T">Enum type.</typeparam>
         /// <param name="value">Value to cast.</param>
         /// <returns>Enum value.</returns>
-        public static T CastToEnum<V, T>(V value) where V : unmanaged where T : Enum
+        public static T CastToEnum<V, T>(V value) where V : unmanaged where T : struct, Enum
         {
-            return MemoryInterop.As<V, T>(ref value);
+            return Unsafe.As<V, T>(ref value);
         }
 
         /// <summary>
@@ -581,13 +582,12 @@ namespace Assimp
         /// Allocates unmanaged memory that is cleared to a certain value. This memory should only be freed by this helper.
         /// </summary>
         /// <param name="sizeInBytes">Size to allocate</param>
-        /// <param name="clearValue">Value the memory will be cleared to, by default zero.</param>
         /// <param name="alignment">Alignment of the memory, by default aligned along 16-byte boundary.</param>
         /// <returns>Pointer to the allocated unmanaged memory.</returns>
-        public static unsafe IntPtr AllocateClearedMemory(int sizeInBytes, byte clearValue = 0, int alignment = 16)
+        public static unsafe IntPtr AllocateClearedMemory(int sizeInBytes, int alignment = 16)
         {
             IntPtr ptr = AllocateMemory(sizeInBytes, alignment);
-            ClearMemory(ptr, clearValue, sizeInBytes);
+            ClearMemory(ptr, sizeInBytes);
             return ptr;
         }
 
@@ -732,14 +732,13 @@ namespace Assimp
         }
 
         /// <summary>
-        /// Clears the memory to the specified value.
+        /// Clears the memory to zero.
         /// </summary>
         /// <param name="memoryPtr">Pointer to the memory.</param>
-        /// <param name="clearValue">Value the memory will be cleared to.</param>
         /// <param name="sizeInBytesToClear">Number of bytes, starting from the memory pointer, to clear.</param>
-        public static unsafe void ClearMemory(IntPtr memoryPtr, byte clearValue, int sizeInBytesToClear)
+        public static unsafe void ClearMemory(IntPtr memoryPtr, int sizeInBytesToClear)
         {
-            MemoryInterop.MemSetUnalignedInline((void*) memoryPtr, clearValue, (uint) sizeInBytesToClear);
+            Unsafe.InitBlockUnaligned(memoryPtr.ToPointer(), 0, (uint) sizeInBytesToClear);
         }
 
         /// <summary>
@@ -749,7 +748,7 @@ namespace Assimp
         /// <returns>Size of the struct in bytes.</returns>
         public static unsafe int SizeOf<T>() where T : struct
         {
-            return MemoryInterop.SizeOfInline<T>();
+            return Unsafe.SizeOf<T>();
         }
 
         /// <summary>
@@ -760,18 +759,7 @@ namespace Assimp
         /// <returns>Pointer to the value.</returns>
         public static unsafe IntPtr AsPointer<T>(ref T src) where T : struct
         {
-            return MemoryInterop.AsPointerInline<T>(ref src);
-        }
-
-        /// <summary>
-        /// Casts the readonly by-ref value into a pointer.
-        /// </summary>
-        /// <typeparam name="T">Struct type.</typeparam>
-        /// <param name="src">By-ref value.</param>
-        /// <returns>Pointer to the value.</returns>
-        public static unsafe IntPtr AsPointerReadonly<T>(in T src) where T : struct
-        {
-            return MemoryInterop.AsPointerReadonlyInline<T>(in src);
+            return new IntPtr(Unsafe.AsPointer<T>(ref src));
         }
 
         /// <summary>
@@ -782,7 +770,7 @@ namespace Assimp
         /// <returns>By-ref value.</returns>
         public static unsafe ref T AsRef<T>(IntPtr pSrc) where T : struct
         {
-            return ref MemoryInterop.AsRef<T>(pSrc);
+            return ref Unsafe.AsRef<T>(pSrc.ToPointer());
         }
 
         /// <summary>
@@ -794,19 +782,7 @@ namespace Assimp
         /// <returns>Reference as the from type.</returns>
         public static ref TTo As<TFrom, TTo>(ref TFrom src) where TFrom : struct where TTo : struct
         {
-            return ref MemoryInterop.As<TFrom, TTo>(ref src);
-        }
-
-        /// <summary>
-        /// Casts one readonly by-ref type to another, unsafely.
-        /// </summary>
-        /// <typeparam name="TFrom">From struct type</typeparam>
-        /// <typeparam name="TTo">To struct type</typeparam>
-        /// <param name="src">Source by-ref value.</param>
-        /// <returns>Reference as the from type.</returns>
-        public static ref readonly TTo AsReadonly<TFrom, TTo>(in TFrom src) where TFrom : struct where TTo : struct
-        {
-            return ref MemoryInterop.AsReadonly<TFrom, TTo>(in src);
+            return ref Unsafe.As<TFrom, TTo>(ref src);
         }
 
         /// <summary>
@@ -817,7 +793,7 @@ namespace Assimp
         /// <returns>Total size, in bytes, of the array's contents.</returns>
         public static int SizeOf<T>(T[] array) where T : struct
         {
-            return array == null ? 0 : array.Length * MemoryInterop.SizeOfInline<T>();
+            return array == null ? 0 : array.Length * Unsafe.SizeOf<T>();
         }
 
         /// <summary>
@@ -839,7 +815,7 @@ namespace Assimp
         /// <param name="sizeInBytesToCopy">Number of bytes to copy</param>
         public static unsafe void CopyMemory(IntPtr pDest, IntPtr pSrc, int sizeInBytesToCopy)
         {
-            MemoryInterop.MemCopyUnalignedInline((void*) pDest, (void*) pSrc, (uint) sizeInBytesToCopy);
+            Buffer.MemoryCopy(pSrc.ToPointer(), pDest.ToPointer(), (long) sizeInBytesToCopy, (long) sizeInBytesToCopy);
         }
 
         /// <summary>
@@ -888,7 +864,7 @@ namespace Assimp
             if(source == null || source.Length == 0)
                 return null;
 
-            byte[] buffer = new byte[MemoryInterop.SizeOfInline<T>() * source.Length];
+            byte[] buffer = new byte[Unsafe.SizeOf<T>() * source.Length];
 
             fixed (void* pBuffer = buffer)
             {
@@ -909,7 +885,7 @@ namespace Assimp
             if(source == null || source.Length == 0)
                 return null;
 
-            T[] buffer = new T[(int) Math.Floor(((double) source.Length) / ((double) MemoryInterop.SizeOfInline<T>()))];
+            T[] buffer = new T[(int) Math.Floor(((double) source.Length) / ((double) Unsafe.SizeOf<T>()))];
 
             fixed (void* pBuffer = source)
             {
@@ -933,7 +909,7 @@ namespace Assimp
             if(srcArray == null || srcArray.Length == 0 || destArray == null || destArray.Length == 0)
                 return;
 
-            int byteCount = MemoryInterop.SizeOfInline<T>() * count;
+            int byteCount = Unsafe.SizeOf<T>() * count;
 
             if(srcStartIndex < 0 || (srcStartIndex + byteCount) > srcArray.Length || destStartIndex < 0 || (destStartIndex + count) > destArray.Length)
                 return;
@@ -958,7 +934,7 @@ namespace Assimp
             if(srcArray == null || srcArray.Length == 0 || destArray == null || destArray.Length == 0)
                 return;
 
-            int byteCount = MemoryInterop.SizeOfInline<T>() * count;
+            int byteCount = Unsafe.SizeOf<T>() * count;
 
             if(srcStartIndex < 0 || (srcStartIndex + count) > srcArray.Length || destStartIndex < 0 || (destStartIndex + byteCount) > destArray.Length)
                 return;
@@ -979,7 +955,9 @@ namespace Assimp
         /// <param name="count">Number of elements to copy</param>
         public static unsafe void Read<T>(IntPtr pSrc, T[] data, int startIndexInArray, int count) where T : struct
         {
-            MemoryInterop.ReadArrayUnaligned<T>(pSrc, data, startIndexInArray, count);
+            ReadOnlySpan<T> src = new ReadOnlySpan<T>(pSrc.ToPointer(), count);
+            Span<T> dst = new Span<T>(data, startIndexInArray, count);
+            src.CopyTo(dst);
         }
 
         /// <summary>
@@ -990,7 +968,7 @@ namespace Assimp
         /// <returns>The read value</returns>
         public static unsafe T Read<T>(IntPtr pSrc) where T : struct
         {
-            return MemoryInterop.ReadInline<T>((void*) pSrc);
+            return Unsafe.ReadUnaligned<T>(pSrc.ToPointer());
         }
 
         /// <summary>
@@ -1001,8 +979,8 @@ namespace Assimp
         /// <param name="value">The read value.</param>
         public static unsafe void Read<T>(IntPtr pSrc, out T value) where T : struct
         {
-            value = MemoryInterop.ReadInline<T>((void*) pSrc);
-        }
+            value = Unsafe.ReadUnaligned<T>(pSrc.ToPointer());
+    }
 
         /// <summary>
         /// Writes data from the array to the memory location.
@@ -1014,7 +992,9 @@ namespace Assimp
         /// <param name="count">Number of elements to copy</param>
         public static unsafe void Write<T>(IntPtr pDest, T[] data, int startIndexInArray, int count) where T : struct
         {
-            MemoryInterop.WriteArrayUnaligned<T>(pDest, data, startIndexInArray, count);
+            ReadOnlySpan<T> src = new ReadOnlySpan<T>(data, startIndexInArray, count);
+            Span<T> dst = new Span<T>(pDest.ToPointer(), count);
+            src.CopyTo(dst);
         }
 
         /// <summary>
@@ -1025,7 +1005,7 @@ namespace Assimp
         /// <param name="data">The value to write</param>
         public static unsafe void Write<T>(IntPtr pDest, in T data) where T : struct
         {
-            MemoryInterop.WriteInline<T>((void*) pDest, in data);
+            Unsafe.WriteUnaligned<T>(pDest.ToPointer(), data);
         }
 
         #endregion
