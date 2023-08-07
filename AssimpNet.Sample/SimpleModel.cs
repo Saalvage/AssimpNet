@@ -159,16 +159,16 @@ namespace Assimp.Sample
             int indexOffset = 0;
             foreach(Mesh m in scene.Meshes)
             {
-                List<Vector3D> verts = m.Vertices;
-                List<Vector3D> norms = (m.HasNormals) ? m.Normals : null;
-                List<Vector3D> uvs = m.HasTextureCoords(0) ? m.TextureCoordinateChannels[0] : null;
+                List<SN.Vector3> verts = m.Vertices;
+                List<SN.Vector3> norms = (m.HasNormals) ? m.Normals : null;
+                List<SN.Vector3> uvs = m.HasTextureCoords(0) ? m.TextureCoordinateChannels[0] : null;
                 for(int i = 0; i < verts.Count; i++)
                 {
-                    Vector3D pos = verts[i];
-                    Vector3D norm = (norms != null) ? norms[i] : new Vector3D(0, 0, 0);
-                    Vector3D uv = (uvs != null) ? uvs[i] : new Vector3D(0, 0, 0);
+                    SN.Vector3 pos = verts[i];
+                    SN.Vector3 norm = (norms != null) ? norms[i] : new SN.Vector3(0, 0, 0);
+                    SN.Vector3 uv = (uvs != null) ? uvs[i] : new SN.Vector3(0, 0, 0);
 
-                    vertices[vIndex++] = new VertexPositionNormalTexture(pos, norm, new Vector2D(uv.X, 1 - uv.Y)); //Invert Y coordinate!
+                    vertices[vIndex++] = new VertexPositionNormalTexture(pos, norm, new SN.Vector2(uv.X, 1 - uv.Y)); //Invert Y coordinate!
                 }
 
                 List<Face> faces = m.Faces;
@@ -211,7 +211,7 @@ namespace Assimp.Sample
 
             foreach(Material m in scene.Materials)
             {
-                Color4D diffuseColor = new Color4D(1, 1, 1, 1);
+                SN.Vector4 diffuseColor = new SN.Vector4(1, 1, 1, 1);
                 if(m.HasColorDiffuse)
                     diffuseColor = m.ColorDiffuse;
               
@@ -415,10 +415,10 @@ namespace Assimp.Sample
         private TextureView m_texView;
         private DeviceBuffer m_materialConstantBuffer;
 
-        public SimpleMaterial(GraphicsDevice gd, Color4D diffuseColor, String texPath, ResourceLayout layout)
+        public SimpleMaterial(GraphicsDevice gd, SN.Vector4 diffuseColor, String texPath, ResourceLayout layout)
         {
             m_materialConstantBuffer = gd.ResourceFactory.CreateBuffer(new BufferDescription(16, BufferUsage.UniformBuffer));
-            gd.UpdateBuffer<Color4D>(m_materialConstantBuffer, 0, ref diffuseColor);
+            gd.UpdateBuffer<SN.Vector4>(m_materialConstantBuffer, 0, ref diffuseColor);
 
             if(File.Exists(texPath))
             {
@@ -486,7 +486,7 @@ namespace Assimp.Sample
         public float TexU;
         public float TexV;
 
-        public VertexPositionNormalTexture(in Vector3D pos, in Vector3D norm, in Vector2D uv)
+        public VertexPositionNormalTexture(in SN.Vector3 pos, in SN.Vector3 norm, in SN.Vector2 uv)
         {
             PosX = pos.X;
             PosY = pos.Y;

@@ -21,6 +21,7 @@
 */
 
 using System;
+using System.Numerics;
 using System.Runtime.InteropServices;
 
 namespace Assimp
@@ -34,19 +35,19 @@ namespace Assimp
         /// <summary>
         /// Origin of the ray in space.
         /// </summary>
-        public Vector3D Position;
+        public Vector3 Position;
 
         /// <summary>
         /// Direction of the ray.
         /// </summary>
-        public Vector3D Direction;
+        public Vector3 Direction;
 
         /// <summary>
         /// Constructs a new Ray.
         /// </summary>
         /// <param name="pos">Origin of the ray.</param>
         /// <param name="dir">Direction of the ray.</param>
-        public Ray(Vector3D pos, Vector3D dir)
+        public Ray(Vector3 pos, Vector3 dir)
         {
             Position = pos;
             Direction = dir;

@@ -22,6 +22,7 @@
 
 using System;
 using System.Globalization;
+using System.Numerics;
 using System.Runtime.InteropServices;
 
 namespace Assimp
@@ -249,17 +250,17 @@ namespace Assimp
         /// <param name="rotMatrix">A 4x4 matrix to construct from, only taking the rotation/scaling part.</param>
         public Matrix3x3(Matrix4x4 rotMatrix)
         {
-            this.A1 = rotMatrix.A1;
-            this.A2 = rotMatrix.A2;
-            this.A3 = rotMatrix.A3;
+            this.A1 = rotMatrix.M11;
+            this.A2 = rotMatrix.M12;
+            this.A3 = rotMatrix.M13;
 
-            this.B1 = rotMatrix.B1;
-            this.B2 = rotMatrix.B2;
-            this.B3 = rotMatrix.B3;
+            this.B1 = rotMatrix.M21;
+            this.B2 = rotMatrix.M22;
+            this.B3 = rotMatrix.M23;
 
-            this.C1 = rotMatrix.C1;
-            this.C2 = rotMatrix.C2;
-            this.C3 = rotMatrix.C3;
+            this.C1 = rotMatrix.M31;
+            this.C2 = rotMatrix.M32;
+            this.C3 = rotMatrix.M33;
         }
 
         /// <summary>
@@ -379,7 +380,7 @@ namespace Assimp
         /// </summary>
         /// <param name="angles">Vector containing the rotation angles about the x, y, z axes, in radians.</param>
         /// <returns>The rotation matrix</returns>
-        public static Matrix3x3 FromEulerAnglesXYZ(Vector3D angles)
+        public static Matrix3x3 FromEulerAnglesXYZ(Vector3 angles)
         {
             return Matrix3x3.FromEulerAnglesXYZ(angles.X, angles.Y, angles.Z);
         }
@@ -447,7 +448,7 @@ namespace Assimp
         /// <param name="radians">Rotation angle, in radians</param>
         /// <param name="axis">Rotation axis, which should be a normalized vector.</param>
         /// <returns>The rotation matrix</returns>
-        public static Matrix3x3 FromAngleAxis(float radians, Vector3D axis)
+        public static Matrix3x3 FromAngleAxis(float radians, Vector3 axis)
         {
             float x = axis.X;
             float y = axis.Y;
@@ -484,7 +485,7 @@ namespace Assimp
         /// </summary>
         /// <param name="scaling">Scaling vector</param>
         /// <returns>The scaling vector</returns>
-        public static Matrix3x3 FromScaling(Vector3D scaling)
+        public static Matrix3x3 FromScaling(Vector3 scaling)
         {
             Matrix3x3 m = Identity;
             m.A1 = scaling.X;
@@ -504,9 +505,9 @@ namespace Assimp
         /// <param name="from">Starting vector</param>
         /// <param name="to">Ending vector</param>
         /// <returns>Rotation matrix to rotate from the start to end.</returns>
-        public static Matrix3x3 FromToMatrix(Vector3D from, Vector3D to)
+        public static Matrix3x3 FromToMatrix(Vector3 from, Vector3 to)
         {
-            float e = Vector3D.Dot(from, to);
+            float e = Vector3.Dot(from, to);
             float f = (e < 0) ? -e : e;
 
             Matrix3x3 m = Identity;
@@ -514,8 +515,8 @@ namespace Assimp
             //"from" and "to" vectors almost parallel
             if(f > 1.0f - 0.00001f)
             {
-                Vector3D u, v; //Temp variables
-                Vector3D x; //Vector almost orthogonal to "from"
+                Vector3 u, v; //Temp variables
+                Vector3 x; //Vector almost orthogonal to "from"
 
                 x.X = (from.X > 0.0f) ? from.X : -from.X;
                 x.Y = (from.Y > 0.0f) ? from.Y : -from.Y;
@@ -560,17 +561,15 @@ namespace Assimp
                 v.Y = x.Y - to.Y;
                 v.Z = x.Z - to.Z;
 
-                float c1 = 2.0f / Vector3D.Dot(u, u);
-                float c2 = 2.0f / Vector3D.Dot(v, v);
-                float c3 = c1 * c2 * Vector3D.Dot(u, v);
+                float c1 = 2.0f / Vector3.Dot(u, u);
+                float c2 = 2.0f / Vector3.Dot(v, v);
+                float c3 = c1 * c2 * Vector3.Dot(u, v);
 
                 for(int i = 1; i < 4; i++)
                 {
                     for(int j = 1; j < 4; j++)
                     {
-                        //This is somewhat unreadable, but the indices for u, v vectors are "zero-based" while
-                        //matrix indices are "one-based" always subtract by one to index those
-                        m[i, j] = -c1 * u[i - 1] * u[j - 1] - c2 * v[i - 1] * v[j - 1] + c3 * v[i - 1] * u[j - 1];
+                        m[i, j] = -c1 * u[i] * u[j] - c2 * v[i] * v[j] + c3 * v[i] * u[j];
                     }
                     m[i, i] += 1.0f;
                 }
@@ -579,7 +578,7 @@ namespace Assimp
             else
             {
                 //Most common case, unless "from" = "to" or "from" =- "to"
-                Vector3D v = Vector3D.Cross(from, to);
+                Vector3 v = Vector3.Cross(from, to);
 
                 //Hand optimized version (9 mults less) by Gottfried Chen
                 float h = 1.0f / (1.0f + e);
@@ -660,17 +659,49 @@ namespace Assimp
         public static implicit operator Matrix3x3(Matrix4x4 mat)
         {
             Matrix3x3 m;
-            m.A1 = mat.A1;
-            m.A2 = mat.A2;
-            m.A3 = mat.A3;
+            m.A1 = mat.M11;
+            m.A2 = mat.M12;
+            m.A3 = mat.M13;
 
-            m.B1 = mat.B1;
-            m.B2 = mat.B2;
-            m.B3 = mat.B3;
+            m.B1 = mat.M21;
+            m.B2 = mat.M22;
+            m.B3 = mat.M23;
 
-            m.C1 = mat.C1;
-            m.C2 = mat.C2;
-            m.C3 = mat.C3;
+            m.C1 = mat.M31;
+            m.C2 = mat.M32;
+            m.C3 = mat.M33;
+            return m;
+        }
+
+        
+        /// <summary>
+        /// Implicit conversion from a 3x3 matrix to a 4x4 matrix.
+        /// </summary>
+        /// <param name="mat">3x3 matrix</param>
+        /// <returns>4x4 matrix</returns>
+        public static implicit operator Matrix4x4(Matrix3x3 mat)
+        {
+            Matrix4x4 m;
+            m.M11 = mat.A1;
+            m.M12 = mat.A2;
+            m.M13 = mat.A3;
+            m.M14 = 0;
+
+            m.M21 = mat.B1;
+            m.M22 = mat.B2;
+            m.M23 = mat.B3;
+            m.M24 = 0;
+
+            m.M31 = mat.C1;
+            m.M32 = mat.C2;
+            m.M33 = mat.C3;
+            m.M34 = 0;
+
+            m.M41 = 0;
+            m.M42 = 0;
+            m.M43 = 0;
+            m.M44 = 1;
+
             return m;
         }
 

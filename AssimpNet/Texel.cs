@@ -22,6 +22,7 @@
 
 using System;
 using System.Globalization;
+using System.Numerics;
 using System.Runtime.InteropServices;
 
 namespace Assimp
@@ -90,13 +91,13 @@ namespace Assimp
         }
 
         /// <summary>
-        /// Implicitly converts a texel to a Color4D.
+        /// Implicitly converts a texel to a Vector4.
         /// </summary>
         /// <param name="texel">Texel to convert</param>
-        /// <returns>Converted Color4D</returns>
-        public static implicit operator Color4D(Texel texel)
+        /// <returns>Converted Vector4</returns>
+        public static implicit operator Vector4(Texel texel)
         {
-            return new Color4D(texel.R / 255.0f, texel.G / 255.0f, texel.B / 255.0f, texel.A / 255.0f);
+            return new Vector4(texel.R / 255.0f, texel.G / 255.0f, texel.B / 255.0f, texel.A / 255.0f);
         }
 
         /// <summary>
