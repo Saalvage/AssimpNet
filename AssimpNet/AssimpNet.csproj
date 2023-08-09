@@ -45,6 +45,25 @@
     <Content Include="AssimpNet.targets" Link="nuget\build\AssimpNet.targets" PackagePath="build" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="..\libs\Assimp\win-x64\assimp.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>runtimes\win-x64\native\%(Filename)%(Extension)</Link>
+    </None>
+    <None Include="..\libs\Assimp\win-x86\assimp.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>runtimes\win-x86\native\%(Filename)%(Extension)</Link>
+    </None>
+    <None Include="..\libs\Assimp\linux-x64\libassimp.so">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>runtimes\linux-x64\native\%(Filename)%(Extension)</Link>
+    </None>
+    <None Include="..\libs\Assimp\osx-x64\libassimp.dylib">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>runtimes\osx-x64\native\%(Filename)%(Extension)</Link>
+    </None>
+  </ItemGroup>
+
   <!-- Copies Unity plugin files into a folder with Release build DLLs which can be drag n dropped into a unity project -->
   <Import Project="..\UnityPlugin\UnityPlugin.targets" />
 
