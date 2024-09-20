@@ -20,13 +20,8 @@
 * THE SOFTWARE.
 */
 
-using System;
-using System.IO;
-using System.Threading;
-using System.Collections.Generic;
-using Assimp.Configs;
-using Assimp.Unmanaged;
 using NUnit.Framework;
+using System;
 
 namespace Assimp.Test
 {
@@ -63,20 +58,20 @@ namespace Assimp.Test
             scene.Animations.Add(anim);
 
             IntPtr scenePtr = Scene.ToUnmanagedScene(scene);
-            Assert.IsTrue(scenePtr != IntPtr.Zero);
+            Assert.That(scenePtr != IntPtr.Zero, Is.True);
 
             Scene scene2 = Scene.FromUnmanagedScene(scenePtr);
             Scene.FreeUnmanagedScene(scenePtr);
 
-            Assert.IsTrue(scene2.AnimationCount == 1);
+            Assert.That(scene2.AnimationCount == 1, Is.True);
 
             Animation otherAnim = scene2.Animations[0];
-            Assert.IsTrue(otherAnim.MeshMorphAnimationChannelCount == 1);
+            Assert.That(otherAnim.MeshMorphAnimationChannelCount == 1, Is.True);
 
             MeshMorphAnimationChannel otherMorph = otherAnim.MeshMorphAnimationChannels[0];
 
-            Assert.IsTrue(otherMorph.Name == morph.Name);
-            Assert.IsTrue(otherMorph.MeshMorphKeyCount== 2);
+            Assert.That(otherMorph.Name == morph.Name, Is.True);
+            Assert.That(otherMorph.MeshMorphKeyCount == 2, Is.True);
 
             CompareMorphKey(otherMorph.MeshMorphKeys[0], morph.MeshMorphKeys[0]);
             CompareMorphKey(otherMorph.MeshMorphKeys[1], morph.MeshMorphKeys[1]);
@@ -85,14 +80,14 @@ namespace Assimp.Test
         private void CompareMorphKey(MeshMorphKey key1, MeshMorphKey key2)
         {
             TestHelper.AssertEquals(key1.Time, key2.Time);
-            Assert.IsTrue(key1.Values.Count == key1.Weights.Count);
-            Assert.IsTrue(key2.Values.Count == key2.Weights.Count);
-            Assert.IsTrue(key1.Values.Count == key2.Values.Count);
+            Assert.That(key1.Values.Count == key1.Weights.Count, Is.True);
+            Assert.That(key2.Values.Count == key2.Weights.Count, Is.True);
+            Assert.That(key1.Values.Count == key2.Values.Count, Is.True);
 
-            for(int i = 0; i < key1.Values.Count; i++)
+            for (int i = 0; i < key1.Values.Count; i++)
             {
                 TestHelper.AssertEquals(key1.Weights[i], key2.Weights[i]);
-                Assert.IsTrue(key1.Values[i] == key2.Values[i]);
+                Assert.That(key1.Values[i] == key2.Values[i], Is.True);
             }
         }
     }

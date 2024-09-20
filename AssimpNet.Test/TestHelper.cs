@@ -66,22 +66,22 @@ namespace Assimp.Test
 
         public static void AssertEquals(double expected, double actual)
         {
-            Assert.IsTrue(Math.Abs(expected - actual) <= Tolerance);
+            Assert.That(Math.Abs(expected - actual) <= Tolerance, Is.True);
         }
 
         public static void AssertEquals(double expected, double actual, String msg)
         {
-            Assert.IsTrue(Math.Abs(expected - actual) <= Tolerance, msg);
+            Assert.That(Math.Abs(expected - actual) <= Tolerance, Is.True, msg);
         }
 
         public static void AssertEquals(float expected, float actual)
         {
-            Assert.IsTrue(Math.Abs(expected - actual) <= Tolerance);
+            Assert.That(Math.Abs(expected - actual) <= Tolerance, Is.True);
         }
 
         public static void AssertEquals(float expected, float actual, String msg)
         {
-            Assert.IsTrue(Math.Abs(expected - actual) <= Tolerance, msg);
+            Assert.That(Math.Abs(expected - actual) <= Tolerance, Is.True, msg);
         }
 
         public static void AssertEquals(float x, float y, Vector2 v)

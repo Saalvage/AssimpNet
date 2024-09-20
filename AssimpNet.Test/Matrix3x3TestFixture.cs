@@ -56,20 +56,20 @@ namespace Assimp.Test
             Matrix3x3 m3 = new Matrix3x3(0.0f, 2.0f, 25.0f, 1.0f, 5.0f, 5.5f, 1.25f, 8.5f, 2.25f);
 
             //Test IEquatable Equals
-            Assert.IsTrue(m1.Equals(m2), "Test IEquatable equals");
-            Assert.IsFalse(m1.Equals(m3), "Test IEquatable equals");
+            Assert.That(m1.Equals(m2), Is.True, "Test IEquatable equals");
+            Assert.That(m1.Equals(m3), Is.False, "Test IEquatable equals");
 
             //Test object equals override
-            Assert.IsTrue(m1.Equals((object) m2), "Tests object equals");
-            Assert.IsFalse(m1.Equals((object) m3), "Tests object equals");
+            Assert.That(m1.Equals((object)m2), Is.True, "Tests object equals");
+            Assert.That(m1.Equals((object)m3), Is.False, "Tests object equals");
 
             //Test op equals
-            Assert.IsTrue(m1 == m2, "Testing OpEquals");
-            Assert.IsFalse(m1 == m3, "Testing OpEquals");
+            Assert.That(m1 == m2, Is.True, "Testing OpEquals");
+            Assert.That(m1 == m3, Is.False, "Testing OpEquals");
 
             //Test op not equals
-            Assert.IsTrue(m1 != m3, "Testing OpNotEquals");
-            Assert.IsFalse(m1 != m2, "Testing OpNotEquals");
+            Assert.That(m1 != m3, Is.True, "Testing OpNotEquals");
+            Assert.That(m1 != m2, Is.False, "Testing OpNotEquals");
         }
 
         [Test]
@@ -107,7 +107,7 @@ namespace Assimp.Test
             Matrix3x3 m2 = Matrix3x3.FromEulerAnglesXYZ(new Vector3(x, y, z));
 
             TestHelper.AssertEquals(tkM, m, "Testing create from euler angles");
-            Assert.IsTrue(m == m2, "Testing if create from euler angle as a vector is the same as floats.");
+            Assert.That(m == m2, Is.True, "Testing if create from euler angle as a vector is the same as floats.");
         }
 
         [Test]
@@ -203,7 +203,7 @@ namespace Assimp.Test
             TK.Matrix4 tkM = TK.Matrix4.Identity;
             Matrix3x3 m = Matrix3x3.Identity;
 
-            Assert.IsTrue(m.IsIdentity, "Testing IsIdentity");
+            Assert.That(m.IsIdentity, Is.True, "Testing IsIdentity");
             TestHelper.AssertEquals(tkM, m, "Testing is identity to baseline");
         }
 

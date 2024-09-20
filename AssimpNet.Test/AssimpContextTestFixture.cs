@@ -68,11 +68,11 @@ namespace Assimp.Test
 
             bool success = importer.ExportFile(collada, Path.Combine(TestHelper.RootPath, "TestFiles/output/exportedCollada.dae"), "dae");
 
-            Assert.IsFalse(success);
+            Assert.That(success, Is.False);
 
             success = importer.ExportFile(collada, Path.Combine(TestHelper.RootPath, "TestFiles/output/exportedCollada.dae"), "collada");
 
-            Assert.IsTrue(success);
+            Assert.That(success, Is.True);
         }
 
         [Test]
@@ -84,9 +84,9 @@ namespace Assimp.Test
             Scene ducky = context.ImportFile(colladaPath);
             ExportDataBlob blob = context.ExportToBlob(ducky, "obj");
 
-            Assert.IsTrue(blob.HasData);
-            Assert.IsTrue(blob.NextBlob != null);
-            Assert.IsTrue(blob.NextBlob.Name.Equals("mtl"));
+            Assert.That(blob.HasData, Is.True);
+            Assert.That(blob.NextBlob != null, Is.True);
+            Assert.That(blob.NextBlob.Name.Equals("mtl"), Is.True);
         }
 
         [Test]
@@ -111,7 +111,7 @@ namespace Assimp.Test
             context.ExportFile(ducky, plyPath, "collada");
 
             Scene ducky2 = context.ImportFile(plyPath);
-            Assert.IsNotNull(ducky2);
+            Assert.That(ducky2, Is.Not.Null);
         }
 
         [Test]
@@ -140,22 +140,22 @@ namespace Assimp.Test
             //Export the scene then read it in and compare!
 
             AssimpContext context = new AssimpContext();
-            Assert.IsTrue(context.ExportFile(scene, path, "obj"));
+            Assert.That(context.ExportFile(scene, path, "obj"), Is.True);
 
             Scene importedScene = context.ImportFile(path);
-            Assert.IsTrue(importedScene.MeshCount == scene.MeshCount);
-            Assert.IsTrue(importedScene.MaterialCount == 2); //Always has the default material, should also have our material
+            Assert.That(importedScene.MeshCount == scene.MeshCount, Is.True);
+            Assert.That(importedScene.MaterialCount == 2, Is.True); //Always has the default material, should also have our material
 
             //Compare the meshes
             Mesh importedTriangle = importedScene.Meshes[0];
 
-            Assert.IsTrue(importedTriangle.VertexCount == triangle.VertexCount);
+            Assert.That(importedTriangle.VertexCount == triangle.VertexCount, Is.True);
             for(int i = 0; i < importedTriangle.VertexCount; i++)
             {
-                Assert.IsTrue(importedTriangle.Vertices[i].Equals(triangle.Vertices[i]));
+                Assert.That(importedTriangle.Vertices[i].Equals(triangle.Vertices[i]), Is.True);
             }
 
-            Assert.IsTrue(importedTriangle.FaceCount == triangle.FaceCount);
+            Assert.That(importedTriangle.FaceCount == triangle.FaceCount, Is.True);
             for(int i = 0; i < importedTriangle.FaceCount; i++)
             {
                 Face importedFace = importedTriangle.Faces[i];
@@ -163,7 +163,7 @@ namespace Assimp.Test
 
                 for(int j = 0; j < importedFace.IndexCount; j++)
                 {
-                    Assert.IsTrue(importedFace.Indices[j] == face.Indices[j]);
+                    Assert.That(importedFace.Indices[j] == face.Indices[j], Is.True);
                 }
             }
         }
@@ -183,10 +183,10 @@ namespace Assimp.Test
 
             IEnumerable<LogStream> logs = LogStream.GetAttachedLogStreams();
 
-            Assert.IsEmpty(logs);
-            Assert.IsFalse(console1.IsAttached);
-            Assert.IsFalse(console2.IsAttached);
-            Assert.IsFalse(console3.IsAttached);
+            Assert.That(logs, Is.Empty);
+            Assert.That(console1.IsAttached, Is.False);
+            Assert.That(console2.IsAttached, Is.False);
+            Assert.That(console3.IsAttached, Is.False);
         }
 
         [Test]
@@ -202,24 +202,24 @@ namespace Assimp.Test
             importer.YAxisRotation = 50.0f;
             LogStream.IsVerboseLoggingEnabled = true;
 
-            Assert.IsTrue(importer.ContainsConfig(NormalSmoothingAngleConfig.NormalSmoothingAngleConfigName));
+            Assert.That(importer.ContainsConfig(NormalSmoothingAngleConfig.NormalSmoothingAngleConfigName), Is.True);
 
             importer.RemoveConfigs();
 
-            Assert.IsFalse(importer.ContainsConfig(NormalSmoothingAngleConfig.NormalSmoothingAngleConfigName));
+            Assert.That(importer.ContainsConfig(NormalSmoothingAngleConfig.NormalSmoothingAngleConfigName), Is.False);
 
             importer.SetConfig(new NormalSmoothingAngleConfig(65.0f));
             importer.SetConfig(new NormalSmoothingAngleConfig(22.5f));
             importer.RemoveConfig(NormalSmoothingAngleConfig.NormalSmoothingAngleConfigName);
 
-            Assert.IsFalse(importer.ContainsConfig(NormalSmoothingAngleConfig.NormalSmoothingAngleConfigName));
+            Assert.That(importer.ContainsConfig(NormalSmoothingAngleConfig.NormalSmoothingAngleConfigName), Is.False);
 
             importer.SetConfig(new NormalSmoothingAngleConfig(65.0f));
 
             Scene scene = importer.ImportFile(path, PostProcessPreset.TargetRealTimeMaximumQuality);
 
-            Assert.IsNotNull(scene);
-            Assert.IsTrue((scene.SceneFlags & SceneFlags.Incomplete) != SceneFlags.Incomplete);
+            Assert.That(scene, Is.Not.Null);
+            Assert.That((scene.SceneFlags & SceneFlags.Incomplete) != SceneFlags.Incomplete, Is.True);
         }
 
         [Test]
@@ -243,8 +243,8 @@ namespace Assimp.Test
 
             fs.Close();
 
-            Assert.IsNotNull(scene);
-            Assert.IsTrue((scene.SceneFlags & SceneFlags.Incomplete) != SceneFlags.Incomplete);
+            Assert.That(scene, Is.Not.Null);
+            Assert.That((scene.SceneFlags & SceneFlags.Incomplete) != SceneFlags.Incomplete, Is.True);
         }
 
         [Test]
@@ -268,8 +268,8 @@ namespace Assimp.Test
 
             fs.Close();
 
-            Assert.IsNotNull(scene);
-            Assert.IsTrue((scene.SceneFlags & SceneFlags.Incomplete) != SceneFlags.Incomplete);
+            Assert.That(scene, Is.Not.Null);
+            Assert.That((scene.SceneFlags & SceneFlags.Incomplete) != SceneFlags.Incomplete, Is.True);
         }
 
         [Test]
@@ -278,15 +278,15 @@ namespace Assimp.Test
             AssimpContext importer = new AssimpContext();
             ImporterDescription[] importerDescrs = importer.GetImporterDescriptions();
 
-            Assert.IsNotNull(importerDescrs);
-            Assert.IsTrue(importerDescrs.Length > 0);
+            Assert.That(importerDescrs, Is.Not.Null);
+            Assert.That(importerDescrs.Length > 0, Is.True);
 
             ImporterDescription descr = importer.GetImporterDescriptionFor("obj");
             ImporterDescription descr2 = importer.GetImporterDescriptionFor(".obj");
 
-            Assert.IsNotNull(descr);
-            Assert.IsNotNull(descr2);
-            Assert.IsTrue(descr.Name == descr2.Name);
+            Assert.That(descr, Is.Not.Null);
+            Assert.That(descr2, Is.Not.Null);
+            Assert.That(descr.Name == descr2.Name, Is.True);
         }
 
         [Test]
@@ -297,16 +297,16 @@ namespace Assimp.Test
 
             String[] importFormats = importer.GetSupportedImportFormats();
 
-            Assert.IsNotNull(exportDescs);
-            Assert.IsNotNull(importFormats);
-            Assert.IsTrue(exportDescs.Length >= 1);
-            Assert.IsTrue(importFormats.Length >= 1);
+            Assert.That(exportDescs, Is.Not.Null);
+            Assert.That(importFormats, Is.Not.Null);
+            Assert.That(exportDescs.Length >= 1, Is.True);
+            Assert.That(importFormats.Length >= 1, Is.True  );
 
-            Assert.IsTrue(importer.IsExportFormatSupported(exportDescs[0].FileExtension));
-            Assert.IsTrue(importer.IsImportFormatSupported(importFormats[0]));
+            Assert.That(importer.IsExportFormatSupported(exportDescs[0].FileExtension), Is.True);
+            Assert.That(importer.IsImportFormatSupported(importFormats[0]), Is.True);
 
-            Assert.IsTrue(importer.IsExportFormatSupported("obj"));
-            Assert.IsTrue(importer.IsExportFormatSupported(".obj"));
+            Assert.That(importer.IsExportFormatSupported("obj"), Is.True);
+            Assert.That(importer.IsExportFormatSupported(".obj"), Is.True);
         }
 
         [Test]
@@ -336,9 +336,9 @@ namespace Assimp.Test
 
             AssimpContext importer = new AssimpContext();
             bool success = importer.ConvertFromStreamToFile(fs, ".dae", outputPath, "obj");
-            Assert.IsTrue(success);
+            Assert.That(success, Is.True);
 
-            Assert.IsTrue(File.Exists(outputPath));
+            Assert.That(File.Exists(outputPath), Is.True);
         }
 
         [Test]
@@ -354,12 +354,12 @@ namespace Assimp.Test
 
             AssimpContext importer = new AssimpContext();
             bool success = importer.ConvertFromStreamToFile(fs, ".dae", outputPath, "obj");
-            Assert.IsTrue(success);
+            Assert.That(success, Is.True);
 
             fs.Position = 0;
 
             ExportDataBlob blob = importer.ConvertFromStreamToBlob(fs, ".dae", "collada");
-            Assert.IsNotNull(blob);
+            Assert.That(blob, Is.Not.Null);
 
             fs.Close();
 
@@ -376,7 +376,7 @@ namespace Assimp.Test
 
             LogStream.DetachAllLogstreams();
 
-            Assert.IsTrue(success);
+            Assert.That(success, Is.True);
         }
 
         [Test]

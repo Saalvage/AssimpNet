@@ -41,8 +41,8 @@ namespace Assimp.Test
             MaterialProperty prop = new MaterialProperty(null, false);
 
             bool success = mat.AddProperty(prop);
-            Assert.IsFalse(success);
-            Assert.IsTrue(String.IsNullOrEmpty(prop.FullyQualifiedName));
+            Assert.That(success, Is.False);
+            Assert.That(String.IsNullOrEmpty(prop.FullyQualifiedName), Is.True);
         }
 
         [TestCase]
@@ -58,10 +58,10 @@ namespace Assimp.Test
             scene.Textures.Add(tex2);
 
             EmbeddedTexture texQuery = scene.GetEmbeddedTexture("*1");
-            Assert.IsTrue(texQuery == tex2);
+            Assert.That(texQuery == tex2, Is.True);
 
             texQuery = scene.GetEmbeddedTexture("C:/TextureFolder/Terrains/Terrain.bmp");
-            Assert.IsTrue(texQuery == tex1);
+            Assert.That(texQuery == tex1, Is.True);
         }
     }
 }

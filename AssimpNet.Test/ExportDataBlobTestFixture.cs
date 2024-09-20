@@ -37,24 +37,24 @@ namespace Assimp.Test
             AssimpContext importer = new AssimpContext();
             ExportDataBlob blob = importer.ConvertFromFileToBlob(path, "obj");
 
-            Assert.IsNotNull(blob);
+            Assert.That(blob, Is.Not.Null);
 
             MemoryStream stream = new MemoryStream();
             blob.ToStream(stream);
 
-            Assert.IsTrue(stream.Length != 0);
+            Assert.That(stream.Length != 0, Is.True);
             stream.Position = 0;
 
             ExportDataBlob blob2 = ExportDataBlob.FromStream(stream);
 
-            Assert.IsNotNull(blob2);
-            Assert.IsTrue(blob.Data.Length == blob.Data.Length);
+            Assert.That(blob2, Is.Not.Null);
+            Assert.That(blob.Data.Length == blob.Data.Length, Is.True);
 
             if(blob.NextBlob != null)
             {
-                Assert.IsTrue(blob2.NextBlob != null);
-                Assert.IsTrue(blob2.NextBlob.Name.Equals(blob.NextBlob.Name));
-                Assert.IsTrue(blob2.NextBlob.Data.Length == blob.NextBlob.Data.Length);
+                Assert.That(blob2.NextBlob != null, Is.True);
+                Assert.That(blob2.NextBlob.Name.Equals(blob.NextBlob.Name), Is.True);
+                Assert.That(blob2.NextBlob.Data.Length == blob.NextBlob.Data.Length, Is.True);
             }
         }
     }
