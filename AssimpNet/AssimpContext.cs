@@ -225,8 +225,7 @@ namespace Assimp
 
                 TransformScene(ptr);
 
-                if(postProcessFlags != PostProcessSteps.None)
-                    ptr = AssimpLibrary.Instance.ApplyPostProcessing(ptr, postProcessFlags);
+                ptr = ApplyPostProcessing(ptr, postProcessFlags);
 
                 return Scene.FromUnmanagedScene(ptr);
             }
@@ -297,8 +296,7 @@ namespace Assimp
 
                 TransformScene(ptr);
 
-                if(postProcessFlags != PostProcessSteps.None)
-                    ptr = AssimpLibrary.Instance.ApplyPostProcessing(ptr, postProcessFlags);
+                ptr = ApplyPostProcessing(ptr, postProcessFlags);
 
                 return Scene.FromUnmanagedScene(ptr);
             }
@@ -507,8 +505,7 @@ namespace Assimp
 
                 TransformScene(ptr);
 
-                if(importProcessSteps != PostProcessSteps.None)
-                    ptr = AssimpLibrary.Instance.ApplyPostProcessing(ptr, importProcessSteps);
+                ptr = ApplyPostProcessing(ptr, importProcessSteps);
 
                 ReturnCode status = AssimpLibrary.Instance.ExportScene(ptr, exportFormatId, outputFilename, fileIO, exportProcessSteps);
 
@@ -598,8 +595,7 @@ namespace Assimp
 
                 TransformScene(ptr);
 
-                if(importProcessSteps != PostProcessSteps.None)
-                    ptr = AssimpLibrary.Instance.ApplyPostProcessing(ptr, importProcessSteps);
+                ptr = ApplyPostProcessing(ptr, importProcessSteps);
 
                 return AssimpLibrary.Instance.ExportSceneToBlob(ptr, exportFormatId, exportProcessSteps);
             }
@@ -694,8 +690,7 @@ namespace Assimp
 
                 TransformScene(ptr);
 
-                if(importProcessSteps != PostProcessSteps.None)
-                    ptr = AssimpLibrary.Instance.ApplyPostProcessing(ptr, importProcessSteps);
+                ptr = ApplyPostProcessing(ptr, importProcessSteps);
 
                 ReturnCode status = AssimpLibrary.Instance.ExportScene(ptr, exportFormatId, outputFilename, exportProcessSteps);
 
@@ -785,8 +780,7 @@ namespace Assimp
 
                 TransformScene(ptr);
 
-                if(importProcessSteps != PostProcessSteps.None)
-                    ptr = AssimpLibrary.Instance.ApplyPostProcessing(ptr, importProcessSteps);
+                ptr = ApplyPostProcessing(ptr, importProcessSteps);
 
                 return AssimpLibrary.Instance.ExportSceneToBlob(ptr, exportFormatId, exportProcessSteps);
             }
@@ -1082,6 +1076,25 @@ namespace Assimp
             }
 
             return false;
+        }
+
+        private IntPtr ApplyPostProcessing(IntPtr scene, PostProcessSteps postProcessFlags)
+        {
+            if(postProcessFlags == PostProcessSteps.None || scene == IntPtr.Zero)
+                return IntPtr.Zero;
+
+            scene = AssimpLibrary.Instance.ApplyPostProcessing(scene, postProcessFlags);
+
+            if(scene == IntPtr.Zero)
+            {
+                String error = AssimpLibrary.Instance.GetErrorString();
+                throw new AssimpException(error.Length == 0
+                    //Postprocessing steps don't usually set the error string when failing
+                    ? "Error applying post processing, see log for more info."
+                    : "Error applying post processing: " + error);
+            }
+
+            return scene;
         }
 
         //Creates all property stores and sets their values
