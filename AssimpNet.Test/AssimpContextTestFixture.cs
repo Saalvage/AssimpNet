@@ -85,8 +85,8 @@ namespace Assimp.Test
             ExportDataBlob blob = context.ExportToBlob(ducky, "obj");
 
             Assert.That(blob.HasData, Is.True);
-            Assert.That(blob.NextBlob != null, Is.True);
-            Assert.That(blob.NextBlob.Name.Equals("mtl"), Is.True);
+            Assert.That(blob.NextBlob, Is.Not.Null);
+            Assert.That(blob.NextBlob.Name, Is.EqualTo("mtl"));
         }
 
         [Test]
@@ -143,19 +143,19 @@ namespace Assimp.Test
             Assert.That(context.ExportFile(scene, path, "obj"), Is.True);
 
             Scene importedScene = context.ImportFile(path);
-            Assert.That(importedScene.MeshCount == scene.MeshCount, Is.True);
-            Assert.That(importedScene.MaterialCount == 2, Is.True); //Always has the default material, should also have our material
+            Assert.That(importedScene.MeshCount, Is.EqualTo(scene.MeshCount));
+            Assert.That(importedScene.MaterialCount, Is.EqualTo(2)); //Always has the default material, should also have our material
 
             //Compare the meshes
             Mesh importedTriangle = importedScene.Meshes[0];
 
-            Assert.That(importedTriangle.VertexCount == triangle.VertexCount, Is.True);
+            Assert.That(importedTriangle.VertexCount, Is.EqualTo(triangle.VertexCount));
             for(int i = 0; i < importedTriangle.VertexCount; i++)
             {
                 Assert.That(importedTriangle.Vertices[i].Equals(triangle.Vertices[i]), Is.True);
             }
 
-            Assert.That(importedTriangle.FaceCount == triangle.FaceCount, Is.True);
+            Assert.That(importedTriangle.FaceCount, Is.EqualTo(triangle.FaceCount));
             for(int i = 0; i < importedTriangle.FaceCount; i++)
             {
                 Face importedFace = importedTriangle.Faces[i];
@@ -163,7 +163,7 @@ namespace Assimp.Test
 
                 for(int j = 0; j < importedFace.IndexCount; j++)
                 {
-                    Assert.That(importedFace.Indices[j] == face.Indices[j], Is.True);
+                    Assert.That(importedFace.Indices[j], Is.EqualTo(face.Indices[j]));
                 }
             }
         }
@@ -219,7 +219,7 @@ namespace Assimp.Test
             Scene scene = importer.ImportFile(path, PostProcessPreset.TargetRealTimeMaximumQuality);
 
             Assert.That(scene, Is.Not.Null);
-            Assert.That((scene.SceneFlags & SceneFlags.Incomplete) != SceneFlags.Incomplete, Is.True);
+            Assert.That((scene.SceneFlags & SceneFlags.Incomplete), Is.Not.EqualTo(SceneFlags.Incomplete));
         }
 
         [Test]
@@ -244,7 +244,7 @@ namespace Assimp.Test
             fs.Close();
 
             Assert.That(scene, Is.Not.Null);
-            Assert.That((scene.SceneFlags & SceneFlags.Incomplete) != SceneFlags.Incomplete, Is.True);
+            Assert.That((scene.SceneFlags & SceneFlags.Incomplete), Is.Not.EqualTo(SceneFlags.Incomplete));
         }
 
         [Test]
@@ -269,7 +269,7 @@ namespace Assimp.Test
             fs.Close();
 
             Assert.That(scene, Is.Not.Null);
-            Assert.That((scene.SceneFlags & SceneFlags.Incomplete) != SceneFlags.Incomplete, Is.True);
+            Assert.That((scene.SceneFlags & SceneFlags.Incomplete), Is.Not.EqualTo(SceneFlags.Incomplete));
         }
 
         [Test]
@@ -279,14 +279,14 @@ namespace Assimp.Test
             ImporterDescription[] importerDescrs = importer.GetImporterDescriptions();
 
             Assert.That(importerDescrs, Is.Not.Null);
-            Assert.That(importerDescrs.Length > 0, Is.True);
+            Assert.That(importerDescrs.Length, Is.GreaterThan(0));
 
             ImporterDescription descr = importer.GetImporterDescriptionFor("obj");
             ImporterDescription descr2 = importer.GetImporterDescriptionFor(".obj");
 
             Assert.That(descr, Is.Not.Null);
             Assert.That(descr2, Is.Not.Null);
-            Assert.That(descr.Name == descr2.Name, Is.True);
+            Assert.That(descr.Name, Is.EqualTo(descr2.Name));
         }
 
         [Test]
@@ -299,8 +299,8 @@ namespace Assimp.Test
 
             Assert.That(exportDescs, Is.Not.Null);
             Assert.That(importFormats, Is.Not.Null);
-            Assert.That(exportDescs.Length >= 1, Is.True);
-            Assert.That(importFormats.Length >= 1, Is.True  );
+            Assert.That(exportDescs.Length, Is.GreaterThanOrEqualTo(1));
+            Assert.That(importFormats.Length, Is.GreaterThanOrEqualTo(1));
 
             Assert.That(importer.IsExportFormatSupported(exportDescs[0].FileExtension), Is.True);
             Assert.That(importer.IsImportFormatSupported(importFormats[0]), Is.True);

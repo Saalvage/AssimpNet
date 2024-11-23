@@ -39,7 +39,7 @@ namespace Assimp.Test
 
             Assert.That(scene, Is.Not.Null);
             Assert.That(scene.RootNode, Is.Not.Null);
-            Assert.That(scene.RootNode.Name.Equals("sphere.obj"), Is.True);
+            Assert.That(scene.RootNode.Name, Is.EqualTo("sphere.obj"));
         }
     }
 }

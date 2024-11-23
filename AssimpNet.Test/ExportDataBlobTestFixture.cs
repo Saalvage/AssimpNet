@@ -42,19 +42,19 @@ namespace Assimp.Test
             MemoryStream stream = new MemoryStream();
             blob.ToStream(stream);
 
-            Assert.That(stream.Length != 0, Is.True);
+            Assert.That(stream.Length, Is.Not.EqualTo(0));
             stream.Position = 0;
 
             ExportDataBlob blob2 = ExportDataBlob.FromStream(stream);
 
             Assert.That(blob2, Is.Not.Null);
-            Assert.That(blob.Data.Length == blob.Data.Length, Is.True);
+            Assert.That(blob2.Data.Length, Is.EqualTo(blob.Data.Length));
 
             if(blob.NextBlob != null)
             {
-                Assert.That(blob2.NextBlob != null, Is.True);
-                Assert.That(blob2.NextBlob.Name.Equals(blob.NextBlob.Name), Is.True);
-                Assert.That(blob2.NextBlob.Data.Length == blob.NextBlob.Data.Length, Is.True);
+                Assert.That(blob2.NextBlob, Is.Not.Null);
+                Assert.That(blob2.NextBlob.Name, Is.EqualTo(blob.NextBlob.Name));
+                Assert.That(blob2.NextBlob.Data.Length, Is.EqualTo(blob.NextBlob.Data.Length));
             }
         }
     }

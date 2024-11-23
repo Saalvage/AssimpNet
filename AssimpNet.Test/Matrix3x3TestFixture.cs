@@ -107,7 +107,7 @@ namespace Assimp.Test
             Matrix3x3 m2 = Matrix3x3.FromEulerAnglesXYZ(new Vector3(x, y, z));
 
             TestHelper.AssertEquals(tkM, m, "Testing create from euler angles");
-            Assert.That(m == m2, Is.True, "Testing if create from euler angle as a vector is the same as floats.");
+            Assert.That(m, Is.EqualTo(m2), "Testing if create from euler angle as a vector is the same as floats.");
         }
 
         [Test]
