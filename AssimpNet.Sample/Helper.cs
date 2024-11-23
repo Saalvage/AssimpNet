@@ -24,7 +24,6 @@ using System;
 using System.IO;
 using System.Runtime.InteropServices;
 using TeximpNet;
-using TeximpNet.DDS;
 using Veldrid;
 using SN = System.Numerics;
 

@@ -28,7 +28,6 @@ using System.Reflection;
 using Veldrid;
 using Veldrid.Sdl2;
 using Veldrid.StartupUtilities;
-using System.Runtime.InteropServices;
 using SN = System.Numerics;
 
 namespace Assimp.Sample
