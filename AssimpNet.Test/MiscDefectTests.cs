@@ -21,11 +21,6 @@
 */
 
 using System;
-using System.IO;
-using System.Threading;
-using System.Collections.Generic;
-using Assimp.Configs;
-using Assimp.Unmanaged;
 using NUnit.Framework;
 
 namespace Assimp.Test
@@ -41,8 +36,8 @@ namespace Assimp.Test
             MaterialProperty prop = new MaterialProperty(null, false);
 
             bool success = mat.AddProperty(prop);
-            Assert.IsFalse(success);
-            Assert.IsTrue(String.IsNullOrEmpty(prop.FullyQualifiedName));
+            Assert.That(success, Is.False);
+            Assert.That(prop.FullyQualifiedName, Is.Null.Or.Empty);
         }
 
         [TestCase]
@@ -58,10 +53,10 @@ namespace Assimp.Test
             scene.Textures.Add(tex2);
 
             EmbeddedTexture texQuery = scene.GetEmbeddedTexture("*1");
-            Assert.IsTrue(texQuery == tex2);
+            Assert.That(texQuery, Is.EqualTo(tex2));
 
             texQuery = scene.GetEmbeddedTexture("C:/TextureFolder/Terrains/Terrain.bmp");
-            Assert.IsTrue(texQuery == tex1);
+            Assert.That(texQuery, Is.EqualTo(tex1));
         }
     }
 }

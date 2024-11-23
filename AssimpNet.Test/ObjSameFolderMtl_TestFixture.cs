@@ -37,9 +37,9 @@ namespace Assimp.Test
             AssimpContext importer = new AssimpContext();
             Scene scene = importer.ImportFile(path);
 
-            Assert.IsNotNull(scene);
-            Assert.IsNotNull(scene.RootNode);
-            Assert.IsTrue(scene.RootNode.Name.Equals("sphere.obj"));
+            Assert.That(scene, Is.Not.Null);
+            Assert.That(scene.RootNode, Is.Not.Null);
+            Assert.That(scene.RootNode.Name, Is.EqualTo("sphere.obj"));
         }
     }
 }

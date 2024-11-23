@@ -41,7 +41,7 @@ namespace Assimp.Test
 
             //None, using the "target high quality flags caused a crash with this model.
             Scene scene = importer.ImportFile(fileName, PostProcessSteps.None);
-            Assert.IsNotNull(scene);
+            Assert.That(scene, Is.Not.Null);
         }
 
         [Test]
@@ -91,22 +91,22 @@ namespace Assimp.Test
                 using(Stream fs = File.OpenRead(Path.Combine(dir, "sphere.obj")))
                 {
                     Scene scene = importer.ImportFileFromStream(fs, "obj");
-                    Assert.IsTrue(scene != null);
-                    Assert.IsTrue(scene.HasMeshes);
-                    Assert.IsTrue(scene.HasMaterials);
+                    Assert.That(scene, Is.Not.Null);
+                    Assert.That(scene.HasMeshes, Is.True);
+                    Assert.That(scene.HasMaterials, Is.True);
 
                     //No material file, so the mesh will always use the default material
-                    Assert.IsTrue(scene.Materials[scene.Meshes[0].MaterialIndex].Name == "DefaultMaterial");
+                    Assert.That(scene.Materials[scene.Meshes[0].MaterialIndex].Name, Is.EqualTo("DefaultMaterial"));
                 }
 
                 //Using custom IO system requires us to pass in the file name, assimp will ask the io system to get a stream
                 Scene scene2 = importer.ImportFile("sphere.obj");
-                Assert.IsTrue(scene2 != null);
-                Assert.IsTrue(scene2.HasMeshes);
-                Assert.IsTrue(scene2.HasMaterials);
+                Assert.That(scene2, Is.Not.Null);
+                Assert.That(scene2.HasMeshes, Is.True);
+                Assert.That(scene2.HasMaterials, Is.True);
 
                 //Should have found a material with the name "SphereMaterial" in the mtl file
-                Assert.IsTrue(scene2.Materials[scene2.Meshes[0].MaterialIndex].Name == "SphereMaterial");
+                Assert.That(scene2.Materials[scene2.Meshes[0].MaterialIndex].Name, Is.EqualTo("SphereMaterial"));
             }
         }
     }
