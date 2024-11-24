@@ -323,7 +323,6 @@ namespace Assimp.Unmanaged
 
         private String GetRIDArch()
         {
-#if NETSTANDARD1_3
             switch(RuntimeInformation.ProcessArchitecture)
             {
                 case Architecture.Arm:
@@ -336,9 +335,6 @@ namespace Assimp.Unmanaged
                 default:
                     return "x64";
             }
-#else
-            return UnmanagedLibrary.Is64Bit ? "x64" : "x86";
-#endif
         }
     }
 }
