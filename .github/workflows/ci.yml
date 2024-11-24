@@ -17,13 +17,14 @@ jobs:
         include:
           - name: Windows x64
             os: windows-latest
-          - name: Windows x86
-            os: windows-latest
-            additional_args: -a x86
+          # TOOD: setup-dotnet is broken for x86, see https://github.com/actions/setup-dotnet/issues/485
+          #- name: Windows x86
+          #  os: windows-latest
+          #  additional_args: -a x86
           - name: Linux
             os: ubuntu-latest
           - name: MacOS
-            os: macos-latest
+            os: macos-13
 
     steps:
       - uses: actions/checkout@v4
