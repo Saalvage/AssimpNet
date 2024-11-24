@@ -1081,7 +1081,7 @@ namespace Assimp
         private IntPtr ApplyPostProcessing(IntPtr scene, PostProcessSteps postProcessFlags)
         {
             if(postProcessFlags == PostProcessSteps.None || scene == IntPtr.Zero)
-                return IntPtr.Zero;
+                return scene;
 
             scene = AssimpLibrary.Instance.ApplyPostProcessing(scene, postProcessFlags);
 
