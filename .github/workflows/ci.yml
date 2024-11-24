@@ -23,7 +23,9 @@ jobs:
           #  additional_args: -a x86
           - name: Linux
             os: ubuntu-latest
-          - name: MacOS
+          - name: MacOS x64
+            os: macos-13
+          - name: MacOS ARM64
             os: macos-latest
 
     steps:
