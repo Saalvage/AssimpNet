@@ -34,8 +34,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-  
-  <Import Project="$(ProjectDir)..\AssimpNet\bin\$(Configuration)\nuget\build\AssimpNet.targets" />
 
   <Target Name="IncludeGeneratedShaderEmbeddedResource" AfterTargets="AssignTargetPaths" Condition="'$(ShaderContentIncludePath)' != ''">
     <ItemGroup>

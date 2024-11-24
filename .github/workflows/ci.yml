@@ -1,0 +1,38 @@
+name: Continuous Integration
+
+on:
+  push:
+  pull_request:
+    branches: [master]
+
+jobs:
+  build:
+    name: Build ${{ matrix.name }} ${{ matrix.configuration }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        configuration: [Release, Debug]
+        name: [Windows x64, Linux, MacOS]
+        include:
+          - name: Windows x64
+            os: windows-latest
+          # TOOD: setup-dotnet is broken for x86, see https://github.com/actions/setup-dotnet/issues/485
+          #- name: Windows x86
+          #  os: windows-latest
+          #  additional_args: -a x86
+          - name: Linux
+            os: ubuntu-latest
+          - name: MacOS
+            os: macos-13
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 7.x.x
+        
+      - run: dotnet test AssimpNet.Test -c ${{ matrix.configuration }} ${{ matrix.additional_args }}
+          
+          

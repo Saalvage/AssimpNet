@@ -50,7 +50,5 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-
-  <Import Project="$(ProjectDir)..\AssimpNet\bin\$(Configuration)\nuget\build\AssimpNet.targets" />
   
 </Project>
