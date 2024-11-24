@@ -1,1 +1,1 @@
-Assimp 5.2.5
+Assimp 5.4.3
