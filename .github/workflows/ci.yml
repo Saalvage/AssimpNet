@@ -18,7 +18,6 @@ jobs:
             os: windows-latest
           - name: Windows x86
             os: windows-latest
-            additional_args: -a x86
           - name: Linux
             os: ubuntu-latest
           - name: MacOS
