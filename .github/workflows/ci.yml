@@ -12,8 +12,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        configuration: [Release, Debug]
         name: [Windows x64, Linux, MacOS x64, MacOS ARM64]
+        configuration: [Release, Debug]
         include:
           - name: Windows x64
             os: windows-latest
