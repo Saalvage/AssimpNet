@@ -24,7 +24,7 @@ jobs:
           - name: Linux
             os: ubuntu-latest
           - name: MacOS
-            os: macos-13
+            os: macos-latest
 
     steps:
       - uses: actions/checkout@v4
