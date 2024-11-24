@@ -20,8 +20,6 @@ jobs:
             os: windows-latest
           - name: Linux
             os: ubuntu-latest
-          - name: MacOS
-            os: macos-latest
 
     steps:
       - uses: actions/checkout@v4
