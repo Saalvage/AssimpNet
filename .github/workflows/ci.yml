@@ -13,13 +13,17 @@ jobs:
       fail-fast: false
       matrix:
         configuration: [Release, Debug]
+        name: [Windows x64, Windows x86, Linux, MacOS]
         include:
           - name: Windows x64
             os: windows-latest
           - name: Windows x86
             os: windows-latest
+            additional_args: -a x86
           - name: Linux
             os: ubuntu-latest
+          - name: MacOS
+            os: macos-latest
 
     steps:
       - uses: actions/checkout@v4
