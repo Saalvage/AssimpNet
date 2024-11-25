@@ -23,6 +23,8 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
+using System.Runtime.InteropServices;
 
 namespace Assimp.Unmanaged
 {
@@ -139,7 +141,7 @@ namespace Assimp.Unmanaged
                 Delegate function;
                 if(!m_nameToUnmanagedFunction.TryGetValue(funcName, out function))
                 {
-                    function = PlatformHelper.GetDelegateForFunctionPointer(procAddr, funcType);
+                    function = Marshal.GetDelegateForFunctionPointer(procAddr, funcType);
                     m_nameToUnmanagedFunction.Add(funcName, function);
                 }
             }
@@ -147,14 +149,7 @@ namespace Assimp.Unmanaged
 
         private string GetUnmanagedName(Type funcType)
         {
-            object[] attributes = PlatformHelper.GetCustomAttributes(funcType, typeof(UnmanagedFunctionNameAttribute), false);
-            foreach(object attr in attributes)
-            {
-                if(attr is UnmanagedFunctionNameAttribute)
-                    return (attr as UnmanagedFunctionNameAttribute).UnmanagedFunctionName;
-            }
-
-            return null;
+            return funcType.GetCustomAttribute<UnmanagedFunctionNameAttribute>(false)?.UnmanagedFunctionName;
         }
 
         protected abstract IntPtr NativeLoadLibrary(string path);

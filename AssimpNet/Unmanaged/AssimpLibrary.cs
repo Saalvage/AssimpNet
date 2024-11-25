@@ -71,7 +71,7 @@ namespace Assimp.Unmanaged
 
         private static AssimpLibrary CreateInstance()
         {
-            return new AssimpLibrary(DefaultLibName, PlatformHelper.GetNestedTypes(typeof(Functions)));
+            return new AssimpLibrary(DefaultLibName, typeof(Functions).GetNestedTypes());
         }
 
         #region Import Methods

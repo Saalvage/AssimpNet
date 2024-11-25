@@ -22,6 +22,7 @@
 
 using System;
 using System.IO;
+using System.Reflection;
 using System.Runtime.InteropServices;
 
 namespace Assimp.Unmanaged
@@ -206,7 +207,7 @@ namespace Assimp.Unmanaged
             }
 
             //Check runtimes folder based on RID
-            string runtimeFolder = Path.Combine(PlatformHelper.GetAppBaseDirectory(), Path.Combine("runtimes", Path.Combine(rid, "native")));
+            string runtimeFolder = Path.Combine(AppContext.BaseDirectory, Path.Combine("runtimes", Path.Combine(rid, "native")));
             if(Directory.Exists(runtimeFolder))
             {
                 string potentialPath = TryGetExistingFile(runtimeFolder, libName, fallbackNames);
@@ -215,7 +216,7 @@ namespace Assimp.Unmanaged
             }
 
             //Check base directory
-            string pathInAppFolder = TryGetExistingFile(PlatformHelper.GetAppBaseDirectory(), libName, fallbackNames);
+            string pathInAppFolder = TryGetExistingFile(AppContext.BaseDirectory, libName, fallbackNames);
             if(!string.IsNullOrEmpty(pathInAppFolder))
                 return pathInAppFolder;
 
@@ -240,8 +241,9 @@ namespace Assimp.Unmanaged
         private string GetNugetPackagePath()
         {
             //Resolve packageId based on assembly informational version
-            string packageId = PlatformHelper.GetAssemblyName().ToLowerInvariant();
-            string packageVersion = PlatformHelper.GetInformationalVersion();
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            string packageId = assembly.GetName().Name.ToLowerInvariant();
+            string packageVersion = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion;
             if(string.IsNullOrEmpty(packageId) || string.IsNullOrEmpty(packageVersion))
                 return null;
 

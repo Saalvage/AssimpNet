@@ -21,7 +21,6 @@
 */
 
 using System;
-using Assimp.Unmanaged;
 
 namespace Assimp
 {
@@ -47,9 +46,9 @@ namespace Assimp
         public NativeCustomMarshalerAttribute(Type type)
         {
             if (type == null)
-                throw new NullReferenceException("type");
+                throw new NullReferenceException(nameof(type));
 
-            if (!PlatformHelper.IsAssignable(typeof(INativeCustomMarshaler), type))
+            if (!typeof(INativeCustomMarshaler).IsAssignableFrom(type))
                 throw new ArgumentException($"{type.FullName} does not implement INativeCustomMarshaler.");
 
             m_marshaler = Activator.CreateInstance(type) as INativeCustomMarshaler;

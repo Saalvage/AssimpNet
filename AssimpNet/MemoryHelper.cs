@@ -25,7 +25,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Collections;
 using System.Collections.Generic;
-using Assimp.Unmanaged;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 
 namespace Assimp
@@ -1034,10 +1034,7 @@ namespace Assimp
             {
                 if(!s_customMarshalers.TryGetValue(type, out marshaler))
                 {
-                    object[] customAttributes = PlatformHelper.GetCustomAttributes(type, typeof(NativeCustomMarshalerAttribute), false);
-                    if(customAttributes.Length != 0)
-                        marshaler = (customAttributes[0] as NativeCustomMarshalerAttribute).Marshaler;
-
+                    marshaler = type.GetCustomAttribute<NativeCustomMarshalerAttribute>(false)?.Marshaler;
                     s_customMarshalers.Add(type, marshaler);
                 }
             }
