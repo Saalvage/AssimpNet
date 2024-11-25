@@ -136,16 +136,16 @@ namespace Assimp
         }
 
         /// <summary>
-        /// Returns a <see cref="System.String"/> that represents this instance.
+        /// Returns a <see cref="string"/> that represents this instance.
         /// </summary>
         /// <returns>
-        /// A <see cref="System.String"/> that represents this instance.
+        /// A <see cref="string"/> that represents this instance.
         /// </returns>
         public override string ToString()
         {
             CultureInfo info = CultureInfo.CurrentCulture;
-            return String.Format(info, "{{Time:{0} Rotation:{1}}}",
-                new Object[] { Time.ToString(info), Value.ToString() });
+            return string.Format(info, "{{Time:{0} Rotation:{1}}}",
+                new object[] { Time.ToString(info), Value.ToString() });
         }
     }
 }

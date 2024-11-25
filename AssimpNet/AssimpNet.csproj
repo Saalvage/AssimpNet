@@ -8,23 +8,24 @@
     <SignAssembly Condition=" '$(MSBuildRuntimeType)' != 'Core'">true</SignAssembly>
     <AssemblyOriginatorKeyFile Condition=" '$(MSBuildRuntimeType)' != 'Core'">AssimpKey.snk</AssemblyOriginatorKeyFile>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Authors>Nicholas Woodfield</Authors>
+    <Authors>Nicholas Woodfield, Salvage</Authors>
     <Company />
-    <Version>5.0.0-beta1</Version>
+    <Version>5.4.3.0</Version>
     <PackageLicenseFile>License.txt</PackageLicenseFile>
     <Copyright>Copyright © 2012-2020 Nicholas Woodfield</Copyright>
     <PackageIcon>logo.png</PackageIcon>
-    <PackageProjectUrl>https://bitbucket.org/Starnick/assimpnet</PackageProjectUrl>
-    <RepositoryUrl>https://bitbucket.org/Starnick/assimpnet.git</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/Saalvage/AssimpNet</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Saalvage/AssimpNet</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-    <Description>A .NET Wrapper for the Open Asset Import (Assimp) library. The library is able to import dozens of different 3D model formats (e.g. OBJ, FBX, GLTF, Collada) and export to several formats (e.g. OBJ, GLTF, Collada). This release targets version 5.0.1 of the native library.</Description>
+    <Description>A .NET Wrapper for the Open Asset Import (Assimp) library. The library is able to import dozens of different 3D model formats (e.g. OBJ, FBX, GLTF, Collada) and export to several formats (e.g. OBJ, GLTF, Collada). Releases target the corresponding version of the native library.</Description>
     <PackageTags>Model 3D Graphics Assimp Mesh Importers Content Assets FBX Collada GLTF OBJ 3DS DXF</PackageTags>
     <RootNamespace>Assimp</RootNamespace>
     <AssemblyName>AssimpNet</AssemblyName>
     <Title>AssimpNet</Title>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='Release'">
@@ -66,6 +67,10 @@
     <None Include="..\libs\Assimp\osx-arm64\libassimp.dylib">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Link>runtimes\osx-arm64\native\%(Filename)%(Extension)</Link>
+    </None>
+    <None Include="..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
     </None>
   </ItemGroup>
 

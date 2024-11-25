@@ -32,24 +32,18 @@ namespace Assimp.Configs
     /// </summary>
     public abstract class PropertyConfig
     {
-        private String m_name;
+        private string m_name;
 
         /// <summary>
         /// Gets the property name.
         /// </summary>
-        public String Name
-        {
-            get
-            {
-                return m_name;
-            }
-        }
+        public string Name => m_name;
 
         /// <summary>
         /// Creates a new property config that has no active Assimp property store.
         /// </summary>
         /// <param name="name">Name of the property.</param>
-        protected PropertyConfig(String name)
+        protected PropertyConfig(string name)
         {
             m_name = name;
         }
@@ -88,33 +82,21 @@ namespace Assimp.Configs
         /// </summary>
         public int Value
         {
-            get
-            {
-                return m_value;
-            }
-            set
-            {
-                m_value = value;
-            }
+            get => m_value;
+            set => m_value = value;
         }
 
         /// <summary>
         /// Gets the default property value.
         /// </summary>
-        public int DefaultValue
-        {
-            get
-            {
-                return m_defaultValue;
-            }
-        }
+        public int DefaultValue => m_defaultValue;
 
         /// <summary>
         /// Constructs a new IntengerPropertyConfig.
         /// </summary>
         /// <param name="name">Name of the property</param>
         /// <param name="value">Property value</param>
-        public IntegerPropertyConfig(String name, int value)
+        public IntegerPropertyConfig(string name, int value)
             : this(name, value, 0) { }
 
         /// <summary>
@@ -123,7 +105,7 @@ namespace Assimp.Configs
         /// <param name="name">Name of the property</param>
         /// <param name="value">Property value</param>
         /// <param name="defaultValue">The default property value</param>
-        public IntegerPropertyConfig(String name, int value, int defaultValue)
+        public IntegerPropertyConfig(string name, int value, int defaultValue)
             : base(name)
         {
             m_value = value;
@@ -164,33 +146,21 @@ namespace Assimp.Configs
         /// </summary>
         public float Value
         {
-            get
-            {
-                return m_value;
-            }
-            set
-            {
-                m_value = value;
-            }
+            get => m_value;
+            set => m_value = value;
         }
 
         /// <summary>
         /// Gets the default property value.
         /// </summary>
-        public float DefaultValue
-        {
-            get
-            {
-                return m_defaultValue;
-            }
-        }
+        public float DefaultValue => m_defaultValue;
 
         /// <summary>
         /// Constructs a new FloatPropertyConfig.
         /// </summary>
         /// <param name="name">Name of the property</param>
         /// <param name="value">Property value</param>
-        public FloatPropertyConfig(String name, float value)
+        public FloatPropertyConfig(string name, float value)
             : this(name, value, 0.0f) { }
 
         /// <summary>
@@ -199,7 +169,7 @@ namespace Assimp.Configs
         /// <param name="name">Name of the property</param>
         /// <param name="value">Property value</param>
         /// <param name="defaultValue">The default property value</param>
-        public FloatPropertyConfig(String name, float value, float defaultValue)
+        public FloatPropertyConfig(string name, float value, float defaultValue)
             : base(name)
         {
             m_value = value;
@@ -240,33 +210,21 @@ namespace Assimp.Configs
         /// </summary>
         public Matrix4x4 Value
         {
-            get
-            {
-                return m_value;
-            }
-            set
-            {
-                m_value = value;
-            }
+            get => m_value;
+            set => m_value = value;
         }
 
         /// <summary>
         /// Gets the default property value.
         /// </summary>
-        public Matrix4x4 DefaultValue
-        {
-            get
-            {
-                return m_defaultValue;
-            }
-        }
+        public Matrix4x4 DefaultValue => m_defaultValue;
 
         /// <summary>
         /// Constructs a new MatrixPropertyConfig.
         /// </summary>
         /// <param name="name">Name of the property</param>
         /// <param name="value">Property value</param>
-        public MatrixPropertyConfig(String name, Matrix4x4 value)
+        public MatrixPropertyConfig(string name, Matrix4x4 value)
             : this(name, value, Matrix4x4.Identity) { }
 
         /// <summary>
@@ -275,7 +233,7 @@ namespace Assimp.Configs
         /// <param name="name">Name of the property</param>
         /// <param name="value">Property value</param>
         /// <param name="defaultValue">The default property value</param>
-        public MatrixPropertyConfig(String name, Matrix4x4 value, Matrix4x4 defaultValue)
+        public MatrixPropertyConfig(string name, Matrix4x4 value, Matrix4x4 defaultValue)
             : base(name)
         {
             m_value = value;
@@ -316,33 +274,21 @@ namespace Assimp.Configs
         /// </summary>
         public bool Value
         {
-            get
-            {
-                return m_value;
-            }
-            set
-            {
-                m_value = value;
-            }
+            get => m_value;
+            set => m_value = value;
         }
 
         /// <summary>
         /// Gets the default property value.
         /// </summary>
-        public bool DefaultValue
-        {
-            get
-            {
-                return m_defaultValue;
-            }
-        }
+        public bool DefaultValue => m_defaultValue;
 
         /// <summary>
         /// Constructs a new BooleanPropertyConfig.
         /// </summary>
         /// <param name="name">Name of the property</param>
         /// <param name="value">Property value</param>
-        public BooleanPropertyConfig(String name, bool value)
+        public BooleanPropertyConfig(string name, bool value)
             : this(name, value, false) { }
 
         /// <summary>
@@ -351,7 +297,7 @@ namespace Assimp.Configs
         /// <param name="name">Name of the property</param>
         /// <param name="value">Property value</param>
         /// <param name="defaultValue">The default property value</param>
-        public BooleanPropertyConfig(String name, bool value, bool defaultValue)
+        public BooleanPropertyConfig(string name, bool value, bool defaultValue)
             : base(name)
         {
             m_value = value;
@@ -385,42 +331,30 @@ namespace Assimp.Configs
     /// </summary>
     public class StringPropertyConfig : PropertyConfig
     {
-        private String m_value;
-        private String m_defaultValue;
+        private string m_value;
+        private string m_defaultValue;
 
         /// <summary>
         /// Gets the property value.
         /// </summary>
-        public String Value
+        public string Value
         {
-            get
-            {
-                return m_value;
-            }
-            set
-            {
-                m_value = value;
-            }
+            get => m_value;
+            set => m_value = value;
         }
 
         /// <summary>
         /// Gets the default property value.
         /// </summary>
-        public String DefaultValue
-        {
-            get
-            {
-                return m_defaultValue;
-            }
-        }
+        public string DefaultValue => m_defaultValue;
 
         /// <summary>
         /// Constructs a new StringPropertyConfig.
         /// </summary>
         /// <param name="name">Name of the property</param>
         /// <param name="value">Property value</param>
-        public StringPropertyConfig(String name, String value)
-            : this(name, value, String.Empty) { }
+        public StringPropertyConfig(string name, string value)
+            : this(name, value, string.Empty) { }
 
         /// <summary>
         /// Constructs a new StringPropertyConfig with a default value.
@@ -428,7 +362,7 @@ namespace Assimp.Configs
         /// <param name="name">Name of the property</param>
         /// <param name="value">Property value</param>
         /// <param name="defaultValue">The default property value</param>
-        public StringPropertyConfig(String name, String value, String defaultValue)
+        public StringPropertyConfig(string name, string value, string defaultValue)
             : base(name)
         {
             m_value = value;
@@ -460,17 +394,17 @@ namespace Assimp.Configs
         /// </summary>
         /// <param name="names">Array of names</param>
         /// <returns>White-space delimited list as a string</returns>
-        protected static String ProcessNames(String[] names)
+        protected static string ProcessNames(string[] names)
         {
             if(names == null || names.Length == 0)
             {
-                return String.Empty;
+                return string.Empty;
             }
 
             StringBuilder builder = new StringBuilder();
-            foreach(String name in names)
+            foreach(string name in names)
             {
-                if(!String.IsNullOrEmpty(name))
+                if(!string.IsNullOrEmpty(name))
                 {
                     builder.Append(name);
                     builder.Append(' ');
@@ -492,13 +426,7 @@ namespace Assimp.Configs
         /// <summary>
         /// Gets the string name used by MeasureTimeConfig.
         /// </summary>
-        public static String MeasureTimeConfigName
-        {
-            get
-            {
-                return AiConfigs.AI_CONFIG_GLOB_MEASURE_TIME;
-            }
-        }
+        public static string MeasureTimeConfigName => AiConfigs.AI_CONFIG_GLOB_MEASURE_TIME;
 
         /// <summary>
         /// Constructs a new MeasureTimeConfig.
@@ -520,13 +448,7 @@ namespace Assimp.Configs
         /// <summary>
         /// Gets the string name used by MultithreadingConfig.
         /// </summary>
-        public static String MultithreadingConfigName
-        {
-            get
-            {
-                return AiConfigs.AI_CONFIG_GLOB_MULTITHREADING;
-            }
-        }
+        public static string MultithreadingConfigName => AiConfigs.AI_CONFIG_GLOB_MULTITHREADING;
 
         /// <summary>
         /// Constructs a new MultithreadingConfig.
@@ -548,13 +470,7 @@ namespace Assimp.Configs
         /// <summary>
         /// Gets the string name used by NoSkeletonMeshConfig.
         /// </summary>
-        public static String NoSkeletonMeshesConfigName
-        {
-            get
-            {
-                return AiConfigs.AI_CONFIG_IMPORT_NO_SKELETON_MESHES;
-            }
-        }
+        public static string NoSkeletonMeshesConfigName => AiConfigs.AI_CONFIG_IMPORT_NO_SKELETON_MESHES;
 
         /// <summary>
         /// Constructs a new NoSkeletonMeshConfig.
@@ -579,13 +495,7 @@ namespace Assimp.Configs
         /// <summary>
         /// Gets the string name used by TangentSmoothingAngleConfig.
         /// </summary>
-        public static String TangentSmoothingAngleConfigName
-        {
-            get
-            {
-                return AiConfigs.AI_CONFIG_PP_CT_MAX_SMOOTHING_ANGLE;
-            }
-        }
+        public static string TangentSmoothingAngleConfigName => AiConfigs.AI_CONFIG_PP_CT_MAX_SMOOTHING_ANGLE;
 
         /// <summary>
         /// Constructs a new TangentSmoothingAngleConfig.
@@ -606,13 +516,8 @@ namespace Assimp.Configs
         /// <summary>
         /// Gets the string name used by NormalSmoothingAngleConfig.
         /// </summary>
-        public static String NormalSmoothingAngleConfigName
-        {
-            get
-            {
-                return AiConfigs.AI_CONFIG_PP_GSN_MAX_SMOOTHING_ANGLE;
-            }
-        }
+        public static string NormalSmoothingAngleConfigName => AiConfigs.AI_CONFIG_PP_GSN_MAX_SMOOTHING_ANGLE;
+
         /// <summary>
         /// Constructs a new NormalSmoothingAngleConfig.
         /// </summary>
@@ -633,20 +538,14 @@ namespace Assimp.Configs
         /// <summary>
         /// Gets the string name used by MDLColorMapConfig.
         /// </summary>
-        public static String MDLColorMapConfigName
-        {
-            get
-            {
-                return AiConfigs.AI_CONFIG_IMPORT_MDL_COLORMAP;
-            }
-        }
+        public static string MDLColorMapConfigName => AiConfigs.AI_CONFIG_IMPORT_MDL_COLORMAP;
 
         /// <summary>
         /// Constructs a new MDLColorMapConfig.
         /// </summary>
         /// <param name="fileName">Colormap filename</param>
-        public MDLColorMapConfig(String fileName)
-            : base(MDLColorMapConfigName, (String.IsNullOrEmpty(fileName)) ? "colormap.lmp" : fileName, "colormap.lmp") { }
+        public MDLColorMapConfig(string fileName)
+            : base(MDLColorMapConfigName, (string.IsNullOrEmpty(fileName)) ? "colormap.lmp" : fileName, "colormap.lmp") { }
     }
 
     /// <summary>
@@ -660,21 +559,15 @@ namespace Assimp.Configs
         /// <summary>
         /// Gets the string name used by MaterialExcludeListConfig.
         /// </summary>
-        public static String MaterialExcludeListConfigName
-        {
-            get
-            {
-                return AiConfigs.AI_CONFIG_PP_RRM_EXCLUDE_LIST;
-            }
-        }
+        public static string MaterialExcludeListConfigName => AiConfigs.AI_CONFIG_PP_RRM_EXCLUDE_LIST;
 
         /// <summary>
         /// Constructs a new MaterialExcludeListConfig. Material names containing whitespace
         /// <c>must</c> be enclosed in single quotation marks.
         /// </summary>
         /// <param name="materialNames">List of material names that will not be modified or replaced by the remove redundant materials post process step.</param>
-        public MaterialExcludeListConfig(String[] materialNames)
-            : base(MaterialExcludeListConfigName, ProcessNames(materialNames), String.Empty) { }
+        public MaterialExcludeListConfig(string[] materialNames)
+            : base(MaterialExcludeListConfigName, ProcessNames(materialNames), string.Empty) { }
     }
 
     /// <summary>
@@ -690,13 +583,7 @@ namespace Assimp.Configs
         /// <summary>
         /// Gets the string name used by KeepSceneHierarchyConfig.
         /// </summary>
-        public static String KeepSceneHierarchyConfigName
-        {
-            get
-            {
-                return AiConfigs.AI_CONFIG_PP_PTV_KEEP_HIERARCHY;
-            }
-        }
+        public static string KeepSceneHierarchyConfigName => AiConfigs.AI_CONFIG_PP_PTV_KEEP_HIERARCHY;
 
         /// <summary>
         /// Constructs a new KeepHierarchyConfig. 
@@ -717,13 +604,7 @@ namespace Assimp.Configs
         /// <summary>
         /// Gets the string name used by NormalizeVertexComponentsConfig.
         /// </summary>
-        public static String NormalizeVertexComponentsConfigName
-        {
-            get
-            {
-                return AiConfigs.AI_CONFIG_PP_PTV_NORMALIZE;
-            }
-        }
+        public static string NormalizeVertexComponentsConfigName => AiConfigs.AI_CONFIG_PP_PTV_NORMALIZE;
 
         /// <summary>
         /// Constructs a new NormalizeVertexComponentsConfig.
@@ -744,13 +625,7 @@ namespace Assimp.Configs
         /// <summary>
         /// Gets the string name used by RemoveDegeneratePrimitivesConfig.
         /// </summary>
-        public static String RemoveDegeneratePrimitivesConfigName
-        {
-            get
-            {
-                return AiConfigs.AI_CONFIG_PP_FD_REMOVE;
-            }
-        }
+        public static string RemoveDegeneratePrimitivesConfigName => AiConfigs.AI_CONFIG_PP_FD_REMOVE;
 
         /// <summary>
         /// Constructs a new RemoveDegeneratePrimitivesConfig.
@@ -769,13 +644,7 @@ namespace Assimp.Configs
         /// <summary>
         /// Gets the string name used by RemoveDegeneratePrimitivesCheckAreaConfig.
         /// </summary>
-        public static String RemoveDegeneratePrimitivesCheckAreaConfigName
-        {
-            get
-            {
-                return AiConfigs.AI_CONFIG_PP_FD_CHECKAREA;
-            }
-        }
+        public static string RemoveDegeneratePrimitivesCheckAreaConfigName => AiConfigs.AI_CONFIG_PP_FD_CHECKAREA;
 
         /// <summary>
         /// Constructs a new RemoveDegeneratePrimitivesCheckAreaConfig.
@@ -798,20 +667,14 @@ namespace Assimp.Configs
         /// <summary>
         /// Gets the string name used by NodeExcludeListConfig.
         /// </summary>
-        public static String NodeExcludeListConfigName
-        {
-            get
-            {
-                return AiConfigs.AI_CONFIG_PP_OG_EXCLUDE_LIST;
-            }
-        }
+        public static string NodeExcludeListConfigName => AiConfigs.AI_CONFIG_PP_OG_EXCLUDE_LIST;
 
         /// <summary>
         /// Constructs a new NodeExcludeListConfig.
         /// </summary>
         /// <param name="nodeNames">List of node names</param>
-        public NodeExcludeListConfig(params String[] nodeNames)
-            : base(NodeExcludeListConfigName, ProcessNames(nodeNames), String.Empty) { }
+        public NodeExcludeListConfig(params string[] nodeNames)
+            : base(NodeExcludeListConfigName, ProcessNames(nodeNames), string.Empty) { }
     }
 
     /// <summary>
@@ -825,25 +688,13 @@ namespace Assimp.Configs
         /// <summary>
         /// Gets the string name used by MeshTriangleLimitConfig.
         /// </summary>
-        public static String MeshTriangleLimitConfigName
-        {
-            get
-            {
-                return AiConfigs.AI_CONFIG_PP_SLM_TRIANGLE_LIMIT;
-            }
-        }
+        public static string MeshTriangleLimitConfigName => AiConfigs.AI_CONFIG_PP_SLM_TRIANGLE_LIMIT;
 
         /// <summary>
         /// Gets the defined default limit value, this corresponds to the
         /// <see cref="AiDefines.AI_SLM_DEFAULT_MAX_TRIANGLES"/> constant.
         /// </summary>
-        public static int MeshTriangleLimitConfigDefaultValue
-        {
-            get
-            {
-                return AiDefines.AI_SLM_DEFAULT_MAX_TRIANGLES;
-            }
-        }
+        public static int MeshTriangleLimitConfigDefaultValue => AiDefines.AI_SLM_DEFAULT_MAX_TRIANGLES;
 
         /// <summary>
         /// Constructs a new MeshTriangleLimitConfig.
@@ -864,25 +715,13 @@ namespace Assimp.Configs
         /// <summary>
         /// Gets the string name used by MeshVertexLimitConfig.
         /// </summary>
-        public static String MeshVertexLimitConfigName
-        {
-            get
-            {
-                return AiConfigs.AI_CONFIG_PP_SLM_VERTEX_LIMIT;
-            }
-        }
+        public static string MeshVertexLimitConfigName => AiConfigs.AI_CONFIG_PP_SLM_VERTEX_LIMIT;
 
         /// <summary>
         /// Gets the defined default limit value, this corresponds to the
         /// <see cref="AiDefines.AI_SLM_DEFAULT_MAX_VERTICES"/> constant.
         /// </summary>
-        public static int MeshVertexLimitConfigDefaultValue
-        {
-            get
-            {
-                return AiDefines.AI_SLM_DEFAULT_MAX_VERTICES;
-            }
-        }
+        public static int MeshVertexLimitConfigDefaultValue => AiDefines.AI_SLM_DEFAULT_MAX_VERTICES;
 
         /// <summary>
         /// Constructs a new MeshVertexLimitConfig.
@@ -903,25 +742,13 @@ namespace Assimp.Configs
         /// <summary>
         /// gets the string name used by VertexBoneWeightLimitConfig.
         /// </summary>
-        public static String VertexBoneWeightLimitConfigName
-        {
-            get
-            {
-                return AiConfigs.AI_CONFIG_PP_LBW_MAX_WEIGHTS;
-            }
-        }
+        public static string VertexBoneWeightLimitConfigName => AiConfigs.AI_CONFIG_PP_LBW_MAX_WEIGHTS;
 
         /// <summary>
         /// Gets the defined default limit value, this corresponds to the
         /// <see cref="AiDefines.AI_LBW_MAX_WEIGHTS"/> constant.
         /// </summary>
-        public static int VertexBoneWeightLimitConfigDefaultValue
-        {
-            get
-            {
-                return AiDefines.AI_LBW_MAX_WEIGHTS;
-            }
-        }
+        public static int VertexBoneWeightLimitConfigDefaultValue => AiDefines.AI_LBW_MAX_WEIGHTS;
 
         /// <summary>
         /// Constructs a new VertexBoneWeightLimitConfig.
@@ -942,25 +769,13 @@ namespace Assimp.Configs
         /// <summary>
         /// Gets the string name used by VertexCacheConfig.
         /// </summary>
-        public static String VertexCacheSizeConfigName
-        {
-            get
-            {
-                return AiConfigs.AI_CONFIG_PP_ICL_PTCACHE_SIZE;
-            }
-        }
+        public static string VertexCacheSizeConfigName => AiConfigs.AI_CONFIG_PP_ICL_PTCACHE_SIZE;
 
         /// <summary>
         /// Gets the defined default vertex cache size, this corresponds to 
         /// the <see cref="AiDefines.PP_ICL_PTCACHE_SIZE"/>.
         /// </summary>
-        public static int VertexCacheSizeConfigDefaultValue
-        {
-            get
-            {
-                return AiDefines.PP_ICL_PTCACHE_SIZE;
-            }
-        }
+        public static int VertexCacheSizeConfigDefaultValue => AiDefines.PP_ICL_PTCACHE_SIZE;
 
         /// <summary>
         /// Constructs a new VertexCacheSizeConfig.
@@ -981,13 +796,7 @@ namespace Assimp.Configs
         /// <summary>
         /// Gets the string name used by RemoveComponentConfig.
         /// </summary>
-        public static String RemoveComponentConfigName
-        {
-            get
-            {
-                return AiConfigs.AI_CONFIG_PP_RVC_FLAGS;
-            }
-        }
+        public static string RemoveComponentConfigName => AiConfigs.AI_CONFIG_PP_RVC_FLAGS;
 
         /// <summary>
         /// Constructs a new RemoveComponentConfig.
@@ -1008,13 +817,7 @@ namespace Assimp.Configs
         /// <summary>
         /// Gets the string name used by SortByPrimitiveTypeConfig.
         /// </summary>
-        public static String SortByPrimitiveTypeConfigName
-        {
-            get
-            {
-                return AiConfigs.AI_CONFIG_PP_SBP_REMOVE;
-            }
-        }
+        public static string SortByPrimitiveTypeConfigName => AiConfigs.AI_CONFIG_PP_SBP_REMOVE;
 
         /// <summary>
         /// Constructs a new SortByPrimitiveTypeConfig.
@@ -1035,13 +838,7 @@ namespace Assimp.Configs
         /// <summary>
         /// Gets the string name used by AnimationAccuracyConfig.
         /// </summary>
-        public static String AnimationAccuracyConfigName
-        {
-            get
-            {
-                return AiConfigs.AI_CONFIG_PP_FID_ANIM_ACCURACY;
-            }
-        }
+        public static string AnimationAccuracyConfigName => AiConfigs.AI_CONFIG_PP_FID_ANIM_ACCURACY;
 
         /// <summary>
         /// Constructs a new AnimationAccuracyConfig.
@@ -1061,13 +858,7 @@ namespace Assimp.Configs
         /// <summary>
         /// Gets the string name used by IgnoreTextureCoordinatesConfig.
         /// </summary>
-        public static String IgnoreTextureCoordinatesConfigName
-        {
-            get
-            {
-                return AiConfigs.AI_CONFIG_PP_FID_IGNORE_TEXTURECOORDS;
-            }
-        }
+        public static string IgnoreTextureCoordinatesConfigName => AiConfigs.AI_CONFIG_PP_FID_IGNORE_TEXTURECOORDS;
 
         /// <summary>
         /// Constructs a new IgnoreTextureCoordinatesConfig.
@@ -1088,13 +879,7 @@ namespace Assimp.Configs
         /// <summary>
         /// Gets the string name used by TransformUVConfig.
         /// </summary>
-        public static String TransformUVConfigName
-        {
-            get
-            {
-                return AiConfigs.AI_CONFIG_PP_TUV_EVALUATE;
-            }
-        }
+        public static string TransformUVConfigName => AiConfigs.AI_CONFIG_PP_TUV_EVALUATE;
 
         /// <summary>
         /// Constructs a new TransformUVConfig.
@@ -1115,13 +900,7 @@ namespace Assimp.Configs
         /// <summary>
         /// Gets the string name used by FavorSpeedConfig.
         /// </summary>
-        public static String FavorSpeedConfigName
-        {
-            get
-            {
-                return AiConfigs.AI_CONFIG_FAVOUR_SPEED;
-            }
-        }
+        public static string FavorSpeedConfigName => AiConfigs.AI_CONFIG_FAVOUR_SPEED;
 
         /// <summary>
         /// Constructs a new FavorSpeedConfig.
@@ -1141,13 +920,7 @@ namespace Assimp.Configs
         /// <summary>
         /// Gets the string name used by MaxBoneCountConfig.
         /// </summary>
-        public static String MaxBoneCountConfigName
-        {
-            get
-            {
-                return AiConfigs.AI_CONFIG_PP_SBBC_MAX_BONES;
-            }
-        }
+        public static string MaxBoneCountConfigName => AiConfigs.AI_CONFIG_PP_SBBC_MAX_BONES;
 
         /// <summary>
         /// Constructs a new MaxBoneCountConfig.
@@ -1166,13 +939,7 @@ namespace Assimp.Configs
         /// <summary>
         /// Gets the string name used by TangentTextureChannelIndexConfig.
         /// </summary>
-        public static String TangentTextureChannelIndexConfigName
-        {
-            get
-            {
-                return AiConfigs.AI_CONFIG_PP_CT_TEXTURE_CHANNEL_INDEX;
-            }
-        }
+        public static string TangentTextureChannelIndexConfigName => AiConfigs.AI_CONFIG_PP_CT_TEXTURE_CHANNEL_INDEX;
 
         /// <summary>
         /// Constructs a new TangentTextureChannelIndexConfig.
@@ -1191,13 +958,7 @@ namespace Assimp.Configs
         /// <summary>
         /// Gets the string name used by DeboneThresholdConfig.
         /// </summary>
-        public static String DeboneThresholdConfigName
-        {
-            get
-            {
-                return AiConfigs.AI_CONFIG_PP_DB_THRESHOLD;
-            }
-        }
+        public static string DeboneThresholdConfigName => AiConfigs.AI_CONFIG_PP_DB_THRESHOLD;
 
         /// <summary>
         /// Constructs a new DeboneThresholdConfig.
@@ -1217,13 +978,7 @@ namespace Assimp.Configs
         /// <summary>
         /// Gets the string name used by DeboneAllOrNoneConfig.
         /// </summary>
-        public static String DeboneAllOrNoneConfigName
-        {
-            get
-            {
-                return AiConfigs.AI_CONFIG_PP_DB_ALL_OR_NONE;
-            }
-        }
+        public static string DeboneAllOrNoneConfigName => AiConfigs.AI_CONFIG_PP_DB_ALL_OR_NONE;
 
         /// <summary>
         /// Constructs a new DeboneAllOrNoneConfig.
@@ -1242,13 +997,7 @@ namespace Assimp.Configs
         /// <summary>
         /// Gets the string name used by RootTransformationConfig.
         /// </summary>
-        public static String RootTransformationConfigName
-        {
-            get
-            {
-                return AiConfigs.AI_CONFIG_PP_PTV_ROOT_TRANSFORMATION;
-            }
-        }
+        public static string RootTransformationConfigName => AiConfigs.AI_CONFIG_PP_PTV_ROOT_TRANSFORMATION;
 
         /// <summary>
         /// Constructs a new RootTransformationConfig.
@@ -1283,13 +1032,7 @@ namespace Assimp.Configs
         /// <summary>
         /// Gets the string name used by GlobalScaleConfig.
         /// </summary>
-        public static String GlobalScaleConfigName
-        {
-            get
-            {
-                return AiConfigs.AI_CONFIG_GLOBAL_SCALE_FACTOR_KEY;
-            }
-        }
+        public static string GlobalScaleConfigName => AiConfigs.AI_CONFIG_GLOBAL_SCALE_FACTOR_KEY;
 
         /// <summary>
         /// Constructs a new GlobalScaleConfig.
@@ -1307,13 +1050,7 @@ namespace Assimp.Configs
         /// <summary>
         /// Gets the string name used by AppScaleConfig.
         /// </summary>
-        public static String AppScaleConfigName
-        {
-            get
-            {
-                return AiConfigs.AI_CONFIG_APP_SCALE_KEY;
-            }
-        }
+        public static string AppScaleConfigName => AiConfigs.AI_CONFIG_APP_SCALE_KEY;
 
         /// <summary>
         /// Constructs a new AppScaleConfig.
@@ -1339,13 +1076,7 @@ namespace Assimp.Configs
         /// <summary>
         /// Gets the string name used by GlobalKeyFrameImportConfig.
         /// </summary>
-        public static String GlobalKeyFrameImportConfigName
-        {
-            get
-            {
-                return AiConfigs.AI_CONFIG_IMPORT_GLOBAL_KEYFRAME;
-            }
-        }
+        public static string GlobalKeyFrameImportConfigName => AiConfigs.AI_CONFIG_IMPORT_GLOBAL_KEYFRAME;
 
         /// <summary>
         /// Constructs a new GlobalKeyFrameImportConfig.
@@ -1366,13 +1097,7 @@ namespace Assimp.Configs
         /// <summary>
         /// Gets the string name used by MD3KeyFrameImportConfig.
         /// </summary>
-        public static String MD3KeyFrameImportConfigName
-        {
-            get
-            {
-                return AiConfigs.AI_CONFIG_IMPORT_MD3_KEYFRAME;
-            }
-        }
+        public static string MD3KeyFrameImportConfigName => AiConfigs.AI_CONFIG_IMPORT_MD3_KEYFRAME;
 
         /// <summary>
         /// Constructs a new MD3KeyFrameImportConfig.
@@ -1393,13 +1118,7 @@ namespace Assimp.Configs
         /// <summary>
         /// Gets the string name used by MD2KeyFrameImportConfig.
         /// </summary>
-        public static String MD2KeyFrameImportConfigName
-        {
-            get
-            {
-                return AiConfigs.AI_CONFIG_IMPORT_MD2_KEYFRAME;
-            }
-        }
+        public static string MD2KeyFrameImportConfigName => AiConfigs.AI_CONFIG_IMPORT_MD2_KEYFRAME;
 
         /// <summary>
         /// Constructs a new MD2KeyFrameImportConfig.
@@ -1420,13 +1139,7 @@ namespace Assimp.Configs
         /// <summary>
         /// Gets the string name used by MDLKeyFrameImportConfig.
         /// </summary>
-        public static String MDLKeyFrameImportConfigName
-        {
-            get
-            {
-                return AiConfigs.AI_CONFIG_IMPORT_MDL_KEYFRAME;
-            }
-        }
+        public static string MDLKeyFrameImportConfigName => AiConfigs.AI_CONFIG_IMPORT_MDL_KEYFRAME;
 
         /// <summary>
         /// Constructs a new MDLKeyFrameImportConfig.
@@ -1447,13 +1160,7 @@ namespace Assimp.Configs
         /// <summary>
         /// Gets the string name used by SMDKeyFrameImportConfig.
         /// </summary>
-        public static String SMDKeyFrameImportConfigName
-        {
-            get
-            {
-                return AiConfigs.AI_CONFIG_IMPORT_SMD_KEYFRAME;
-            }
-        }
+        public static string SMDKeyFrameImportConfigName => AiConfigs.AI_CONFIG_IMPORT_SMD_KEYFRAME;
 
         /// <summary>
         /// Constructs a new SMDKeyFrameImportConfig.
@@ -1474,13 +1181,7 @@ namespace Assimp.Configs
         /// <summary>
         /// Gets the string name used by UnrealKeyFrameImportConfig.
         /// </summary>
-        public static String UnrealKeyFrameImportConfigName
-        {
-            get
-            {
-                return AiConfigs.AI_CONFIG_IMPORT_UNREAL_KEYFRAME;
-            }
-        }
+        public static string UnrealKeyFrameImportConfigName => AiConfigs.AI_CONFIG_IMPORT_UNREAL_KEYFRAME;
 
         /// <summary>
         /// Constructs a new UnrealKeyFrameImportConfig.
@@ -1500,13 +1201,7 @@ namespace Assimp.Configs
         /// <summary>
         /// Gets the string name used by ACSeparateBackfaceCullConfig.
         /// </summary>
-        public static String ACSeparateBackfaceCullConfigName
-        {
-            get
-            {
-                return AiConfigs.AI_CONFIG_IMPORT_AC_SEPARATE_BFCULL;
-            }
-        }
+        public static string ACSeparateBackfaceCullConfigName => AiConfigs.AI_CONFIG_IMPORT_AC_SEPARATE_BFCULL;
 
         /// <summary>
         /// Constructs a new ACSeparateBackfaceCullConfig.
@@ -1527,13 +1222,7 @@ namespace Assimp.Configs
         /// <summary>
         /// Gets the string name used by ACEvaluateSubdivisionConfig.
         /// </summary>
-        public static String ACEvaluateSubdivisionConfigName
-        {
-            get
-            {
-                return AiConfigs.AI_CONFIG_IMPORT_AC_EVAL_SUBDIVISION;
-            }
-        }
+        public static string ACEvaluateSubdivisionConfigName => AiConfigs.AI_CONFIG_IMPORT_AC_EVAL_SUBDIVISION;
 
         /// <summary>
         /// Constructs a new ACEvaluateSubdivisionConfig.
@@ -1553,13 +1242,7 @@ namespace Assimp.Configs
         /// <summary>
         /// Gets the string name used by UnrealHandleFlagsConfig.
         /// </summary>
-        public static String UnrealHandleFlagsConfigName
-        {
-            get
-            {
-                return AiConfigs.AI_CONFIG_IMPORT_UNREAL_HANDLE_FLAGS;
-            }
-        }
+        public static string UnrealHandleFlagsConfigName => AiConfigs.AI_CONFIG_IMPORT_UNREAL_HANDLE_FLAGS;
 
         /// <summary>
         /// Constructs a new UnrealHandleFlagsConfig.
@@ -1582,13 +1265,7 @@ namespace Assimp.Configs
         /// <summary>
         /// Gets the string name used by TerragenComputeTexCoordsConfig.
         /// </summary>
-        public static String TerragenComputeTexCoordsConfigName
-        {
-            get
-            {
-                return AiConfigs.AI_CONFIG_IMPORT_TER_MAKE_UVS;
-            }
-        }
+        public static string TerragenComputeTexCoordsConfigName => AiConfigs.AI_CONFIG_IMPORT_TER_MAKE_UVS;
 
         /// <summary>
         /// Constructs a new TerragenComputeTexCoordsConfig.
@@ -1608,13 +1285,7 @@ namespace Assimp.Configs
         /// <summary>
         /// Gets the string name used by ASEReconstructNormalsConfig.
         /// </summary>
-        public static String ASEReconstructNormalsConfigName
-        {
-            get
-            {
-                return AiConfigs.AI_CONFIG_IMPORT_ASE_RECONSTRUCT_NORMALS;
-            }
-        }
+        public static string ASEReconstructNormalsConfigName => AiConfigs.AI_CONFIG_IMPORT_ASE_RECONSTRUCT_NORMALS;
 
         /// <summary>
         /// Constructs a new ASEReconstructNormalsConfig.
@@ -1636,13 +1307,7 @@ namespace Assimp.Configs
         /// <summary>
         /// Gets the string name used by MD3HandleMultiPartConfig.
         /// </summary>
-        public static String MD3HandleMultiPartConfigName
-        {
-            get
-            {
-                return AiConfigs.AI_CONFIG_IMPORT_MD3_HANDLE_MULTIPART;
-            }
-        }
+        public static string MD3HandleMultiPartConfigName => AiConfigs.AI_CONFIG_IMPORT_MD3_HANDLE_MULTIPART;
 
         /// <summary>
         /// Constructs a new MD3HandleMultiPartConfig.
@@ -1664,19 +1329,13 @@ namespace Assimp.Configs
         /// <summary>
         /// Gets the string name used by MD3SkinNameConfig.
         /// </summary>
-        public static String MD3SkinNameConfigName
-        {
-            get
-            {
-                return AiConfigs.AI_CONFIG_IMPORT_MD3_SKIN_NAME;
-            }
-        }
+        public static string MD3SkinNameConfigName => AiConfigs.AI_CONFIG_IMPORT_MD3_SKIN_NAME;
 
         /// <summary>
         /// Constructs a new MD3SkinNameConfig.
         /// </summary>
         /// <param name="skinName">The skin name.</param>
-        public MD3SkinNameConfig(String skinName)
+        public MD3SkinNameConfig(string skinName)
             : base(MD3SkinNameConfigName, skinName, "default") { }
     }
 
@@ -1690,20 +1349,14 @@ namespace Assimp.Configs
         /// <summary>
         /// Gets the string name used by MD3ShaderSourceConfig.
         /// </summary>
-        public static String MD3ShaderSourceConfigName
-        {
-            get
-            {
-                return AiConfigs.AI_CONFIG_IMPORT_MD3_SHADER_SRC;
-            }
-        }
+        public static string MD3ShaderSourceConfigName => AiConfigs.AI_CONFIG_IMPORT_MD3_SHADER_SRC;
 
         /// <summary>
         /// Constructs a new MD3ShaderSourceConfig.
         /// </summary>
         /// <param name="shaderFile">The shader file.</param>
-        public MD3ShaderSourceConfig(String shaderFile)
-            : base(MD3ShaderSourceConfigName, shaderFile, String.Empty) { }
+        public MD3ShaderSourceConfig(string shaderFile)
+            : base(MD3ShaderSourceConfigName, shaderFile, string.Empty) { }
     }
 
     /// <summary>
@@ -1720,13 +1373,7 @@ namespace Assimp.Configs
         /// <summary>
         /// Gets the string name used by LWOImportOneLayerConfig.
         /// </summary>
-        public static String LWOImportOneLayerConfigName
-        {
-            get
-            {
-                return AiConfigs.AI_CONFIG_IMPORT_LWO_ONE_LAYER_ONLY;
-            }
-        }
+        public static string LWOImportOneLayerConfigName => AiConfigs.AI_CONFIG_IMPORT_LWO_ONE_LAYER_ONLY;
 
         /// <summary>
         /// Constructs a new LWOImportOneLayerConfig.
@@ -1749,13 +1396,7 @@ namespace Assimp.Configs
         /// <summary>
         /// Gets the string name used by MD5NoAnimationAutoLoadConfig.
         /// </summary>
-        public static String MD5NoAnimationAutoLoadConfigName
-        {
-            get
-            {
-                return AiConfigs.AI_CONFIG_IMPORT_MD5_NO_ANIM_AUTOLOAD;
-            }
-        }
+        public static string MD5NoAnimationAutoLoadConfigName => AiConfigs.AI_CONFIG_IMPORT_MD5_NO_ANIM_AUTOLOAD;
 
         /// <summary>
         /// Constructs a new MD5NoAnimationAutoLoadConfig.
@@ -1782,13 +1423,7 @@ namespace Assimp.Configs
         /// <summary>
         /// Gets the string name used by LWSAnimationStartConfig.
         /// </summary>
-        public static String LWSAnimationStartConfigName
-        {
-            get
-            {
-                return AiConfigs.AI_CONFIG_IMPORT_LWS_ANIM_START;
-            }
-        }
+        public static string LWSAnimationStartConfigName => AiConfigs.AI_CONFIG_IMPORT_LWS_ANIM_START;
 
         /// <summary>
         /// Constructs a new LWSAnimationStartConfig.
@@ -1815,13 +1450,7 @@ namespace Assimp.Configs
         /// <summary>
         /// Gets the string name used by LWSAnimationEndConfig.
         /// </summary>
-        public static String LWSAnimationEndConfigName
-        {
-            get
-            {
-                return AiConfigs.AI_CONFIG_IMPORT_LWS_ANIM_END;
-            }
-        }
+        public static string LWSAnimationEndConfigName => AiConfigs.AI_CONFIG_IMPORT_LWS_ANIM_END;
 
         /// <summary>
         /// Constructs a new LWSAnimationEndConfig.
@@ -1843,13 +1472,7 @@ namespace Assimp.Configs
         /// <summary>
         /// Gets the string name used by IRRAnimationFrameRateConfig.
         /// </summary>
-        public static String IRRAnimationFrameRateConfigName
-        {
-            get
-            {
-                return AiConfigs.AI_CONFIG_IMPORT_IRR_ANIM_FPS;
-            }
-        }
+        public static string IRRAnimationFrameRateConfigName => AiConfigs.AI_CONFIG_IMPORT_IRR_ANIM_FPS;
 
         /// <summary>
         /// Constructs a new IRRAnimationFramerateConfig.
@@ -1870,19 +1493,13 @@ namespace Assimp.Configs
         /// <summary>
         /// Gets the string name used by OgreMaterialFileConfig.
         /// </summary>
-        public static String OgreMaterialFileConfigName
-        {
-            get
-            {
-                return AiConfigs.AI_CONFIG_IMPORT_OGRE_MATERIAL_FILE;
-            }
-        }
+        public static string OgreMaterialFileConfigName => AiConfigs.AI_CONFIG_IMPORT_OGRE_MATERIAL_FILE;
 
         /// <summary>
         /// Constructs a new OgreMaterialFileConfig.
         /// </summary>
         /// <param name="materialFileName">Material file name to load.</param>
-        public OgreMaterialFileConfig(String materialFileName)
+        public OgreMaterialFileConfig(string materialFileName)
             : base(OgreMaterialFileConfigName, materialFileName, "Scene.Material") { }
     }
 
@@ -1905,13 +1522,7 @@ namespace Assimp.Configs
         /// <summary>
         /// Gets the string name used by OgreTextureTypeFromFilenameConfig.
         /// </summary>
-        public static String OgreTextureTypeFromFilenameConfigName
-        {
-            get
-            {
-                return AiConfigs.AI_CONFIG_IMPORT_OGRE_TEXTURETYPE_FROM_FILENAME;
-            }
-        }
+        public static string OgreTextureTypeFromFilenameConfigName => AiConfigs.AI_CONFIG_IMPORT_OGRE_TEXTURETYPE_FROM_FILENAME;
 
         /// <summary>
         /// Constructs a new OgreTextureTypeFromFilenameConfig.
@@ -1930,13 +1541,7 @@ namespace Assimp.Configs
         /// <summary>
         /// Gets the string name used by IFCSkipSpaceRepresentationsConfig.
         /// </summary>
-        public static String IFCSkipSpaceRepresentationsConfigName
-        {
-            get
-            {
-                return AiConfigs.AI_CONFIG_IMPORT_IFC_SKIP_SPACE_REPRESENTATIONS;
-            }
-        }
+        public static string IFCSkipSpaceRepresentationsConfigName => AiConfigs.AI_CONFIG_IMPORT_IFC_SKIP_SPACE_REPRESENTATIONS;
 
         /// <summary>
         /// Constructs a new IFCSkipSpaceRepresentationsConfig.
@@ -1958,13 +1563,7 @@ namespace Assimp.Configs
         /// <summary>
         /// Gets the string name used by IFCUseCustomTriangulationConfig.
         /// </summary>
-        public static String IFCUseCustomTriangulationConfigName
-        {
-            get
-            {
-                return AiConfigs.AI_CONFIG_IMPORT_IFC_CUSTOM_TRIANGULATION;
-            }
-        }
+        public static string IFCUseCustomTriangulationConfigName => AiConfigs.AI_CONFIG_IMPORT_IFC_CUSTOM_TRIANGULATION;
 
         /// <summary>
         /// Constructs a new IFCUseCustomTriangulationConfig.
@@ -1982,13 +1581,7 @@ namespace Assimp.Configs
         /// <summary>
         /// Gets the string name used by IFCSmoothingAngleConfig.
         /// </summary>
-        public static String IFCSmoothingAngleConfigName
-        {
-            get
-            {
-                return AiConfigs.AI_CONFIG_IMPORT_IFC_SMOOTHING_ANGLE;
-            }
-        }
+        public static string IFCSmoothingAngleConfigName => AiConfigs.AI_CONFIG_IMPORT_IFC_SMOOTHING_ANGLE;
 
         /// <summary>
         /// Constructs a new IFCSmoothingAngleConfig.
@@ -2006,13 +1599,7 @@ namespace Assimp.Configs
         /// <summary>
         /// Gets the string name used by IFCCylindricalTessellationConfig.
         /// </summary>
-        public static String IFCCylindricalTessellationConfigName
-        {
-            get
-            {
-                return AiConfigs.AI_CONFIG_IMPORT_IFC_CYLINDRICAL_TESSELLATION;
-            }
-        }
+        public static string IFCCylindricalTessellationConfigName => AiConfigs.AI_CONFIG_IMPORT_IFC_CYLINDRICAL_TESSELLATION;
 
         /// <summary>
         /// Constructs a new IFCCylindricalTessellationConfig.
@@ -2030,13 +1617,7 @@ namespace Assimp.Configs
         /// <summary>
         /// Gets the string name used by ColladaIgnoreUpDirectionConfig.
         /// </summary>
-        public static String ColladaIgnoreUpDirectionConfigName
-        {
-            get
-            {
-                return AiConfigs.AI_CONFIG_IMPORT_COLLADA_IGNORE_UP_DIRECTION;
-            }
-        }
+        public static string ColladaIgnoreUpDirectionConfigName => AiConfigs.AI_CONFIG_IMPORT_COLLADA_IGNORE_UP_DIRECTION;
 
         /// <summary>
         /// Constructs a new ColladaIgnoreUpDirectionConfig.
@@ -2056,13 +1637,7 @@ namespace Assimp.Configs
         /// <summary>
         /// Gets the string name used by ColladaUseColladaNamesConfig.
         /// </summary>
-        public static String ColladaUseColladaNamesConfigName
-        {
-            get
-            {
-                return AiConfigs.AI_CONFIG_IMPORT_COLLADA_USE_COLLADA_NAMES;
-            }
-        }
+        public static string ColladaUseColladaNamesConfigName => AiConfigs.AI_CONFIG_IMPORT_COLLADA_USE_COLLADA_NAMES;
 
         /// <summary>
         /// Constructs a new ColladaUseColladaNamesConfig.
@@ -2080,13 +1655,7 @@ namespace Assimp.Configs
         /// <summary>
         /// Gets the string name used by FBXImportAllGeometryLayersConfig.
         /// </summary>
-        public static String FBXImportAllGeometryLayersConfigName
-        {
-            get
-            {
-                return AiConfigs.AI_CONFIG_IMPORT_FBX_READ_ALL_GEOMETRY_LAYERS;
-            }
-        }
+        public static string FBXImportAllGeometryLayersConfigName => AiConfigs.AI_CONFIG_IMPORT_FBX_READ_ALL_GEOMETRY_LAYERS;
 
         /// <summary>
         /// Constructs a new FBXImportAllGeometryLayersConfig.
@@ -2105,13 +1674,7 @@ namespace Assimp.Configs
         /// <summary>
         /// Gets the string name used by FBXImportAllMaterialsConfig.
         /// </summary>
-        public static String FBXImportAllMaterialsConfigName
-        {
-            get
-            {
-                return AiConfigs.AI_CONFIG_IMPORT_FBX_READ_ALL_MATERIALS;
-            }
-        }
+        public static string FBXImportAllMaterialsConfigName => AiConfigs.AI_CONFIG_IMPORT_FBX_READ_ALL_MATERIALS;
 
         /// <summary>
         /// Constructs a new FBXImportAllMaterialsConfig.
@@ -2129,13 +1692,7 @@ namespace Assimp.Configs
         /// <summary>
         /// Gets the string name used by FBXImportMaterialsConfig.
         /// </summary>
-        public static String FBXImportMaterialsConfigName
-        {
-            get
-            {
-                return AiConfigs.AI_CONFIG_IMPORT_FBX_READ_MATERIALS;
-            }
-        }
+        public static string FBXImportMaterialsConfigName => AiConfigs.AI_CONFIG_IMPORT_FBX_READ_MATERIALS;
 
         /// <summary>
         /// Constructs a new FBXImportMaterialsConfig.
@@ -2154,13 +1711,7 @@ namespace Assimp.Configs
         /// <summary>
         /// Gets the string name used by FBXImportEmbeddedTexturesConfig.
         /// </summary>
-        public static String FBXImportEmbeddedTexturesConfigName
-        {
-            get
-            {
-                return AiConfigs.AI_CONFIG_IMPORT_FBX_READ_TEXTURES;
-            }
-        }
+        public static string FBXImportEmbeddedTexturesConfigName => AiConfigs.AI_CONFIG_IMPORT_FBX_READ_TEXTURES;
 
         /// <summary>
         /// Constructs a new FBXImportEmbeddedTexturesConfig.
@@ -2178,13 +1729,7 @@ namespace Assimp.Configs
         /// <summary>
         /// Gets the string name used by FBXImportSearchEmbeddedTexturesConfig.
         /// </summary>
-        public static String FBXImportEmbeddedTexturesLegacyNamingConfigName
-        {
-            get
-            {
-                return AiConfigs.AI_CONFIG_IMPORT_FBX_EMBEDDED_TEXTURES_LEGACY_NAMING;
-            }
-        }
+        public static string FBXImportEmbeddedTexturesLegacyNamingConfigName => AiConfigs.AI_CONFIG_IMPORT_FBX_EMBEDDED_TEXTURES_LEGACY_NAMING;
 
         /// <summary>
         /// Constructs a new FBXImportSearchEmbeddedTexturesConfig.
@@ -2202,13 +1747,7 @@ namespace Assimp.Configs
         /// <summary>
         /// Gets the string name used by FBXImportCamerasConfig.
         /// </summary>
-        public static String FBXImportCamerasConfigName
-        {
-            get
-            {
-                return AiConfigs.AI_CONFIG_IMPORT_FBX_READ_CAMERAS;
-            }
-        }
+        public static string FBXImportCamerasConfigName => AiConfigs.AI_CONFIG_IMPORT_FBX_READ_CAMERAS;
 
         /// <summary>
         /// Constructs a new FBXImportCamerasConfig.
@@ -2226,13 +1765,7 @@ namespace Assimp.Configs
         /// <summary>
         /// Gets the string name used by FBXImportLightsConfig.
         /// </summary>
-        public static String FBXImportLightsConfigName
-        {
-            get
-            {
-                return AiConfigs.AI_CONFIG_IMPORT_FBX_READ_LIGHTS;
-            }
-        }
+        public static string FBXImportLightsConfigName => AiConfigs.AI_CONFIG_IMPORT_FBX_READ_LIGHTS;
 
         /// <summary>
         /// Constructs a new FBXImportLightsConfig.
@@ -2250,13 +1783,7 @@ namespace Assimp.Configs
         /// <summary>
         /// Gets the string name used by FBXImportAnimationsConfig.
         /// </summary>
-        public static String FBXImportAnimationsConfigName
-        {
-            get
-            {
-                return AiConfigs.AI_CONFIG_IMPORT_FBX_READ_ANIMATIONS;
-            }
-        }
+        public static string FBXImportAnimationsConfigName => AiConfigs.AI_CONFIG_IMPORT_FBX_READ_ANIMATIONS;
 
         /// <summary>
         /// Constructs a new FBXImportAnimationsConfig.
@@ -2276,13 +1803,7 @@ namespace Assimp.Configs
         /// <summary>
         /// Gets the string name used by FBXStrictModeConfig.
         /// </summary>
-        public static String FBXStrictModeConfigName
-        {
-            get
-            {
-                return AiConfigs.AI_CONFIG_IMPORT_FBX_STRICT_MODE;
-            }
-        }
+        public static string FBXStrictModeConfigName => AiConfigs.AI_CONFIG_IMPORT_FBX_STRICT_MODE;
 
         /// <summary>
         /// Constructs a new FBXStrictModeConfig.
@@ -2301,13 +1822,7 @@ namespace Assimp.Configs
         /// <summary>
         /// Gets the string name used by FBXPreservePivotsConfig.
         /// </summary>
-        public static String FBXPreservePivotsConfigName
-        {
-            get
-            {
-                return AiConfigs.AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS;
-            }
-        }
+        public static string FBXPreservePivotsConfigName => AiConfigs.AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS;
 
         /// <summary>
         /// Constructs a new FBXPreservePivotsConfig.
@@ -2326,13 +1841,7 @@ namespace Assimp.Configs
         /// <summary>
         /// Gets the string name used by FBXOptimizeEmptyAnimationCurvesConfig.
         /// </summary>
-        public static String FBXOptimizeEmptyAnimationCurvesConfigName
-        {
-            get
-            {
-                return AiConfigs.AI_CONFIG_IMPORT_FBX_OPTIMIZE_EMPTY_ANIMATION_CURVES;
-            }
-        }
+        public static string FBXOptimizeEmptyAnimationCurvesConfigName => AiConfigs.AI_CONFIG_IMPORT_FBX_OPTIMIZE_EMPTY_ANIMATION_CURVES;
 
         /// <summary>
         /// Constructs a new FBXOptimizeEmptyAnimationCurvesConfig.
@@ -2350,13 +1859,7 @@ namespace Assimp.Configs
         /// <summary>
         /// Gets the string name used by FBXConvertToMetersConfig.
         /// </summary>
-        public static String FBXConvertToMetersConfigName
-        {
-            get
-            {
-                return AiConfigs.AI_CONFIG_FBX_CONVERT_TO_M;
-            }
-        }
+        public static string FBXConvertToMetersConfigName => AiConfigs.AI_CONFIG_FBX_CONVERT_TO_M;
 
         /// <summary>
         /// Constructs a new FBXConvertToMetersConfig.
@@ -2374,13 +1877,7 @@ namespace Assimp.Configs
         /// <summary>
         /// Gets the string name used by SmdLoadAnimationListConfig.
         /// </summary>
-        public static String SmdLoadAnimationListConfigName
-        {
-            get
-            {
-                return AiConfigs.AI_CONFIG_IMPORT_SMD_LOAD_ANIMATION_LIST;
-            }
-        }
+        public static string SmdLoadAnimationListConfigName => AiConfigs.AI_CONFIG_IMPORT_SMD_LOAD_ANIMATION_LIST;
 
         /// <summary>
         /// Constructs a new SmdLoadAnimationListConfig.
@@ -2399,13 +1896,7 @@ namespace Assimp.Configs
         /// <summary>
         /// Gets the string name used by RemoveEmptyBonesConfig.
         /// </summary>
-        public static String RemoveEmptyBonesConfigName
-        {
-            get
-            {
-                return AiConfigs.AI_CONFIG_IMPORT_REMOVE_EMPTY_BONES;
-            }
-        }
+        public static string RemoveEmptyBonesConfigName => AiConfigs.AI_CONFIG_IMPORT_REMOVE_EMPTY_BONES;
 
         /// <summary>
         /// Constructs a new RemoveEmptyBonesConfig.
@@ -2427,13 +1918,7 @@ namespace Assimp.Configs
         /// <summary>
         /// Gets the string name used by XFileUseDoublesConfig.
         /// </summary>
-        public static String XFileUseDoublesConfigName
-        {
-            get
-            {
-                return AiConfigs.AI_CONFIG_EXPORT_XFILE_64BIT;
-            }
-        }
+        public static string XFileUseDoublesConfigName => AiConfigs.AI_CONFIG_EXPORT_XFILE_64BIT;
 
         /// <summary>
         /// Constructs a new XFileUseDoublesConfig.
@@ -2452,13 +1937,7 @@ namespace Assimp.Configs
         /// <summary>
         /// Gets the string name used by ExportPointCloudsConfig.
         /// </summary>
-        public static String ExportPointCloudsConfigName
-        {
-            get
-            {
-                return AiConfigs.AI_CONFIG_EXPORT_POINT_CLOUDS;
-            }
-        }
+        public static string ExportPointCloudsConfigName => AiConfigs.AI_CONFIG_EXPORT_POINT_CLOUDS;
 
         /// <summary>
         /// Constructs a new ExportPointCloudConfig.

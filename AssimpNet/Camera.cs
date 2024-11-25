@@ -35,7 +35,7 @@ namespace Assimp
     /// </summary>
     public sealed class Camera : IMarshalable<Camera, AiCamera>
     {
-        private String m_name;
+        private string m_name;
         private Vector3 m_position;
         private Vector3 m_up;
         private Vector3 m_direction;
@@ -49,16 +49,10 @@ namespace Assimp
         /// scenegraph with the same name. This node specifies the position of the
         /// camera in the scene hierarchy and can be animated.
         /// </summary>
-        public String Name
+        public string Name
         {
-            get
-            {
-                return m_name;
-            }
-            set
-            {
-                m_name = value;
-            }
+            get => m_name;
+            set => m_name = value;
         }
 
         /// <summary>
@@ -67,14 +61,8 @@ namespace Assimp
         /// </summary>
         public Vector3 Position
         {
-            get
-            {
-                return m_position;
-            }
-            set
-            {
-                m_position = value;
-            }
+            get => m_position;
+            set => m_position = value;
         }
 
         /// <summary>
@@ -84,14 +72,8 @@ namespace Assimp
         /// </summary>
         public Vector3 Up
         {
-            get
-            {
-                return m_up;
-            }
-            set
-            {
-                m_up = value;
-            }
+            get => m_up;
+            set => m_up = value;
         }
 
         /// <summary>
@@ -100,14 +82,8 @@ namespace Assimp
         /// </summary>
         public Vector3 Direction
         {
-            get
-            {
-                return m_direction;
-            }
-            set
-            {
-                m_direction = value;
-            }
+            get => m_direction;
+            set => m_direction = value;
         }
 
         /// <summary>
@@ -117,14 +93,8 @@ namespace Assimp
         /// </summary>
         public float FieldOfview
         {
-            get
-            {
-                return m_fieldOfView;
-            }
-            set
-            {
-                m_fieldOfView = value;
-            }
+            get => m_fieldOfView;
+            set => m_fieldOfView = value;
         }
 
         /// <summary>
@@ -133,14 +103,8 @@ namespace Assimp
         /// </summary>
         public float ClipPlaneNear
         {
-            get
-            {
-                return m_clipPlaneNear;
-            }
-            set
-            {
-                m_clipPlaneNear = value;
-            }
+            get => m_clipPlaneNear;
+            set => m_clipPlaneNear = value;
         }
 
         /// <summary>
@@ -151,14 +115,8 @@ namespace Assimp
         /// </summary>
         public float ClipPlaneFar
         {
-            get
-            {
-                return m_clipPlaneFar;
-            }
-            set
-            {
-                m_clipPlaneFar = value;
-            }
+            get => m_clipPlaneFar;
+            set => m_clipPlaneFar = value;
         }
 
         /// <summary>
@@ -168,14 +126,8 @@ namespace Assimp
         /// </summary>
         public float AspectRatio
         {
-            get
-            {
-                return m_aspectRatio;
-            }
-            set
-            {
-                m_aspectRatio = value;
-            }
+            get => m_aspectRatio;
+            set => m_aspectRatio = value;
         }
 
         /// <summary>
@@ -221,7 +173,7 @@ namespace Assimp
         /// </summary>
         public Camera()
         {
-            m_name = String.Empty;
+            m_name = string.Empty;
         }
 
         #region IMarshalable Implementation
@@ -229,7 +181,7 @@ namespace Assimp
         /// <summary>
         /// Gets if the native value type is blittable (that is, does not require marshaling by the runtime, e.g. has MarshalAs attributes).
         /// </summary>
-        bool IMarshalable<Camera, AiCamera>.IsNativeBlittable { get { return true; } }
+        bool IMarshalable<Camera, AiCamera>.IsNativeBlittable => true;
 
         /// <summary>
         /// Writes the managed data to the native value.

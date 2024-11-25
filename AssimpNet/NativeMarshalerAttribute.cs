@@ -21,7 +21,6 @@
 */
 
 using System;
-using System.Diagnostics;
 using Assimp.Unmanaged;
 
 namespace Assimp
@@ -37,13 +36,7 @@ namespace Assimp
         /// <summary>
         /// Gets the associated marshaler.
         /// </summary>
-        public INativeCustomMarshaler Marshaler
-        {
-            get
-            {
-                return m_marshaler;
-            }
-        }
+        public INativeCustomMarshaler Marshaler => m_marshaler;
 
         /// <summary>
         /// Constructs a new instance of the <see cref="NativeCustomMarshalerAttribute"/> class.
@@ -57,7 +50,7 @@ namespace Assimp
                 throw new NullReferenceException("type");
 
             if (!PlatformHelper.IsAssignable(typeof(INativeCustomMarshaler), type))
-                throw new ArgumentException(String.Format("{0} does not implement INativeCustomMarshaler.", type.FullName));
+                throw new ArgumentException($"{type.FullName} does not implement INativeCustomMarshaler.");
 
             m_marshaler = Activator.CreateInstance(type) as INativeCustomMarshaler;
         }

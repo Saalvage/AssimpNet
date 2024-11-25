@@ -85,13 +85,7 @@ namespace Assimp
         /// <summary>
         /// Gets the identity matrix.
         /// </summary>
-        public static Matrix3x3 Identity
-        {
-            get
-            {
-                return _identity;
-            }
-        }
+        public static Matrix3x3 Identity => _identity;
 
         /// <summary>
         /// Gets if this matrix is an identity matrix.
@@ -724,7 +718,7 @@ namespace Assimp
         /// <returns>
         ///   <c>true</c> if the specified <see cref="System.Object"/> is equal to this instance; otherwise, <c>false</c>.
         /// </returns>
-        public override bool Equals(Object obj)
+        public override bool Equals(object obj)
         {
             if(obj is Matrix3x3)
             {
@@ -746,18 +740,18 @@ namespace Assimp
         }
 
         /// <summary>
-        /// Returns a <see cref="System.String"/> that represents this instance.
+        /// Returns a <see cref="string"/> that represents this instance.
         /// </summary>
         /// <returns>
-        /// A <see cref="System.String"/> that represents this instance.
+        /// A <see cref="string"/> that represents this instance.
         /// </returns>
-        public override String ToString()
+        public override string ToString()
         {
             CultureInfo info = CultureInfo.CurrentCulture;
-            Object[] args = new object[] { A1.ToString(info), A2.ToString(info), A3.ToString(info),
+            object[] args = new object[] { A1.ToString(info), A2.ToString(info), A3.ToString(info),
 				B1.ToString(info), B2.ToString(info), B3.ToString(info),
 				C1.ToString(info), C2.ToString(info), C3.ToString(info)};
-            return String.Format(info, "{{[A1:{0} A2:{1} A3:{2}] [B1:{3} B2:{4} B3:{5}] [C1:{6} C2:{7} C3:{8}]}}", args);
+            return string.Format(info, "{{[A1:{0} A2:{1} A3:{2}] [B1:{3} B2:{4} B3:{5}] [C1:{6} C2:{7} C3:{8}]}}", args);
         }
     }
 }

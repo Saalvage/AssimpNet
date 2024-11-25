@@ -37,7 +37,7 @@ namespace Assimp
     /// </summary>
     public sealed class Light : IMarshalable<Light, AiLight>
     {
-        private String m_name;
+        private string m_name;
         private LightSourceType m_lightType;
         private float m_angleInnerCone;
         private float m_angleOuterCone;
@@ -55,16 +55,10 @@ namespace Assimp
         /// <summary>
         /// Gets or sets the name of the light source. This corresponds to a node present in the scenegraph.
         /// </summary>
-        public String Name
+        public string Name
         {
-            get
-            {
-                return m_name;
-            }
-            set
-            {
-                m_name = value;
-            }
+            get => m_name;
+            set => m_name = value;
         }
 
         /// <summary>
@@ -72,14 +66,8 @@ namespace Assimp
         /// </summary>
         public LightSourceType LightType
         {
-            get
-            {
-                return m_lightType;
-            }
-            set
-            {
-                m_lightType = value;
-            }
+            get => m_lightType;
+            set => m_lightType = value;
         }
 
         /// <summary>
@@ -89,14 +77,8 @@ namespace Assimp
         /// </summary>
         public float AngleInnerCone
         {
-            get
-            {
-                return m_angleInnerCone;
-            }
-            set
-            {
-                m_angleInnerCone = value;
-            }
+            get => m_angleInnerCone;
+            set => m_angleInnerCone = value;
         }
 
         /// <summary>
@@ -106,14 +88,8 @@ namespace Assimp
         /// </summary>
         public float AngleOuterCone
         {
-            get
-            {
-                return m_angleOuterCone;
-            }
-            set
-            {
-                m_angleOuterCone = value;
-            }
+            get => m_angleOuterCone;
+            set => m_angleOuterCone = value;
         }
 
         /// <summary>
@@ -123,14 +99,8 @@ namespace Assimp
         /// </summary>
         public float AttenuationConstant
         {
-            get
-            {
-                return m_attConstant;
-            }
-            set
-            {
-                m_attConstant = value;
-            }
+            get => m_attConstant;
+            set => m_attConstant = value;
         }
 
         /// <summary>
@@ -140,14 +110,8 @@ namespace Assimp
         /// </summary>
         public float AttenuationLinear
         {
-            get
-            {
-                return m_attLinear;
-            }
-            set
-            {
-                m_attLinear = value;
-            }
+            get => m_attLinear;
+            set => m_attLinear = value;
         }
 
         /// <summary>
@@ -157,14 +121,8 @@ namespace Assimp
         /// </summary>
         public float AttenuationQuadratic
         {
-            get
-            {
-                return m_attQuadratic;
-            }
-            set
-            {
-                m_attQuadratic = value;
-            }
+            get => m_attQuadratic;
+            set => m_attQuadratic = value;
         }
 
         /// <summary>
@@ -174,14 +132,8 @@ namespace Assimp
         /// </summary>
         public Vector3 Position
         {
-            get
-            {
-                return m_position;
-            }
-            set
-            {
-                m_position = value;
-            }
+            get => m_position;
+            set => m_position = value;
         }
 
         /// <summary>
@@ -190,14 +142,8 @@ namespace Assimp
         /// </summary>
         public Vector3 Direction
         {
-            get
-            {
-                return m_direction;
-            }
-            set
-            {
-                m_direction = value;
-            }
+            get => m_direction;
+            set => m_direction = value;
         }
 
         /// <summary>
@@ -206,14 +152,8 @@ namespace Assimp
         /// </summary>
         public Vector3 Up
         {
-            get
-            {
-                return m_up;
-            }
-            set
-            {
-                m_up = value;
-            }
+            get => m_up;
+            set => m_up = value;
         }
 
         /// <summary>
@@ -222,14 +162,8 @@ namespace Assimp
         /// </summary>
         public Vector3 ColorDiffuse
         {
-            get
-            {
-                return m_diffuse;
-            }
-            set
-            {
-                m_diffuse = value;
-            }
+            get => m_diffuse;
+            set => m_diffuse = value;
         }
 
         /// <summary>
@@ -238,14 +172,8 @@ namespace Assimp
         /// </summary>
         public Vector3 ColorSpecular
         {
-            get
-            {
-                return m_specular;
-            }
-            set
-            {
-                m_specular = value;
-            }
+            get => m_specular;
+            set => m_specular = value;
         }
 
         /// <summary>
@@ -254,14 +182,8 @@ namespace Assimp
         /// </summary>
         public Vector3 ColorAmbient
         {
-            get
-            {
-                return m_ambient;
-            }
-            set
-            {
-                m_ambient = value;
-            }
+            get => m_ambient;
+            set => m_ambient = value;
         }
 
         /// <summary>
@@ -269,14 +191,8 @@ namespace Assimp
         /// </summary>
         public Vector2 AreaSize
         {
-            get
-            {
-                return m_areaSize;
-            }
-            set
-            {
-                m_areaSize = value;
-            }
+            get => m_areaSize;
+            set => m_areaSize = value;
         }
 
         /// <summary>
@@ -298,7 +214,7 @@ namespace Assimp
         /// <summary>
         /// Gets if the native value type is blittable (that is, does not require marshaling by the runtime, e.g. has MarshalAs attributes).
         /// </summary>
-        bool IMarshalable<Light, AiLight>.IsNativeBlittable { get { return true; } }
+        bool IMarshalable<Light, AiLight>.IsNativeBlittable => true;
 
         /// <summary>
         /// Writes the managed data to the native value.

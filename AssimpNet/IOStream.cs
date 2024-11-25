@@ -41,42 +41,24 @@ namespace Assimp
     private AiFileFlushProc m_flushProc;
     private IntPtr m_filePtr;
     private bool m_isDiposed;
-    private String m_pathToFile;
+    private string m_pathToFile;
     private FileIOMode m_fileMode;
     private byte[] m_byteBuffer;
 
     /// <summary>
     /// Gets whether or not this IOStream has been disposed.
     /// </summary>
-    public bool IsDisposed
-    {
-      get
-      {
-        return m_isDiposed;
-      }
-    }
+    public bool IsDisposed => m_isDiposed;
 
     /// <summary>
     /// Gets the original path to file given by Assimp.
     /// </summary>
-    public String PathToFile
-    {
-      get
-      {
-        return m_pathToFile;
-      }
-    }
+    public string PathToFile => m_pathToFile;
 
     /// <summary>
     /// Gets the original desired file access mode.
     /// </summary>
-    public FileIOMode FileMode
-    {
-      get
-      {
-        return m_fileMode;
-      }
-    }
+    public FileIOMode FileMode => m_fileMode;
 
     /// <summary>
     /// Gets whether the stream is in fact valid - that is, the input/output has been
@@ -87,20 +69,14 @@ namespace Assimp
       get;
     }
 
-    internal IntPtr AiFile
-    {
-      get
-      {
-        return m_filePtr;
-      }
-    }
+    internal IntPtr AiFile => m_filePtr;
 
     /// <summary>
     /// Constructs a new IOStream.
     /// </summary>
     /// <param name="pathToFile">Path to file given by Assimp</param>
     /// <param name="fileMode">Desired file access mode</param>
-    public IOStream(String pathToFile, FileIOMode fileMode) : this(pathToFile, fileMode, true) { }
+    public IOStream(string pathToFile, FileIOMode fileMode) : this(pathToFile, fileMode, true) { }
 
     /// <summary>
     /// Constructs a new IOStream.
@@ -109,7 +85,7 @@ namespace Assimp
     /// <param name="fileMode">Desired file access mode</param>
     /// <param name="initialize">True if initialize should be immediately called with the default callbacks. Set this to false
     /// if your subclass requires a different way to setup the function pointers.</param>
-    protected IOStream(String pathToFile, FileIOMode fileMode, bool initialize = true)
+    protected IOStream(string pathToFile, FileIOMode fileMode, bool initialize = true)
     {
       m_pathToFile = pathToFile;
       m_fileMode = fileMode;

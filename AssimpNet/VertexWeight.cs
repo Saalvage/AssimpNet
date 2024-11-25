@@ -20,7 +20,6 @@
 * THE SOFTWARE.
 */
 
-using System;
 using System.Globalization;
 using System.Runtime.InteropServices;
 
@@ -55,16 +54,16 @@ namespace Assimp
         }
 
         /// <summary>
-        /// Returns a <see cref="System.String"/> that represents this instance.
+        /// Returns a <see cref="string"/> that represents this instance.
         /// </summary>
         /// <returns>
-        /// A <see cref="System.String"/> that represents this instance.
+        /// A <see cref="string"/> that represents this instance.
         /// </returns>
         public override string ToString()
         {
             CultureInfo info = CultureInfo.CurrentCulture;
-            return String.Format(info, "{{VertexID:{0} Weight:{1}}}",
-                new Object[] { VertexID.ToString(info), Weight.ToString(info) });
+            return string.Format(info, "{{VertexID:{0} Weight:{1}}}",
+                new object[] { VertexID.ToString(info), Weight.ToString(info) });
         }
     }
 }

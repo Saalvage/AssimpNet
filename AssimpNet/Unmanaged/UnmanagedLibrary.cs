@@ -21,7 +21,6 @@
 */
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
 
@@ -34,11 +33,11 @@ namespace Assimp.Unmanaged
     /// </summary>
     public abstract class UnmanagedLibrary
     {
-        private static Object s_defaultLoadSync = new Object();
+        private static object s_defaultLoadSync = new object();
 
         private UnmanagedLibraryImplementation m_impl;
         private UnmanagedLibraryResolver m_resolver;
-        private String m_libraryPath = String.Empty;
+        private string m_libraryPath = string.Empty;
         private volatile bool m_checkNeedsLoading = true;       
 
         /// <summary>
@@ -54,47 +53,23 @@ namespace Assimp.Unmanaged
         /// <summary>
         /// Queries if the unmanaged library has been loaded or not.
         /// </summary>
-        public bool IsLibraryLoaded
-        {
-            get
-            {
-                return m_impl.IsLibraryLoaded;
-            }
-        }
+        public bool IsLibraryLoaded => m_impl.IsLibraryLoaded;
 
         /// <summary>
         /// Gets the default name of the unmanaged library DLL. This is dependent based on the platform extension and name prefix. Additional
         /// names can be set in the <see cref="UnmanagedLibraryResolver"/> (e.g. to load versioned DLLs)
         /// </summary>
-        public String DefaultLibraryName
-        {
-            get
-            {
-                return m_impl.DefaultLibraryName;
-            }
-        }
+        public string DefaultLibraryName => m_impl.DefaultLibraryName;
 
         /// <summary>
         /// Gets the path to the unmanaged library DLL that is currently loaded.
         /// </summary>
-        public String LibraryPath
-        {
-            get
-            {
-                return m_libraryPath;
-            }
-        }
+        public string LibraryPath => m_libraryPath;
 
         /// <summary>
         /// Gets the resolver used to find the unmanaged library DLL when loading.
         /// </summary>
-        public UnmanagedLibraryResolver Resolver
-        {
-            get
-            {
-                return m_resolver;
-            }
-        }
+        public UnmanagedLibraryResolver Resolver => m_resolver;
 
         /// <summary>
         /// Gets or sets whether an <see cref="AssimpException"/> is thrown if the unmanaged DLL fails to load for whatever reason. By
@@ -102,33 +77,21 @@ namespace Assimp.Unmanaged
         /// </summary>
         public bool ThrowOnLoadFailure
         {
-            get
-            {
-                return m_impl.ThrowOnLoadFailure;
-            }
-            set
-            {
-                m_impl.ThrowOnLoadFailure = value;
-            }
+            get => m_impl.ThrowOnLoadFailure;
+            set => m_impl.ThrowOnLoadFailure = value;
         }
 
         /// <summary>
         /// Queries if the OS is 64-bit, if false then it is 32-bit.
         /// </summary>
-        public static bool Is64Bit
-        {
-            get
-            {
-                return IntPtr.Size == 8;
-            }
-        }
+        public static bool Is64Bit => IntPtr.Size == 8;
 
         /// <summary>
         /// Constructs a new <see cref="UnmanagedLibrary"/>.
         /// </summary>
         /// <param name="defaultName">Default name (NOT path) of the unmanaged library.</param>
         /// <param name="unmanagedFunctionDelegateTypes">Delegate types to instantiate and load.</param>
-        protected UnmanagedLibrary(String defaultName, Type[] unmanagedFunctionDelegateTypes)
+        protected UnmanagedLibrary(string defaultName, Type[] unmanagedFunctionDelegateTypes)
         {
             CreateRuntimeImplementation(defaultName, unmanagedFunctionDelegateTypes);
         }
@@ -164,7 +127,7 @@ namespace Assimp.Unmanaged
         /// <returns>True if the library was found and successfully loaded.</returns>
         public bool LoadLibrary()
         {
-            String libPath = m_resolver.ResolveLibraryPath(DefaultLibraryName);
+            string libPath = m_resolver.ResolveLibraryPath(DefaultLibraryName);
             return LoadLibrary(libPath);
         }
 
@@ -174,7 +137,7 @@ namespace Assimp.Unmanaged
         /// <param name="lib32Path">Path to the 32-bit DLL</param>
         /// <param name="lib64Path">Path to the 64-bit DLL</param>
         /// <returns>True if the library was found and successfully loaded.</returns>
-        public bool LoadLibrary(String lib32Path, String lib64Path)
+        public bool LoadLibrary(string lib32Path, string lib64Path)
         {
             return LoadLibrary((Is64Bit) ? lib64Path : lib32Path);
         }
@@ -184,7 +147,7 @@ namespace Assimp.Unmanaged
         /// </summary>
         /// <param name="libPath">Path to the unmanaged DLL.</param>
         /// <returns>True if the library was found and successfully loaded.</returns>
-        public bool LoadLibrary(String libPath)
+        public bool LoadLibrary(string libPath)
         {
             if(IsLibraryLoaded)
             {
@@ -194,7 +157,7 @@ namespace Assimp.Unmanaged
             }
 
             //Automatically append extension if necessary
-            if(!String.IsNullOrEmpty(libPath) && !Path.HasExtension(libPath))
+            if(!string.IsNullOrEmpty(libPath) && !Path.HasExtension(libPath))
                 libPath = Path.ChangeExtension(libPath, m_impl.DllExtension);
 
             if(m_impl.LoadLibrary(libPath))
@@ -220,7 +183,7 @@ namespace Assimp.Unmanaged
                 OnLibraryFreed();
 
                 m_impl.FreeLibrary();
-                m_libraryPath = String.Empty;
+                m_libraryPath = string.Empty;
                 m_checkNeedsLoading = true;
 
                 return true;
@@ -235,7 +198,7 @@ namespace Assimp.Unmanaged
         /// <typeparam name="T">Type of delegate.</typeparam>
         /// <param name="funcName">Name of unmanaged function that is exported by the library.</param>
         /// <returns>The delegate, or null if not found.</returns>
-        public T GetFunction<T>(String funcName) where T : class
+        public T GetFunction<T>(string funcName) where T : class
         {
             return m_impl.GetFunction<T>(funcName);
         }
@@ -281,14 +244,14 @@ namespace Assimp.Unmanaged
                 evt(this, EventArgs.Empty);
         }
 
-        private void CreateRuntimeImplementation(String defaultLibName, Type[] unmanagedFunctionDelegateTypes)
+        private void CreateRuntimeImplementation(string defaultLibName, Type[] unmanagedFunctionDelegateTypes)
         {
             Platform platform = GetPlatform();
             m_resolver = new UnmanagedLibraryResolver(platform);
             m_impl = CreateRuntimeImplementationForPlatform(platform, defaultLibName, unmanagedFunctionDelegateTypes);
         }
 
-        private UnmanagedLibraryImplementation CreateRuntimeImplementationForPlatform(Platform platform, String defaultLibName, Type[] unmanagedFunctionDelegateTypes)
+        private UnmanagedLibraryImplementation CreateRuntimeImplementationForPlatform(Platform platform, string defaultLibName, Type[] unmanagedFunctionDelegateTypes)
         {
             switch(platform)
             {
@@ -303,7 +266,7 @@ namespace Assimp.Unmanaged
             throw new PlatformNotSupportedException();
         }
 
-        private UnmanagedLibraryImplementation CreateRuntimeImplementationForWindowsPlatform(String defaultLibName, Type[] unmanagedFunctionDelegateTypes)
+        private UnmanagedLibraryImplementation CreateRuntimeImplementationForWindowsPlatform(string defaultLibName, Type[] unmanagedFunctionDelegateTypes)
         {
             try
             {
@@ -336,12 +299,12 @@ namespace Assimp.Unmanaged
             );
         }
 
-        private UnmanagedLibraryImplementation CreateRuntimeImplementationForMacPlatform(String defaultLibName, Type[] unmanagedFunctionDelegateTypes)
+        private UnmanagedLibraryImplementation CreateRuntimeImplementationForMacPlatform(string defaultLibName, Type[] unmanagedFunctionDelegateTypes)
         {
             return new UnmanagedMacLibraryImplementation(defaultLibName, unmanagedFunctionDelegateTypes);
         }
 
-        private UnmanagedLibraryImplementation CreateRuntimeImplementationForLinuxPlatform(String defaultLibName, Type[] unmanagedFunctionDelegateTypes)
+        private UnmanagedLibraryImplementation CreateRuntimeImplementationForLinuxPlatform(string defaultLibName, Type[] unmanagedFunctionDelegateTypes)
         {
             try 
             {
@@ -378,7 +341,7 @@ namespace Assimp.Unmanaged
         private static class NativeMethods
         {
             [DllImport("kernel32.dll", CharSet = CharSet.Ansi, BestFitMapping = false, SetLastError = true, EntryPoint = "LoadLibrary")]
-            public static extern IntPtr WinNativeLoadLibrary(String fileName);
+            public static extern IntPtr WinNativeLoadLibrary(string fileName);
 
             [DllImport("api-ms-win-core-libraryloader-l2-1-0.dll", SetLastError = true, EntryPoint = "LoadPackagedLibrary")]
             public static extern IntPtr WinUwpLoadLibrary([MarshalAs(UnmanagedType.LPWStr)] string libraryName, int reserved = 0);

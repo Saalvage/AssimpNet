@@ -32,12 +32,12 @@ namespace Assimp.Unmanaged
     /// </summary>
     public sealed class AssimpLibrary : UnmanagedLibrary
     {
-        private static readonly Object s_sync = new Object();
+        private static readonly object s_sync = new object();
 
         /// <summary>
         /// Default name of the unmanaged library. Based on runtime implementation the prefix ("lib" on non-windows) and extension (.dll, .so, .dylib) will be appended automatically.
         /// </summary>
-        private const String DefaultLibName = "assimp";
+        private const string DefaultLibName = "assimp";
 
         private static AssimpLibrary s_instance;
 
@@ -64,15 +64,9 @@ namespace Assimp.Unmanaged
         /// Gets if the Assimp unmanaged library supports multithreading. If it was compiled for single threading only,
         /// then it will not utilize multiple threads during import.
         /// </summary>
-        public bool IsMultithreadingSupported
-        {
-            get
-            {
-                return !((GetCompileFlags() & CompileFlags.SingleThreaded) == CompileFlags.SingleThreaded);
-            }
-        }
+        public bool IsMultithreadingSupported => !((GetCompileFlags() & CompileFlags.SingleThreaded) == CompileFlags.SingleThreaded);
 
-        private AssimpLibrary(String defaultLibName, Type[] unmanagedFunctionDelegateTypes)
+        private AssimpLibrary(string defaultLibName, Type[] unmanagedFunctionDelegateTypes)
             : base(defaultLibName, unmanagedFunctionDelegateTypes) { }
 
         private static AssimpLibrary CreateInstance()
@@ -89,7 +83,7 @@ namespace Assimp.Unmanaged
         /// <param name="flags">Post process flags specifying what steps are to be run after the import.</param>
         /// <param name="propStore">Property store containing config name-values, may be null.</param>
         /// <returns>Pointer to the unmanaged data structure.</returns>
-        public IntPtr ImportFile(String file, PostProcessSteps flags, IntPtr propStore)
+        public IntPtr ImportFile(string file, PostProcessSteps flags, IntPtr propStore)
         {
             return ImportFile(file, flags, IntPtr.Zero, propStore);
         }
@@ -103,7 +97,7 @@ namespace Assimp.Unmanaged
         /// any associated file the loader needs to open, passing NULL uses the default implementation.</param>
         /// <param name="propStore">Property store containing config name-values, may be null.</param>
         /// <returns>Pointer to the unmanaged data structure.</returns>
-        public IntPtr ImportFile(String file, PostProcessSteps flags, IntPtr fileIO, IntPtr propStore)
+        public IntPtr ImportFile(string file, PostProcessSteps flags, IntPtr fileIO, IntPtr propStore)
         {
             LoadIfNotLoaded();
 
@@ -121,7 +115,7 @@ namespace Assimp.Unmanaged
         /// <param name="formatHint">A hint to Assimp to decide which importer to use to process the data</param>
         /// <param name="propStore">Property store containing the config name-values, may be null.</param>
         /// <returns>Pointer to the unmanaged data structure.</returns>
-        public IntPtr ImportFileFromStream(Stream stream, PostProcessSteps flags, String formatHint, IntPtr propStore)
+        public IntPtr ImportFileFromStream(Stream stream, PostProcessSteps flags, string formatHint, IntPtr propStore)
         {
             LoadIfNotLoaded();
 
@@ -212,11 +206,11 @@ namespace Assimp.Unmanaged
         /// <param name="formatId">Format id describing which format to export to.</param>
         /// <param name="preProcessing">Pre processing flags to operate on the scene during the export.</param>
         /// <returns>Exported binary blob, or null if there was an error.</returns>
-        public ExportDataBlob ExportSceneToBlob(IntPtr scene, String formatId, PostProcessSteps preProcessing)
+        public ExportDataBlob ExportSceneToBlob(IntPtr scene, string formatId, PostProcessSteps preProcessing)
         {
             LoadIfNotLoaded();
 
-            if(String.IsNullOrEmpty(formatId) || scene == IntPtr.Zero)
+            if(string.IsNullOrEmpty(formatId) || scene == IntPtr.Zero)
                 return null;
 
             Functions.aiExportSceneToBlob exportBlobFunc = GetFunction<Functions.aiExportSceneToBlob>(FunctionNames.aiExportSceneToBlob);
@@ -244,7 +238,7 @@ namespace Assimp.Unmanaged
         /// <param name="preProcessing">Pre processing flags - accepts any post processing step flag. In reality only a small subset are actually supported, e.g. to ensure the input
         /// conforms to the standard Assimp output format. Some may be redundant, such as triangulation, which some exporters may have to enforce due to the export format.</param>
         /// <returns>Return code specifying if the operation was a success.</returns>
-        public ReturnCode ExportScene(IntPtr scene, String formatId, String fileName, PostProcessSteps preProcessing)
+        public ReturnCode ExportScene(IntPtr scene, string formatId, string fileName, PostProcessSteps preProcessing)
         {
             return ExportScene(scene, formatId, fileName, IntPtr.Zero, preProcessing);
         }
@@ -261,11 +255,11 @@ namespace Assimp.Unmanaged
         /// <param name="preProcessing">Pre processing flags - accepts any post processing step flag. In reality only a small subset are actually supported, e.g. to ensure the input
         /// conforms to the standard Assimp output format. Some may be redundant, such as triangulation, which some exporters may have to enforce due to the export format.</param>
         /// <returns>Return code specifying if the operation was a success.</returns>
-        public ReturnCode ExportScene(IntPtr scene, String formatId, String fileName, IntPtr fileIO, PostProcessSteps preProcessing)
+        public ReturnCode ExportScene(IntPtr scene, string formatId, string fileName, IntPtr fileIO, PostProcessSteps preProcessing)
         {
             LoadIfNotLoaded();
 
-            if(String.IsNullOrEmpty(formatId) || scene == IntPtr.Zero)
+            if(string.IsNullOrEmpty(formatId) || scene == IntPtr.Zero)
                 return ReturnCode.Failure;
 
             Functions.aiExportSceneEx exportFunc = GetFunction<Functions.aiExportSceneEx>(FunctionNames.aiExportSceneEx);
@@ -399,11 +393,11 @@ namespace Assimp.Unmanaged
         /// <param name="propertyStore">Pointer to property store</param>
         /// <param name="name">Property name</param>
         /// <param name="value">Property value</param>
-        public void SetImportPropertyInteger(IntPtr propertyStore, String name, int value)
+        public void SetImportPropertyInteger(IntPtr propertyStore, string name, int value)
         {
             LoadIfNotLoaded();
 
-            if(propertyStore == IntPtr.Zero || String.IsNullOrEmpty(name))
+            if(propertyStore == IntPtr.Zero || string.IsNullOrEmpty(name))
                 return;
 
             Functions.aiSetImportPropertyInteger func = GetFunction<Functions.aiSetImportPropertyInteger>(FunctionNames.aiSetImportPropertyInteger);
@@ -417,11 +411,11 @@ namespace Assimp.Unmanaged
         /// <param name="propertyStore">Pointer to property store</param>
         /// <param name="name">Property name</param>
         /// <param name="value">Property value</param>
-        public void SetImportPropertyFloat(IntPtr propertyStore, String name, float value)
+        public void SetImportPropertyFloat(IntPtr propertyStore, string name, float value)
         {
             LoadIfNotLoaded();
 
-            if(propertyStore == IntPtr.Zero || String.IsNullOrEmpty(name))
+            if(propertyStore == IntPtr.Zero || string.IsNullOrEmpty(name))
                 return;
 
             Functions.aiSetImportPropertyFloat func = GetFunction<Functions.aiSetImportPropertyFloat>(FunctionNames.aiSetImportPropertyFloat);
@@ -435,11 +429,11 @@ namespace Assimp.Unmanaged
         /// <param name="propertyStore">Pointer to property store</param>
         /// <param name="name">Property name</param>
         /// <param name="value">Property value</param>
-        public void SetImportPropertyString(IntPtr propertyStore, String name, String value)
+        public void SetImportPropertyString(IntPtr propertyStore, string name, string value)
         {
             LoadIfNotLoaded();
 
-            if(propertyStore == IntPtr.Zero || String.IsNullOrEmpty(name))
+            if(propertyStore == IntPtr.Zero || string.IsNullOrEmpty(name))
                 return;
 
             Functions.aiSetImportPropertyString func = GetFunction<Functions.aiSetImportPropertyString>(FunctionNames.aiSetImportPropertyString);
@@ -455,11 +449,11 @@ namespace Assimp.Unmanaged
         /// <param name="propertyStore">Pointer to property store</param>
         /// <param name="name">Property name</param>
         /// <param name="value">Property value</param>
-        public void SetImportPropertyMatrix(IntPtr propertyStore, String name, Matrix4x4 value)
+        public void SetImportPropertyMatrix(IntPtr propertyStore, string name, Matrix4x4 value)
         {
             LoadIfNotLoaded();
 
-            if(propertyStore == IntPtr.Zero || String.IsNullOrEmpty(name))
+            if(propertyStore == IntPtr.Zero || string.IsNullOrEmpty(name))
                 return;
 
             Functions.aiSetImportPropertyMatrix func = GetFunction<Functions.aiSetImportPropertyMatrix>(FunctionNames.aiSetImportPropertyMatrix);
@@ -478,7 +472,7 @@ namespace Assimp.Unmanaged
         /// <param name="texType">Texture Type semantic, always zero for non-texture properties</param>
         /// <param name="texIndex">Texture index, always zero for non-texture properties</param>
         /// <returns>The color if it exists. If not, the default Vector4 value is returned.</returns>
-        public Vector4 GetMaterialColor(ref AiMaterial mat, String key, TextureType texType, uint texIndex)
+        public Vector4 GetMaterialColor(ref AiMaterial mat, string key, TextureType texType, uint texIndex)
         {
             LoadIfNotLoaded();
 
@@ -512,7 +506,7 @@ namespace Assimp.Unmanaged
         /// <param name="floatCount">The maximum number of floats to read. This may not accurately describe the data returned, as it may not exist or be smaller. If this value is less than
         /// the available floats, then only the requested number is returned (e.g. 1 or 2 out of a 4 float array).</param>
         /// <returns>The float array, if it exists</returns>
-        public float[] GetMaterialFloatArray(ref AiMaterial mat, String key, TextureType texType, uint texIndex, uint floatCount)
+        public float[] GetMaterialFloatArray(ref AiMaterial mat, string key, TextureType texType, uint texIndex, uint floatCount)
         {
             LoadIfNotLoaded();
 
@@ -550,7 +544,7 @@ namespace Assimp.Unmanaged
         /// <param name="intCount">The maximum number of integers to read. This may not accurately describe the data returned, as it may not exist or be smaller. If this value is less than
         /// the available integers, then only the requested number is returned (e.g. 1 or 2 out of a 4 float array).</param>
         /// <returns>The integer array, if it exists</returns>
-        public int[] GetMaterialIntegerArray(ref AiMaterial mat, String key, TextureType texType, uint texIndex, uint intCount)
+        public int[] GetMaterialIntegerArray(ref AiMaterial mat, string key, TextureType texType, uint texIndex, uint intCount)
         {
             LoadIfNotLoaded();
 
@@ -586,7 +580,7 @@ namespace Assimp.Unmanaged
         /// <param name="texType">Texture Type semantic, always zero for non-texture properties</param>
         /// <param name="texIndex">Texture index, always zero for non-texture properties</param>
         /// <returns>The material property, if found.</returns>
-        public AiMaterialProperty GetMaterialProperty(ref AiMaterial mat, String key, TextureType texType, uint texIndex)
+        public AiMaterialProperty GetMaterialProperty(ref AiMaterial mat, string key, TextureType texType, uint texIndex)
         {
             LoadIfNotLoaded();
 
@@ -609,7 +603,7 @@ namespace Assimp.Unmanaged
         /// <param name="texType">Texture Type semantic, always zero for non-texture properties</param>
         /// <param name="texIndex">Texture index, always zero for non-texture properties</param>
         /// <returns>The string, if it exists. If not, an empty string is returned.</returns>
-        public String GetMaterialString(ref AiMaterial mat, String key, TextureType texType, uint texIndex)
+        public string GetMaterialString(ref AiMaterial mat, string key, TextureType texType, uint texIndex)
         {
             LoadIfNotLoaded();
 
@@ -620,7 +614,7 @@ namespace Assimp.Unmanaged
             if(code == ReturnCode.Success)
                 return str.GetString();
 
-            return String.Empty;
+            return string.Empty;
         }
 
         /// <summary>
@@ -645,7 +639,7 @@ namespace Assimp.Unmanaged
         /// <param name="type">Texture type semantic</param>
         /// <param name="index">Texture index</param>
         /// <returns>The texture filepath, if it exists. If not an empty string is returned.</returns>
-        public String GetMaterialTextureFilePath(ref AiMaterial mat, TextureType type, uint index)
+        public string GetMaterialTextureFilePath(ref AiMaterial mat, TextureType type, uint index)
         {
             LoadIfNotLoaded();
 
@@ -666,7 +660,7 @@ namespace Assimp.Unmanaged
                 return str.GetString();
             }
 
-            return String.Empty;
+            return string.Empty;
         }
 
         /// <summary>
@@ -703,7 +697,7 @@ namespace Assimp.Unmanaged
         /// Gets the last error logged in Assimp.
         /// </summary>
         /// <returns>The last error message logged.</returns>
-        public String GetErrorString()
+        public string GetErrorString()
         {
             LoadIfNotLoaded();
 
@@ -712,7 +706,7 @@ namespace Assimp.Unmanaged
             IntPtr ptr = func();
 
             if(ptr == IntPtr.Zero)
-                return String.Empty;
+                return string.Empty;
 
             return Marshal.PtrToStringAnsi(ptr);
         }
@@ -722,7 +716,7 @@ namespace Assimp.Unmanaged
         /// </summary>
         /// <param name="extension">Model format extension, e.g. ".3ds"</param>
         /// <returns>True if the format is supported, false otherwise.</returns>
-        public bool IsExtensionSupported(String extension)
+        public bool IsExtensionSupported(string extension)
         {
             LoadIfNotLoaded();
 
@@ -735,7 +729,7 @@ namespace Assimp.Unmanaged
         /// Gets all the model format extensions that are currently supported by Assimp.
         /// </summary>
         /// <returns>Array of supported format extensions</returns>
-        public String[] GetExtensionList()
+        public string[] GetExtensionList()
         {
             LoadIfNotLoaded();
 
@@ -743,7 +737,7 @@ namespace Assimp.Unmanaged
 
             AiString aiString = new AiString();
             func(ref aiString);
-            return aiString.GetString().Split(new String[] { "*", ";*" }, StringSplitOptions.RemoveEmptyEntries);
+            return aiString.GetString().Split(new string[] { "*", ";*" }, StringSplitOptions.RemoveEmptyEntries);
         }
 
         /// <summary>
@@ -943,7 +937,7 @@ namespace Assimp.Unmanaged
         /// Gets the Assimp legal info.
         /// </summary>
         /// <returns>String containing Assimp legal info.</returns>
-        public String GetLegalString()
+        public string GetLegalString()
         {
             LoadIfNotLoaded();
 
@@ -952,7 +946,7 @@ namespace Assimp.Unmanaged
             IntPtr ptr = func();
 
             if(ptr == IntPtr.Zero)
-                return String.Empty;
+                return string.Empty;
 
             return Marshal.PtrToStringAnsi(ptr);
         }
@@ -1000,7 +994,7 @@ namespace Assimp.Unmanaged
         /// Returns the branchname of the Assimp runtime.
         /// </summary>
         /// <returns>The current branch name.</returns>
-        public String GetBranchName()
+        public string GetBranchName()
         {
             LoadIfNotLoaded();
 
@@ -1009,7 +1003,7 @@ namespace Assimp.Unmanaged
             IntPtr ptr = func();
 
             if(ptr == IntPtr.Zero)
-                return String.Empty;
+                return string.Empty;
 
             return Marshal.PtrToStringAnsi(ptr);
         }
@@ -1019,13 +1013,13 @@ namespace Assimp.Unmanaged
         /// version of Assimp that this wrapper is currently using.
         /// </summary>
         /// <returns>Unmanaged DLL version</returns>
-        public String GetVersion()
+        public string GetVersion()
         {
             uint major = GetVersionMajor();
             uint minor = GetVersionMinor();
             uint rev = GetVersionRevision();
 
-            return String.Format("{0}.{1}.{2}", major.ToString(), minor.ToString(), rev.ToString());
+            return $"{major.ToString()}.{minor.ToString()}.{rev.ToString()}";
         }
 
         /// <summary>
@@ -1058,7 +1052,7 @@ namespace Assimp.Unmanaged
         /// <param name="scene">Input asset.</param>
         /// <param name="filename">Texture path extracted from <see cref="GetMaterialString"/>.</param>
         /// <returns>An embedded texture, or nullptr.</returns>
-        public IntPtr GetEmbeddedTexture(IntPtr scene, String filename)
+        public IntPtr GetEmbeddedTexture(IntPtr scene, string filename)
         {
             LoadIfNotLoaded();
 
@@ -1080,99 +1074,99 @@ namespace Assimp.Unmanaged
 
             #region Import Function Names
 
-            public const String aiImportFile = "aiImportFile";
-            public const String aiImportFileEx = "aiImportFileEx";
-            public const String aiImportFileExWithProperties = "aiImportFileExWithProperties";
-            public const String aiImportFileFromMemory = "aiImportFileFromMemory";
-            public const String aiImportFileFromMemoryWithProperties = "aiImportFileFromMemoryWithProperties";
-            public const String aiReleaseImport = "aiReleaseImport";
-            public const String aiApplyPostProcessing = "aiApplyPostProcessing";
+            public const string aiImportFile = "aiImportFile";
+            public const string aiImportFileEx = "aiImportFileEx";
+            public const string aiImportFileExWithProperties = "aiImportFileExWithProperties";
+            public const string aiImportFileFromMemory = "aiImportFileFromMemory";
+            public const string aiImportFileFromMemoryWithProperties = "aiImportFileFromMemoryWithProperties";
+            public const string aiReleaseImport = "aiReleaseImport";
+            public const string aiApplyPostProcessing = "aiApplyPostProcessing";
 
             #endregion
 
             #region Export Function Names
 
-            public const String aiGetExportFormatCount = "aiGetExportFormatCount";
-            public const String aiGetExportFormatDescription = "aiGetExportFormatDescription";
-            public const String aiReleaseExportFormatDescription = "aiReleaseExportFormatDescription";
-            public const String aiExportSceneToBlob = "aiExportSceneToBlob";
-            public const String aiReleaseExportBlob = "aiReleaseExportBlob";
-            public const String aiExportScene = "aiExportScene";
-            public const String aiExportSceneEx = "aiExportSceneEx";
-            public const String aiCopyScene = "aiCopyScene";
+            public const string aiGetExportFormatCount = "aiGetExportFormatCount";
+            public const string aiGetExportFormatDescription = "aiGetExportFormatDescription";
+            public const string aiReleaseExportFormatDescription = "aiReleaseExportFormatDescription";
+            public const string aiExportSceneToBlob = "aiExportSceneToBlob";
+            public const string aiReleaseExportBlob = "aiReleaseExportBlob";
+            public const string aiExportScene = "aiExportScene";
+            public const string aiExportSceneEx = "aiExportSceneEx";
+            public const string aiCopyScene = "aiCopyScene";
 
             #endregion
 
             #region Logging Function Names
 
-            public const String aiAttachLogStream = "aiAttachLogStream";
-            public const String aiEnableVerboseLogging = "aiEnableVerboseLogging";
-            public const String aiDetachLogStream = "aiDetachLogStream";
-            public const String aiDetachAllLogStreams = "aiDetachAllLogStreams";
+            public const string aiAttachLogStream = "aiAttachLogStream";
+            public const string aiEnableVerboseLogging = "aiEnableVerboseLogging";
+            public const string aiDetachLogStream = "aiDetachLogStream";
+            public const string aiDetachAllLogStreams = "aiDetachAllLogStreams";
 
             #endregion
 
             #region Import Properties Function Names
 
-            public const String aiCreatePropertyStore = "aiCreatePropertyStore";
-            public const String aiReleasePropertyStore = "aiReleasePropertyStore";
-            public const String aiSetImportPropertyInteger = "aiSetImportPropertyInteger";
-            public const String aiSetImportPropertyFloat = "aiSetImportPropertyFloat";
-            public const String aiSetImportPropertyString = "aiSetImportPropertyString";
-            public const String aiSetImportPropertyMatrix = "aiSetImportPropertyMatrix";
+            public const string aiCreatePropertyStore = "aiCreatePropertyStore";
+            public const string aiReleasePropertyStore = "aiReleasePropertyStore";
+            public const string aiSetImportPropertyInteger = "aiSetImportPropertyInteger";
+            public const string aiSetImportPropertyFloat = "aiSetImportPropertyFloat";
+            public const string aiSetImportPropertyString = "aiSetImportPropertyString";
+            public const string aiSetImportPropertyMatrix = "aiSetImportPropertyMatrix";
 
             #endregion
 
             #region Material Getters Function Names
 
-            public const String aiGetMaterialColor = "aiGetMaterialColor";
-            public const String aiGetMaterialFloatArray = "aiGetMaterialFloatArray";
-            public const String aiGetMaterialIntegerArray = "aiGetMaterialIntegerArray";
-            public const String aiGetMaterialProperty = "aiGetMaterialProperty";
-            public const String aiGetMaterialString = "aiGetMaterialString";
-            public const String aiGetMaterialTextureCount = "aiGetMaterialTextureCount";
-            public const String aiGetMaterialTexture = "aiGetMaterialTexture";
+            public const string aiGetMaterialColor = "aiGetMaterialColor";
+            public const string aiGetMaterialFloatArray = "aiGetMaterialFloatArray";
+            public const string aiGetMaterialIntegerArray = "aiGetMaterialIntegerArray";
+            public const string aiGetMaterialProperty = "aiGetMaterialProperty";
+            public const string aiGetMaterialString = "aiGetMaterialString";
+            public const string aiGetMaterialTextureCount = "aiGetMaterialTextureCount";
+            public const string aiGetMaterialTexture = "aiGetMaterialTexture";
 
             #endregion
 
             #region Error and Info Function Names
 
-            public const String aiGetErrorString = "aiGetErrorString";
-            public const String aiIsExtensionSupported = "aiIsExtensionSupported";
-            public const String aiGetExtensionList = "aiGetExtensionList";
-            public const String aiGetImportFormatCount = "aiGetImportFormatCount";
-            public const String aiGetImportFormatDescription = "aiGetImportFormatDescription";
-            public const String aiGetMemoryRequirements = "aiGetMemoryRequirements";
+            public const string aiGetErrorString = "aiGetErrorString";
+            public const string aiIsExtensionSupported = "aiIsExtensionSupported";
+            public const string aiGetExtensionList = "aiGetExtensionList";
+            public const string aiGetImportFormatCount = "aiGetImportFormatCount";
+            public const string aiGetImportFormatDescription = "aiGetImportFormatDescription";
+            public const string aiGetMemoryRequirements = "aiGetMemoryRequirements";
 
             #endregion
 
             #region Math Function Names
 
-            public const String aiCreateQuaternionFromMatrix = "aiCreateQuaternionFromMatrix";
-            public const String aiDecomposeMatrix = "aiDecomposeMatrix";
-            public const String aiTransposeMatrix4 = "aiTransposeMatrix4";
-            public const String aiTransposeMatrix3 = "aiTransposeMatrix3";
-            public const String aiTransformVecByMatrix3 = "aiTransformVecByMatrix3";
-            public const String aiTransformVecByMatrix4 = "aiTransformVecByMatrix4";
-            public const String aiMultiplyMatrix4 = "aiMultiplyMatrix4";
-            public const String aiMultiplyMatrix3 = "aiMultiplyMatrix3";
-            public const String aiIdentityMatrix3 = "aiIdentityMatrix3";
-            public const String aiIdentityMatrix4 = "aiIdentityMatrix4";
+            public const string aiCreateQuaternionFromMatrix = "aiCreateQuaternionFromMatrix";
+            public const string aiDecomposeMatrix = "aiDecomposeMatrix";
+            public const string aiTransposeMatrix4 = "aiTransposeMatrix4";
+            public const string aiTransposeMatrix3 = "aiTransposeMatrix3";
+            public const string aiTransformVecByMatrix3 = "aiTransformVecByMatrix3";
+            public const string aiTransformVecByMatrix4 = "aiTransformVecByMatrix4";
+            public const string aiMultiplyMatrix4 = "aiMultiplyMatrix4";
+            public const string aiMultiplyMatrix3 = "aiMultiplyMatrix3";
+            public const string aiIdentityMatrix3 = "aiIdentityMatrix3";
+            public const string aiIdentityMatrix4 = "aiIdentityMatrix4";
 
             #endregion
 
             #region Version Info Function Names
 
-            public const String aiGetLegalString = "aiGetLegalString";
-            public const String aiGetVersionMinor = "aiGetVersionMinor";
-            public const String aiGetVersionMajor = "aiGetVersionMajor";
-            public const String aiGetVersionRevision = "aiGetVersionRevision";
-            public const String aiGetCompileFlags = "aiGetCompileFlags";
-            public const String aiGetBranchName = "aiGetBranchName";
+            public const string aiGetLegalString = "aiGetLegalString";
+            public const string aiGetVersionMinor = "aiGetVersionMinor";
+            public const string aiGetVersionMajor = "aiGetVersionMajor";
+            public const string aiGetVersionRevision = "aiGetVersionRevision";
+            public const string aiGetCompileFlags = "aiGetCompileFlags";
+            public const string aiGetBranchName = "aiGetBranchName";
 
             #endregion
 
-            public const String aiGetEmbeddedTexture = "aiGetEmbeddedTexture";
+            public const string aiGetEmbeddedTexture = "aiGetEmbeddedTexture";
         }
 
         #endregion
@@ -1188,19 +1182,19 @@ namespace Assimp.Unmanaged
             #region Import Delegates
 
             [UnmanagedFunctionPointer(CallingConvention.Cdecl), UnmanagedFunctionName(FunctionNames.aiImportFile)]
-            public delegate IntPtr aiImportFile([In, MarshalAs(UnmanagedType.LPUTF8Str)] String file, uint flags);
+            public delegate IntPtr aiImportFile([In, MarshalAs(UnmanagedType.LPUTF8Str)] string file, uint flags);
 
             [UnmanagedFunctionPointer(CallingConvention.Cdecl), UnmanagedFunctionName(FunctionNames.aiImportFileEx)]
-            public delegate IntPtr aiImportFileEx([In, MarshalAs(UnmanagedType.LPUTF8Str)] String file, uint flags, IntPtr fileIO);
+            public delegate IntPtr aiImportFileEx([In, MarshalAs(UnmanagedType.LPUTF8Str)] string file, uint flags, IntPtr fileIO);
 
             [UnmanagedFunctionPointer(CallingConvention.Cdecl), UnmanagedFunctionName(FunctionNames.aiImportFileExWithProperties)]
-            public delegate IntPtr aiImportFileExWithProperties([In, MarshalAs(UnmanagedType.LPUTF8Str)] String file, uint flag, IntPtr fileIO, IntPtr propStore);
+            public delegate IntPtr aiImportFileExWithProperties([In, MarshalAs(UnmanagedType.LPUTF8Str)] string file, uint flag, IntPtr fileIO, IntPtr propStore);
 
             [UnmanagedFunctionPointer(CallingConvention.Cdecl), UnmanagedFunctionName(FunctionNames.aiImportFileFromMemory)]
-            public delegate IntPtr aiImportFileFromMemory(byte[] buffer, uint bufferLength, uint flags, [In, MarshalAs(UnmanagedType.LPUTF8Str)] String formatHint);
+            public delegate IntPtr aiImportFileFromMemory(byte[] buffer, uint bufferLength, uint flags, [In, MarshalAs(UnmanagedType.LPUTF8Str)] string formatHint);
 
             [UnmanagedFunctionPointer(CallingConvention.Cdecl), UnmanagedFunctionName(FunctionNames.aiImportFileFromMemoryWithProperties)]
-            public delegate IntPtr aiImportFileFromMemoryWithProperties(byte[] buffer, uint bufferLength, uint flags, [In, MarshalAs(UnmanagedType.LPUTF8Str)] String formatHint, IntPtr propStore);
+            public delegate IntPtr aiImportFileFromMemoryWithProperties(byte[] buffer, uint bufferLength, uint flags, [In, MarshalAs(UnmanagedType.LPUTF8Str)] string formatHint, IntPtr propStore);
 
             [UnmanagedFunctionPointer(CallingConvention.Cdecl), UnmanagedFunctionName(FunctionNames.aiReleaseImport)]
             public delegate void aiReleaseImport(IntPtr scene);
@@ -1222,16 +1216,16 @@ namespace Assimp.Unmanaged
             public delegate void aiReleaseExportFormatDescription(IntPtr desc);
 
             [UnmanagedFunctionPointer(CallingConvention.Cdecl), UnmanagedFunctionName(FunctionNames.aiExportSceneToBlob)]
-            public delegate IntPtr aiExportSceneToBlob(IntPtr scene, [In, MarshalAs(UnmanagedType.LPUTF8Str)] String formatId, uint preProcessing);
+            public delegate IntPtr aiExportSceneToBlob(IntPtr scene, [In, MarshalAs(UnmanagedType.LPUTF8Str)] string formatId, uint preProcessing);
 
             [UnmanagedFunctionPointer(CallingConvention.Cdecl), UnmanagedFunctionName(FunctionNames.aiReleaseExportBlob)]
             public delegate void aiReleaseExportBlob(IntPtr blobData);
 
             [UnmanagedFunctionPointer(CallingConvention.Cdecl), UnmanagedFunctionName(FunctionNames.aiExportScene)]
-            public delegate ReturnCode aiExportScene(IntPtr scene, [In, MarshalAs(UnmanagedType.LPUTF8Str)] String formatId, [In, MarshalAs(UnmanagedType.LPUTF8Str)] String fileName, uint preProcessing);
+            public delegate ReturnCode aiExportScene(IntPtr scene, [In, MarshalAs(UnmanagedType.LPUTF8Str)] string formatId, [In, MarshalAs(UnmanagedType.LPUTF8Str)] string fileName, uint preProcessing);
 
             [UnmanagedFunctionPointer(CallingConvention.Cdecl), UnmanagedFunctionName(FunctionNames.aiExportSceneEx)]
-            public delegate ReturnCode aiExportSceneEx(IntPtr scene, [In, MarshalAs(UnmanagedType.LPUTF8Str)] String formatId, [In, MarshalAs(UnmanagedType.LPUTF8Str)] String fileName, IntPtr fileIO, uint preProcessing);
+            public delegate ReturnCode aiExportSceneEx(IntPtr scene, [In, MarshalAs(UnmanagedType.LPUTF8Str)] string formatId, [In, MarshalAs(UnmanagedType.LPUTF8Str)] string fileName, IntPtr fileIO, uint preProcessing);
 
             [UnmanagedFunctionPointer(CallingConvention.Cdecl), UnmanagedFunctionName(FunctionNames.aiCopyScene)]
             public delegate void aiCopyScene(IntPtr sceneIn, out IntPtr sceneOut);
@@ -1263,35 +1257,35 @@ namespace Assimp.Unmanaged
             public delegate void aiReleasePropertyStore(IntPtr propertyStore);
 
             [UnmanagedFunctionPointer(CallingConvention.Cdecl), UnmanagedFunctionName(FunctionNames.aiSetImportPropertyInteger)]
-            public delegate void aiSetImportPropertyInteger(IntPtr propertyStore, [In, MarshalAs(UnmanagedType.LPUTF8Str)] String name, int value);
+            public delegate void aiSetImportPropertyInteger(IntPtr propertyStore, [In, MarshalAs(UnmanagedType.LPUTF8Str)] string name, int value);
 
             [UnmanagedFunctionPointer(CallingConvention.Cdecl), UnmanagedFunctionName(FunctionNames.aiSetImportPropertyFloat)]
-            public delegate void aiSetImportPropertyFloat(IntPtr propertyStore, [In, MarshalAs(UnmanagedType.LPUTF8Str)] String name, float value);
+            public delegate void aiSetImportPropertyFloat(IntPtr propertyStore, [In, MarshalAs(UnmanagedType.LPUTF8Str)] string name, float value);
 
             [UnmanagedFunctionPointer(CallingConvention.Cdecl), UnmanagedFunctionName(FunctionNames.aiSetImportPropertyString)]
-            public delegate void aiSetImportPropertyString(IntPtr propertyStore, [In, MarshalAs(UnmanagedType.LPUTF8Str)] String name, ref AiString value);
+            public delegate void aiSetImportPropertyString(IntPtr propertyStore, [In, MarshalAs(UnmanagedType.LPUTF8Str)] string name, ref AiString value);
 
             [UnmanagedFunctionPointer(CallingConvention.Cdecl), UnmanagedFunctionName(FunctionNames.aiSetImportPropertyMatrix)]
-            public delegate void aiSetImportPropertyMatrix(IntPtr propertyStore, [In, MarshalAs(UnmanagedType.LPUTF8Str)] String name, ref Matrix4x4 value);
+            public delegate void aiSetImportPropertyMatrix(IntPtr propertyStore, [In, MarshalAs(UnmanagedType.LPUTF8Str)] string name, ref Matrix4x4 value);
 
             #endregion
 
             #region Material Delegates
 
             [UnmanagedFunctionPointer(CallingConvention.Cdecl), UnmanagedFunctionName(FunctionNames.aiGetMaterialColor)]
-            public delegate ReturnCode aiGetMaterialColor(ref AiMaterial mat, [In, MarshalAs(UnmanagedType.LPUTF8Str)] String key, uint texType, uint texIndex, IntPtr colorOut);
+            public delegate ReturnCode aiGetMaterialColor(ref AiMaterial mat, [In, MarshalAs(UnmanagedType.LPUTF8Str)] string key, uint texType, uint texIndex, IntPtr colorOut);
 
             [UnmanagedFunctionPointer(CallingConvention.Cdecl), UnmanagedFunctionName(FunctionNames.aiGetMaterialFloatArray)]
-            public delegate ReturnCode aiGetMaterialFloatArray(ref AiMaterial mat, [In, MarshalAs(UnmanagedType.LPUTF8Str)] String key, uint texType, uint texIndex, IntPtr ptrOut, ref uint valueCount);
+            public delegate ReturnCode aiGetMaterialFloatArray(ref AiMaterial mat, [In, MarshalAs(UnmanagedType.LPUTF8Str)] string key, uint texType, uint texIndex, IntPtr ptrOut, ref uint valueCount);
 
             [UnmanagedFunctionPointer(CallingConvention.Cdecl), UnmanagedFunctionName(FunctionNames.aiGetMaterialIntegerArray)]
-            public delegate ReturnCode aiGetMaterialIntegerArray(ref AiMaterial mat, [In, MarshalAs(UnmanagedType.LPUTF8Str)] String key, uint texType, uint texIndex, IntPtr ptrOut, ref uint valueCount);
+            public delegate ReturnCode aiGetMaterialIntegerArray(ref AiMaterial mat, [In, MarshalAs(UnmanagedType.LPUTF8Str)] string key, uint texType, uint texIndex, IntPtr ptrOut, ref uint valueCount);
 
             [UnmanagedFunctionPointer(CallingConvention.Cdecl), UnmanagedFunctionName(FunctionNames.aiGetMaterialProperty)]
-            public delegate ReturnCode aiGetMaterialProperty(ref AiMaterial mat, [In, MarshalAs(UnmanagedType.LPUTF8Str)] String key, uint texType, uint texIndex, out IntPtr propertyOut);
+            public delegate ReturnCode aiGetMaterialProperty(ref AiMaterial mat, [In, MarshalAs(UnmanagedType.LPUTF8Str)] string key, uint texType, uint texIndex, out IntPtr propertyOut);
 
             [UnmanagedFunctionPointer(CallingConvention.Cdecl), UnmanagedFunctionName(FunctionNames.aiGetMaterialString)]
-            public delegate ReturnCode aiGetMaterialString(ref AiMaterial mat, [In, MarshalAs(UnmanagedType.LPUTF8Str)] String key, uint texType, uint texIndex, out AiString str);
+            public delegate ReturnCode aiGetMaterialString(ref AiMaterial mat, [In, MarshalAs(UnmanagedType.LPUTF8Str)] string key, uint texType, uint texIndex, out AiString str);
 
             [UnmanagedFunctionPointer(CallingConvention.Cdecl), UnmanagedFunctionName(FunctionNames.aiGetMaterialTexture)]
             public delegate ReturnCode aiGetMaterialTexture(ref AiMaterial mat, TextureType type, uint index, out AiString path, out TextureMapping mapping, out uint uvIndex, out float blendFactor, out TextureOperation textureOp, [In, Out] TextureWrapMode[] wrapModes, out uint flags);
@@ -1348,7 +1342,7 @@ namespace Assimp.Unmanaged
 
             [UnmanagedFunctionPointer(CallingConvention.Cdecl), UnmanagedFunctionName(FunctionNames.aiIsExtensionSupported)]
             [return: MarshalAs(UnmanagedType.Bool)]
-            public delegate bool aiIsExtensionSupported([In, MarshalAs(UnmanagedType.LPUTF8Str)] String extension);
+            public delegate bool aiIsExtensionSupported([In, MarshalAs(UnmanagedType.LPUTF8Str)] string extension);
 
             [UnmanagedFunctionPointer(CallingConvention.Cdecl), UnmanagedFunctionName(FunctionNames.aiGetImportFormatCount)]
             public delegate UIntPtr aiGetImportFormatCount();
@@ -1381,7 +1375,7 @@ namespace Assimp.Unmanaged
             #endregion
 
             [UnmanagedFunctionPointer(CallingConvention.Cdecl), UnmanagedFunctionName(FunctionNames.aiGetEmbeddedTexture)]
-            public delegate IntPtr aiGetEmbeddedTexture(IntPtr scene, [In, MarshalAs(UnmanagedType.LPUTF8Str)] String filename);
+            public delegate IntPtr aiGetEmbeddedTexture(IntPtr scene, [In, MarshalAs(UnmanagedType.LPUTF8Str)] string filename);
         }
 
         #endregion

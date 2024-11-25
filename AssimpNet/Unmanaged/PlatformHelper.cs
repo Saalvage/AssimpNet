@@ -21,8 +21,6 @@
 */
 
 using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
@@ -73,7 +71,7 @@ namespace Assimp.Unmanaged
     //Helper class for making it easier to access certain reflection methods on types between .Net framework and .Net standard (pre-netstandard 2.0)
     internal class PlatformHelper
     {
-        public static String GetInformationalVersion()
+        public static string GetInformationalVersion()
         {
             object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyInformationalVersionAttribute), false);
             if(attributes == null || attributes.Length == 0)
@@ -83,12 +81,12 @@ namespace Assimp.Unmanaged
             return (attr != null) ? attr.InformationalVersion : null;
         }
 
-        public static String GetAssemblyName()
+        public static string GetAssemblyName()
         {
             return Assembly.GetExecutingAssembly().GetName().Name;
         }
 
-        public static String GetAppBaseDirectory()
+        public static string GetAppBaseDirectory()
         {
             return AppContext.BaseDirectory;
         }
@@ -109,10 +107,10 @@ namespace Assimp.Unmanaged
             return type.GetNestedTypes();
         }
 
-        public static Object[] GetCustomAttributes(Type type, Type attributeType, bool inherit)
+        public static object[] GetCustomAttributes(Type type, Type attributeType, bool inherit)
         {
             if(type == null || attributeType == null)
-                return new Object[0];
+                return new object[0];
 
             return type.GetCustomAttributes(attributeType, inherit);
         }

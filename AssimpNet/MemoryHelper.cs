@@ -25,7 +25,6 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Collections;
 using System.Collections.Generic;
-using System.Reflection;
 using Assimp.Unmanaged;
 using System.Runtime.CompilerServices;
 
@@ -44,7 +43,7 @@ namespace Assimp
     public static class MemoryHelper
     {
         private static Dictionary<Type, INativeCustomMarshaler> s_customMarshalers = new Dictionary<Type, INativeCustomMarshaler>();
-        private static Dictionary<Object, GCHandle> s_pinnedObjects = new Dictionary<Object, GCHandle>();
+        private static Dictionary<object, GCHandle> s_pinnedObjects = new Dictionary<object, GCHandle>();
 
         #region Marshaling Interop
 
@@ -430,14 +429,14 @@ namespace Assimp
             INativeCustomMarshaler marshaler;
             if (HasNativeCustomMarshaler(typeof(T), out marshaler))
             {
-                marshaler.MarshalManagedToNative((Object)value, ptr);
+                marshaler.MarshalManagedToNative((object)value, ptr);
                 return;
             }
 
 #if NETSTANDARD1_3
             Marshal.StructureToPtr<T>(value, ptr, true);
 #else
-            Marshal.StructureToPtr((Object)value, ptr, true);
+            Marshal.StructureToPtr((object)value, ptr, true);
 #endif
         }
 
@@ -484,7 +483,7 @@ namespace Assimp
         /// </summary>
         /// <param name="obj">Object to pin.</param>
         /// <returns>Pointer to pinned object's memory location.</returns>
-        public static IntPtr PinObject(Object obj)
+        public static IntPtr PinObject(object obj)
         {
             lock(s_pinnedObjects)
             {
@@ -503,7 +502,7 @@ namespace Assimp
         /// Unpins an object in memory, allowing it to once again freely be moved around by the runtime.
         /// </summary>
         /// <param name="obj">Object to unpin.</param>
-        public static void UnpinObject(Object obj)
+        public static void UnpinObject(object obj)
         {
             lock(s_pinnedObjects)
             {
@@ -713,10 +712,10 @@ namespace Assimp
         /// <returns>True if both arrays contain the same data, false otherwise.</returns>
         public static bool Compare(byte[] firstData, byte[] secondData)
         {
-            if(Object.ReferenceEquals(firstData, secondData))
+            if(object.ReferenceEquals(firstData, secondData))
                 return true;
 
-            if(Object.ReferenceEquals(firstData, null) || Object.ReferenceEquals(secondData, null))
+            if(object.ReferenceEquals(firstData, null) || object.ReferenceEquals(secondData, null))
                 return false;
 
             if(firstData.Length != secondData.Length)
@@ -827,7 +826,7 @@ namespace Assimp
         public static int Count<T>(IEnumerable<T> source)
         {
             if(source == null)
-                throw new ArgumentNullException("source");
+                throw new ArgumentNullException(nameof(source));
 
             ICollection<T> coll = source as ICollection<T>;
             if(coll != null)
@@ -1053,7 +1052,7 @@ namespace Assimp
             {
                 if(!s_customMarshalers.TryGetValue(type, out marshaler))
                 {
-                    Object[] customAttributes = PlatformHelper.GetCustomAttributes(type, typeof(NativeCustomMarshalerAttribute), false);
+                    object[] customAttributes = PlatformHelper.GetCustomAttributes(type, typeof(NativeCustomMarshalerAttribute), false);
                     if(customAttributes.Length != 0)
                         marshaler = (customAttributes[0] as NativeCustomMarshalerAttribute).Marshaler;
 

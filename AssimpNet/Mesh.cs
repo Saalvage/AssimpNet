@@ -32,7 +32,7 @@ namespace Assimp
     /// </summary>
     public sealed class Mesh : IMarshalable<Mesh, AiMesh>
     {
-        private String m_name;
+        private string m_name;
         private PrimitiveType m_primitiveType;
         private int m_materialIndex;
         private List<Vector3> m_vertices;
@@ -55,16 +55,10 @@ namespace Assimp
         /// or importers split meshes up, each mesh will reference
         /// the same (dummy) name.
         /// </summary>
-        public String Name
+        public string Name
         {
-            get
-            {
-                return m_name;
-            }
-            set
-            {
-                m_name = value;
-            }
+            get => m_name;
+            set => m_name = value;
         }
 
         /// <summary>
@@ -74,14 +68,8 @@ namespace Assimp
         /// </summary>
         public PrimitiveType PrimitiveType
         {
-            get
-            {
-                return m_primitiveType;
-            }
-            set
-            {
-                m_primitiveType = value;
-            }
+            get => m_primitiveType;
+            set => m_primitiveType = value;
         }
 
         /// <summary>
@@ -89,141 +77,69 @@ namespace Assimp
         /// </summary>
         public int MaterialIndex
         {
-            get
-            {
-                return m_materialIndex;
-            }
-            set
-            {
-                m_materialIndex = value;
-            }
+            get => m_materialIndex;
+            set => m_materialIndex = value;
         }
 
         /// <summary>
         /// Gets the number of vertices in this mesh. This is the count that all
         /// per-vertex lists should be the size of.
         /// </summary>
-        public int VertexCount
-        {
-            get
-            {
-                return m_vertices.Count;
-            }
-        }
+        public int VertexCount => m_vertices.Count;
 
         /// <summary>
         /// Gets if the mesh has a vertex array. This should always return
         /// true provided no special scene flags are set.
         /// </summary>
-        public bool HasVertices
-        {
-            get
-            {
-                return m_vertices.Count > 0;
-            }
-        }
+        public bool HasVertices => m_vertices.Count > 0;
 
         /// <summary>
         /// Gets the vertex position list.
         /// </summary>
-        public List<Vector3> Vertices
-        {
-            get
-            {
-                return m_vertices;
-            }
-        }
+        public List<Vector3> Vertices => m_vertices;
 
         /// <summary>
         /// Gets if the mesh as normals. If it does exist, the count should be the same as the vertex count.
         /// </summary>
-        public bool HasNormals
-        {
-            get
-            {
-                return m_normals.Count > 0;
-            }
-        }
+        public bool HasNormals => m_normals.Count > 0;
 
         /// <summary>
         /// Gets the vertex normal list.
         /// </summary>
-        public List<Vector3> Normals
-        {
-            get
-            {
-                return m_normals;
-            }
-        }
+        public List<Vector3> Normals => m_normals;
 
         /// <summary>
         /// Gets if the mesh has tangents and bitangents. It is not
         /// possible for one to be without the other. If it does exist, the count should be the same as the vertex count.
         /// </summary>
-        public bool HasTangentBasis
-        {
-            get
-            {
-                return m_tangents.Count > 0 && m_bitangents.Count > 0;
-            }
-        }
+        public bool HasTangentBasis => m_tangents.Count > 0 && m_bitangents.Count > 0;
 
         /// <summary>
         /// Gets the vertex tangent list.
         /// </summary>
-        public List<Vector3> Tangents
-        {
-            get
-            {
-                return m_tangents;
-            }
-        }
+        public List<Vector3> Tangents => m_tangents;
 
         /// <summary>
         /// Gets the vertex bitangent list.
         /// </summary>
-        public List<Vector3> BiTangents
-        {
-            get
-            {
-                return m_bitangents;
-            }
-        }
+        public List<Vector3> BiTangents => m_bitangents;
 
         /// <summary>
         /// Gets the number of faces contained in the mesh.
         /// </summary>
-        public int FaceCount
-        {
-            get
-            {
-                return m_faces.Count;
-            }
-        }
+        public int FaceCount => m_faces.Count;
 
         /// <summary>
         /// Gets if the mesh contains faces. If no special
         /// scene flags are set, this should always return true.
         /// </summary>
-        public bool HasFaces
-        {
-            get
-            {
-                return m_faces.Count > 0;
-            }
-        }
+        public bool HasFaces => m_faces.Count > 0;
 
         /// <summary>
         /// Gets the mesh's faces. Each face will contain indices
         /// to the vertices.
         /// </summary>
-        public List<Face> Faces
-        {
-            get
-            {
-                return m_faces;
-            }
-        }
+        public List<Face> Faces => m_faces;
 
         /// <summary>
         /// Gets the number of valid vertex color channels contained in the
@@ -269,118 +185,58 @@ namespace Assimp
         /// Gets the array that contains each vertex color channels, by default all are lists of zero (but can be set to null). Each index
         /// in the array corresponds to the texture coordinate channel. The length of the array corresponds to Assimp's maximum vertex color channel limit.
         /// </summary>
-        public List<Vector4>[] VertexColorChannels
-        {
-            get
-            {
-                return m_colors;
-            }
-        }
+        public List<Vector4>[] VertexColorChannels => m_colors;
 
         /// <summary>
         /// Gets the array that contains each texture coordinate channel, by default all are lists of zero (but can be set to null). Each index
         /// in the array corresponds to the texture coordinate channel. The length of the array corresponds to Assimp's maximum UV channel limit.
         /// </summary>
-        public List<Vector3>[] TextureCoordinateChannels
-        {
-            get
-            {
-                return m_texCoords;
-            }
-        }
+        public List<Vector3>[] TextureCoordinateChannels => m_texCoords;
 
         /// <summary>
         /// Gets the array that contains the count of UV(W) components for each texture coordinate channel, usually 2 (UV) or 3 (UVW). A component
         /// value of zero means the texture coordinate channel does not exist. The channel index (index in the array) corresponds
         /// to the texture coordinate channel index.
         /// </summary>
-        public int[] UVComponentCount
-        {
-            get
-            {
-                return m_texComponentCount;
-            }
-        }
+        public int[] UVComponentCount => m_texComponentCount;
 
         /// <summary>
         /// Gets the number of bones that influence this mesh.
         /// </summary>
-        public int BoneCount
-        {
-            get
-            {
-                return m_bones.Count;
-            }
-        }
+        public int BoneCount => m_bones.Count;
 
         /// <summary>
         /// Gets if this mesh has bones.
         /// </summary>
-        public bool HasBones
-        {
-            get
-            {
-                return m_bones.Count > 0;
-            }
-        }
+        public bool HasBones => m_bones.Count > 0;
 
         /// <summary>
         /// Gets the bones that influence this mesh.
         /// </summary>
-        public List<Bone> Bones
-        {
-            get
-            {
-                return m_bones;
-            }
-        }
+        public List<Bone> Bones => m_bones;
 
         /// <summary>
         /// Gets the number of mesh animation attachments that influence this mesh.
         /// </summary>
-        public int MeshAnimationAttachmentCount
-        {
-            get
-            {
-                return m_meshAttachments.Count;
-            }
-        }
+        public int MeshAnimationAttachmentCount => m_meshAttachments.Count;
 
         /// <summary>
         /// Gets if this mesh has mesh animation attachments.
         /// </summary>
-        public bool HasMeshAnimationAttachments
-        {
-            get
-            {
-                return m_meshAttachments.Count > 0;
-            }
-        }
+        public bool HasMeshAnimationAttachments => m_meshAttachments.Count > 0;
 
         /// <summary>
         /// Gets the mesh animation attachments that influence this mesh.
         /// </summary>
-        public List<MeshAnimationAttachment> MeshAnimationAttachments
-        {
-            get
-            {
-                return m_meshAttachments;
-            }
-        }
+        public List<MeshAnimationAttachment> MeshAnimationAttachments => m_meshAttachments;
 
         /// <summary>
         /// Gets or sets the morph method used when animation attachments are used.
         /// </summary>
         public MeshMorphingMethod MorphMethod
         {
-            get
-            {
-                return m_morphMethod;
-            }
-            set
-            {
-                m_morphMethod = value;
-            }
+            get => m_morphMethod;
+            set => m_morphMethod = value;
         }
 
         /// <summary>
@@ -388,39 +244,33 @@ namespace Assimp
         /// </summary>
         public BoundingBox BoundingBox
         {
-            get
-            {
-                return m_boundingBox;
-            }
-            set
-            {
-                m_boundingBox = value;
-            }
+            get => m_boundingBox;
+            set => m_boundingBox = value;
         }
 
         /// <summary>
         /// Constructs a new instance of the <see cref="Mesh"/> class.
         /// </summary>
-        public Mesh() : this(String.Empty, PrimitiveType.Triangle) { }
+        public Mesh() : this(string.Empty, PrimitiveType.Triangle) { }
 
         /// <summary>
         /// Constructs a new instance of the <see cref="Mesh"/> class.
         /// </summary>
         /// <param name="name">Name of the mesh.</param>
-        public Mesh(String name) : this(name, PrimitiveType.Triangle) { }
+        public Mesh(string name) : this(name, PrimitiveType.Triangle) { }
 
         /// <summary>
         /// Constructs a new instance of the <see cref="Mesh"/> class.
         /// </summary>
         /// <param name="primType">Primitive types contained in the mesh.</param>
-        public Mesh(PrimitiveType primType) : this(String.Empty, primType) { }
+        public Mesh(PrimitiveType primType) : this(string.Empty, primType) { }
 
         /// <summary>
         /// Constructs a new instance of the <see cref="Mesh"/> class.
         /// </summary>
         /// <param name="name">Name of the mesh</param>
         /// <param name="primType">Primitive types contained in the mesh.</param>
-        public Mesh(String name, PrimitiveType primType)
+        public Mesh(string name, PrimitiveType primType)
         {
             m_name = name;
             m_primitiveType = primType;
@@ -644,7 +494,7 @@ namespace Assimp
         /// <summary>
         /// Gets if the native value type is blittable (that is, does not require marshaling by the runtime, e.g. has MarshalAs attributes).
         /// </summary>
-        bool IMarshalable<Mesh, AiMesh>.IsNativeBlittable { get { return true; } }
+        bool IMarshalable<Mesh, AiMesh>.IsNativeBlittable => true;
 
         /// <summary>
         /// Writes the managed data to the native value.

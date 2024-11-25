@@ -20,7 +20,6 @@
 * THE SOFTWARE.
 */
 
-using System;
 using System.IO;
 using NUnit.Framework;
 
@@ -32,7 +31,7 @@ namespace Assimp.Test
         [Test]
         public void TestObjLoad()
         {
-            String path = Path.Combine(TestHelper.RootPath, "TestFiles/sphere.obj");
+            string path = Path.Combine(TestHelper.RootPath, "TestFiles/sphere.obj");
 
             AssimpContext importer = new AssimpContext();
             Scene scene = importer.ImportFile(path);

@@ -111,16 +111,16 @@ namespace Assimp
         }
 
         /// <summary>
-        /// Returns a <see cref="System.String"/> that represents this instance.
+        /// Returns a <see cref="string"/> that represents this instance.
         /// </summary>
         /// <returns>
-        /// A <see cref="System.String"/> that represents this instance.
+        /// A <see cref="string"/> that represents this instance.
         /// </returns>
         public override string ToString()
         {
             CultureInfo info = CultureInfo.CurrentCulture;
-            return String.Format(info, "{{Min:{0} Max:{1}}",
-                new Object[] { Min.ToString(), Max.ToString() });
+            return string.Format(info, "{{Min:{0} Max:{1}}",
+                new object[] { Min.ToString(), Max.ToString() });
         }
     }
 }

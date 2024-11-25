@@ -35,9 +35,9 @@ namespace Assimp.Test
         public const float DEFAULT_TOLERANCE = 0.000001f;
         public static float Tolerance = DEFAULT_TOLERANCE;
 
-        private static String m_rootPath = null;
+        private static string m_rootPath = null;
 
-        public static String RootPath
+        public static string RootPath
         {
             get
             {
@@ -67,7 +67,7 @@ namespace Assimp.Test
             Assert.That(actual, Is.EqualTo(expected).Within(Tolerance));
         }
 
-        public static void AssertEquals(double expected, double actual, String msg)
+        public static void AssertEquals(double expected, double actual, string msg)
         {
             Assert.That(actual, Is.EqualTo(expected).Within(Tolerance), msg);
         }
@@ -77,7 +77,7 @@ namespace Assimp.Test
             Assert.That(actual, Is.EqualTo(expected).Within(Tolerance));
         }
 
-        public static void AssertEquals(float expected, float actual, String msg)
+        public static void AssertEquals(float expected, float actual, string msg)
         {
             Assert.That(actual, Is.EqualTo(expected).Within(Tolerance), msg);
         }
@@ -88,10 +88,10 @@ namespace Assimp.Test
             AssertEquals(y, v.Y);
         }
 
-        public static void AssertEquals(float x, float y, Vector2 v, String msg)
+        public static void AssertEquals(float x, float y, Vector2 v, string msg)
         {
-            AssertEquals(x, v.X, msg + String.Format(" => checking X component ({0} == {1}", x, v.X));
-            AssertEquals(y, v.Y, msg + String.Format(" => checking Y component ({0} == {1}", y, v.Y));
+            AssertEquals(x, v.X, msg + $" => checking X component ({x} == {v.X}");
+            AssertEquals(y, v.Y, msg + $" => checking Y component ({y} == {v.Y}");
         }
 
         public static void AssertEquals(float x, float y, float z, Vector3 v)
@@ -101,11 +101,11 @@ namespace Assimp.Test
             AssertEquals(z, v.Z);
         }
 
-        public static void AssertEquals(float x, float y, float z, Vector3 v, String msg)
+        public static void AssertEquals(float x, float y, float z, Vector3 v, string msg)
         {
-            AssertEquals(x, v.X, msg + String.Format(" => checking X component ({0} == {1}", x, v.X));
-            AssertEquals(y, v.Y, msg + String.Format(" => checking Y component ({0} == {1}", y, v.Y));
-            AssertEquals(z, v.Z, msg + String.Format(" => checking Z component ({0} == {1}", z, v.Z));
+            AssertEquals(x, v.X, msg + $" => checking X component ({x} == {v.X}");
+            AssertEquals(y, v.Y, msg + $" => checking Y component ({y} == {v.Y}");
+            AssertEquals(z, v.Z, msg + $" => checking Z component ({z} == {v.Z}");
         }
 
         public static void AssertEquals(float r, float g, float b, float a, Vector4 c)
@@ -116,23 +116,23 @@ namespace Assimp.Test
             AssertEquals(a, c.W);
         }
 
-        public static void AssertEquals(float r, float g, float b, float a, Vector4 c, String msg)
+        public static void AssertEquals(float r, float g, float b, float a, Vector4 c, string msg)
         {
-            AssertEquals(r, c.X, msg + String.Format(" => checking R component ({0} == {1}", r, c.X));
-            AssertEquals(g, c.Y, msg + String.Format(" => checking G component ({0} == {1}", g, c.Y));
-            AssertEquals(b, c.Z, msg + String.Format(" => checking B component ({0} == {1}", b, c.Z));
-            AssertEquals(a, c.W, msg + String.Format(" => checking A component ({0} == {1}", a, c.W));
+            AssertEquals(r, c.X, msg + $" => checking R component ({r} == {c.X}");
+            AssertEquals(g, c.Y, msg + $" => checking G component ({g} == {c.Y}");
+            AssertEquals(b, c.Z, msg + $" => checking B component ({b} == {c.Z}");
+            AssertEquals(a, c.W, msg + $" => checking A component ({a} == {c.W}");
         }
 
-        public static void AssertEquals(float x, float y, float z, float w, Quaternion q, String msg)
+        public static void AssertEquals(float x, float y, float z, float w, Quaternion q, string msg)
         {
-            AssertEquals(x, q.X, msg + String.Format(" => checking X component ({0} == {1}", x, q.X));
-            AssertEquals(y, q.Y, msg + String.Format(" => checking Y component ({0} == {1}", y, q.Y));
-            AssertEquals(z, q.Z, msg + String.Format(" => checking Z component ({0} == {1}", z, q.Z));
-            AssertEquals(w, q.W, msg + String.Format(" => checking W component ({0} == {1}", w, q.W));
+            AssertEquals(x, q.X, msg + $" => checking X component ({x} == {q.X}");
+            AssertEquals(y, q.Y, msg + $" => checking Y component ({y} == {q.Y}");
+            AssertEquals(z, q.Z, msg + $" => checking Z component ({z} == {q.Z}");
+            AssertEquals(w, q.W, msg + $" => checking W component ({w} == {q.W}");
         }
 
-        public static void AssertEquals(TK.Matrix4 tkM, Matrix3x3 mat, String msg)
+        public static void AssertEquals(TK.Matrix4 tkM, Matrix3x3 mat, string msg)
         {
             //Note: OpenTK 4x4 matrix is a row-vector matrix, so compare rows to AssimpNet Matrix3x3 columns
             TK.Vector4 row0 = tkM.Row0;
@@ -144,23 +144,23 @@ namespace Assimp.Test
             AssertEquals(row2.X, row2.Y, row2.Z, new Vector3(mat.A3, mat.B3, mat.C3), msg + " => checking third column vector");
         }
 
-        public static void AssertEquals(TK.Vector4 v1, TK.Vector4 v2, String msg)
+        public static void AssertEquals(TK.Vector4 v1, TK.Vector4 v2, string msg)
         {
-            AssertEquals(v1.X, v2.X, msg + String.Format(" => checking X component ({0} == {1}", v1.X, v2.X));
-            AssertEquals(v1.Y, v2.Y, msg + String.Format(" => checking Y component ({0} == {1}", v1.Y, v2.Y));
-            AssertEquals(v1.Z, v2.Z, msg + String.Format(" => checking Z component ({0} == {1}", v1.Z, v2.Z));
-            AssertEquals(v1.W, v2.W, msg + String.Format(" => checking W component ({0} == {1}", v1.W, v2.W));
+            AssertEquals(v1.X, v2.X, msg + $" => checking X component ({v1.X} == {v2.X}");
+            AssertEquals(v1.Y, v2.Y, msg + $" => checking Y component ({v1.Y} == {v2.Y}");
+            AssertEquals(v1.Z, v2.Z, msg + $" => checking Z component ({v1.Z} == {v2.Z}");
+            AssertEquals(v1.W, v2.W, msg + $" => checking W component ({v1.W} == {v2.W}");
         }
 
-        public static void AssertEquals(TK.Quaternion q1, Quaternion q2, String msg)
+        public static void AssertEquals(TK.Quaternion q1, Quaternion q2, string msg)
         {
-            AssertEquals(q1.X, q2.X, msg + String.Format(" => checking X component ({0} == {1}", q1.X, q2.X));
-            AssertEquals(q1.Y, q2.Y, msg + String.Format(" => checking Y component ({0} == {1}", q1.Y, q2.Y));
-            AssertEquals(q1.Z, q2.Z, msg + String.Format(" => checking Z component ({0} == {1}", q1.Z, q2.Z));
-            AssertEquals(q1.W, q2.W, msg + String.Format(" => checking W component ({0} == {1}", q1.W, q2.W));
+            AssertEquals(q1.X, q2.X, msg + $" => checking X component ({q1.X} == {q2.X}");
+            AssertEquals(q1.Y, q2.Y, msg + $" => checking Y component ({q1.Y} == {q2.Y}");
+            AssertEquals(q1.Z, q2.Z, msg + $" => checking Z component ({q1.Z} == {q2.Z}");
+            AssertEquals(q1.W, q2.W, msg + $" => checking W component ({q1.W} == {q2.W}");
         }
 
-        public static void AssertEquals(TK.Matrix4 tkM, Matrix4x4 mat, String msg)
+        public static void AssertEquals(TK.Matrix4 tkM, Matrix4x4 mat, string msg)
         {
             //Note: OpenTK 4x4 matrix is a row-vector matrix, so compare rows to AssimpNet Matrix4x4 columns
             AssertEquals(tkM.Row0, new TK.Vector4(mat.M11, mat.M21, mat.M31, mat.M41), msg + " => checking first column vector");
