@@ -202,7 +202,7 @@ namespace Assimp
 
                 for(int i = 0; i < numChildren; i++)
                 {
-                    IntPtr currPos = MemoryHelper.AddIntPtr(childrenPtr, stride * i);
+                    IntPtr currPos = childrenPtr + stride * i;
                     Node child = node.m_children[i];
 
                     IntPtr childPtr = IntPtr.Zero;
@@ -268,7 +268,7 @@ namespace Assimp
 
                 for(int i = 0; i < numChildren; i++)
                 {
-                    IntPtr currPos = MemoryHelper.AddIntPtr(childrenPtr, stride * i);
+                    IntPtr currPos = childrenPtr + stride * i;
                     Node child = m_children[i];
 
                     IntPtr childPtr = IntPtr.Zero;

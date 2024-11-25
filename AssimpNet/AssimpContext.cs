@@ -1025,7 +1025,7 @@ namespace Assimp
                     if(aiScene.RootNode == IntPtr.Zero)
                         return false;
 
-                    IntPtr matrixPtr = MemoryHelper.AddIntPtr(aiScene.RootNode, MemoryHelper.SizeOf<AiString>()); //Skip over Node Name
+                    IntPtr matrixPtr = aiScene.RootNode + MemoryHelper.SizeOf<AiString>(); //Skip over Node Name
 
                     Matrix4x4 matrix = MemoryHelper.Read<Matrix4x4>(matrixPtr); //Get the root transform
                     matrix = matrix * m_scaleRot; //Transform

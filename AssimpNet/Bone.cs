@@ -151,8 +151,8 @@ namespace Assimp
                 return;
 
             AiBone aiBone = MemoryHelper.Read<AiBone>(nativeValue);
-            int numWeights = MemoryHelper.Read<int>(MemoryHelper.AddIntPtr(nativeValue, MemoryHelper.SizeOf<AiString>()));
-            IntPtr weightsPtr = MemoryHelper.AddIntPtr(nativeValue, MemoryHelper.SizeOf<AiString>() + sizeof(uint));
+            int numWeights = MemoryHelper.Read<int>(nativeValue + MemoryHelper.SizeOf<AiString>());
+            IntPtr weightsPtr = nativeValue + MemoryHelper.SizeOf<AiString>() + sizeof(uint);
 
             if(aiBone.NumWeights > 0 && aiBone.Weights != IntPtr.Zero)
                 MemoryHelper.FreeMemory(aiBone.Weights);

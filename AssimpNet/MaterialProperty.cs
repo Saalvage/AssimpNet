@@ -682,7 +682,7 @@ namespace Assimp
                 aiString.Length = (uint) MemoryHelper.Read<int>(new IntPtr(ptr));
 
                 //Memcpy starting at dataPtr + sizeof(int) for length + 1 (to account for null terminator)
-                MemoryHelper.CopyMemory(new IntPtr(aiString.Data), MemoryHelper.AddIntPtr(new IntPtr(ptr), sizeof(int)), (int) aiString.Length + 1);
+                MemoryHelper.CopyMemory(new IntPtr(aiString.Data), new IntPtr(ptr) + sizeof(int), (int) aiString.Length + 1);
 
                 return aiString.GetString();
             }
