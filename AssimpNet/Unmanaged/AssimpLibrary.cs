@@ -1052,6 +1052,18 @@ namespace Assimp.Unmanaged
 
         #endregion
 
+        public IntPtr GetEmbeddedTexture(IntPtr scene, String filename)
+        {
+            LoadIfNotLoaded();
+
+            if(scene == IntPtr.Zero)
+                return IntPtr.Zero;
+
+            Functions.aiGetEmbeddedTexture func = GetFunction<Functions.aiGetEmbeddedTexture>(FunctionNames.aiGetEmbeddedTexture);
+
+            return func(scene, filename);
+        }
+
         #region Function names 
 
         /// <summary>
@@ -1153,6 +1165,8 @@ namespace Assimp.Unmanaged
             public const String aiGetBranchName = "aiGetBranchName";
 
             #endregion
+
+            public const String aiGetEmbeddedTexture = "aiGetEmbeddedTexture";
         }
 
         #endregion
@@ -1359,6 +1373,9 @@ namespace Assimp.Unmanaged
             public delegate uint aiGetCompileFlags();
 
             #endregion
+
+            [UnmanagedFunctionPointer(CallingConvention.Cdecl), UnmanagedFunctionName(FunctionNames.aiGetEmbeddedTexture)]
+            public delegate IntPtr aiGetEmbeddedTexture(IntPtr scene, [In, MarshalAs(UnmanagedType.LPUTF8Str)] String filename);
         }
 
         #endregion

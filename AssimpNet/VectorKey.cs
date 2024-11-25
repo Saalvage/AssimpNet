@@ -44,6 +44,11 @@ namespace Assimp
         public Vector3 Value;
 
         /// <summary>
+        /// The interpolation setting of this key.
+        /// </summary>
+        public AnimInterpolation Interpolation = AnimInterpolation.Linear;
+
+        /// <summary>
         /// Constructs a new VectorKey.
         /// </summary>
         /// <param name="time">The time of this key.</param>
@@ -144,8 +149,8 @@ namespace Assimp
         public override string ToString()
         {
             CultureInfo info = CultureInfo.CurrentCulture;
-            return String.Format(info, "{{Time:{0} Vector:{1}}}",
-                new Object[] { Time.ToString(info), Value.ToString() });
+            return String.Format(info, "{{Time:{0} Vector:{1} Interpolation:{2}}}",
+                new Object[] { Time.ToString(info), Value.ToString(), Interpolation.ToString() });
         }
     }
 }
