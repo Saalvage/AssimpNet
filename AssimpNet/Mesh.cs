@@ -425,7 +425,7 @@ namespace Assimp
             m_name = name;
             m_primitiveType = primType;
             m_materialIndex = 0;
-            m_morphMethod = MeshMorphingMethod.None;
+            m_morphMethod = MeshMorphingMethod.Unknown;
 
             m_vertices = new List<Vector3>();
             m_normals = new List<Vector3>();

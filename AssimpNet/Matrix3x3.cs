@@ -288,8 +288,8 @@ namespace Assimp
             float det = Determinant();
             if(det == 0.0f)
             {
-                // Matrix not invertible. Setting all elements to NaN is not really
-                // correct in a mathematical sense but it is easy to debug for the
+                // Matrix is not invertible. Setting all elements to NaN is not really
+                // correct in a mathematical sense, but it is easy to debug for the
                 // programmer.
                 A1 = float.NaN;
                 A2 = float.NaN;

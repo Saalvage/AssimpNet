@@ -7,13 +7,14 @@ on:
 
 jobs:
   build:
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.event.pull_request.base.repo.full_name
     name: Build ${{ matrix.name }} ${{ matrix.configuration }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
+        name: [Windows x64, Linux, MacOS x64, MacOS ARM64]
         configuration: [Release, Debug]
-        name: [Windows x64, Linux, MacOS]
         include:
           - name: Windows x64
             os: windows-latest
@@ -23,8 +24,10 @@ jobs:
           #  additional_args: -a x86
           - name: Linux
             os: ubuntu-latest
-          - name: MacOS
+          - name: MacOS x64
             os: macos-13
+          - name: MacOS ARM64
+            os: macos-latest
 
     steps:
       - uses: actions/checkout@v4
