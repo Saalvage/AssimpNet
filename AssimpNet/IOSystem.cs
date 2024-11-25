@@ -44,32 +44,14 @@ namespace Assimp
     /// <summary>
     /// Gets whether or not this IOSystem has been disposed.
     /// </summary>
-    public bool IsDisposed
-    {
-      get
-      {
-        return m_isDisposed;
-      }
-    }
+    public bool IsDisposed => m_isDisposed;
 
     /// <summary>
     /// Gets the number of currently opened streams.
     /// </summary>
-    public int OpenFileCount
-    {
-      get
-      {
-        return m_openedFiles.Count;
-      }
-    }
+    public int OpenFileCount => m_openedFiles.Count;
 
-    internal IntPtr AiFileIO
-    {
-      get
-      {
-        return m_fileIOPtr;
-      }
-    }
+    internal IntPtr AiFileIO => m_fileIOPtr;
 
     /// <summary>
     /// Constructs a new IOSystem.
@@ -123,7 +105,7 @@ namespace Assimp
     /// <param name="pathToFile">Path to the file</param>
     /// <param name="fileMode">Desired file access mode</param>
     /// <returns>The IO stream</returns>
-    public abstract IOStream OpenFile(String pathToFile, FileIOMode fileMode);
+    public abstract IOStream OpenFile(string pathToFile, FileIOMode fileMode);
 
     /// <summary>
     /// Closes a stream that is owned by this IOSystem.
@@ -197,7 +179,7 @@ namespace Assimp
     /// <param name="pathToFile"></param>
     /// <param name="mode"></param>
     /// <returns></returns>
-    protected IntPtr OnAiFileOpenProc(IntPtr fileIO, String pathToFile, String mode)
+    protected IntPtr OnAiFileOpenProc(IntPtr fileIO, string pathToFile, string mode)
     {
       if (m_fileIOPtr != fileIO)
         return IntPtr.Zero;
@@ -239,7 +221,7 @@ namespace Assimp
       }
     }
 
-    private FileIOMode ConvertFileMode(String mode)
+    private FileIOMode ConvertFileMode(string mode)
     {
       FileIOMode fileMode = FileIOMode.Read;
 

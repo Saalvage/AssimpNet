@@ -61,11 +61,11 @@ namespace Assimp.Sample
         public SN.Matrix4x4 WorldMatrix { get; set; }
         public SN.Vector3 LightPosition { get; set; }
 
-        public SN.Vector3 SceneCenter { get { return m_sceneCenter; } }
-        public SN.Vector3 SceneMin { get { return m_sceneMin; } }
-        public SN.Vector3 SceneMax { get { return m_sceneMax; } }
+        public SN.Vector3 SceneCenter => m_sceneCenter;
+        public SN.Vector3 SceneMin => m_sceneMin;
+        public SN.Vector3 SceneMax => m_sceneMax;
 
-        public static SimpleModel LoadFromFile(String filePath, GraphicsDevice gd, PostProcessSteps ppSteps, params PropertyConfig[] configs)
+        public static SimpleModel LoadFromFile(string filePath, GraphicsDevice gd, PostProcessSteps ppSteps, params PropertyConfig[] configs)
         {
             if(!File.Exists(filePath) || gd == null)
                 return null;
@@ -140,7 +140,7 @@ namespace Assimp.Sample
             }
         }
 
-        private bool CreateVertexBuffer(Scene scene, GraphicsDevice gd, String baseDir)
+        private bool CreateVertexBuffer(Scene scene, GraphicsDevice gd, string baseDir)
         {
             int vCount, iCount;
             GatherVertexCounts(scene, out vCount, out iCount);
@@ -215,7 +215,7 @@ namespace Assimp.Sample
                 if(m.HasColorDiffuse)
                     diffuseColor = m.ColorDiffuse;
               
-                String filePath = String.Empty;
+                string filePath = string.Empty;
                 if(m.HasTextureDiffuse)
                     filePath = Path.Combine(baseDir, m.TextureDiffuse.FilePath);
 
@@ -415,7 +415,7 @@ namespace Assimp.Sample
         private TextureView m_texView;
         private DeviceBuffer m_materialConstantBuffer;
 
-        public SimpleMaterial(GraphicsDevice gd, SN.Vector4 diffuseColor, String texPath, ResourceLayout layout)
+        public SimpleMaterial(GraphicsDevice gd, SN.Vector4 diffuseColor, string texPath, ResourceLayout layout)
         {
             m_materialConstantBuffer = gd.ResourceFactory.CreateBuffer(new BufferDescription(16, BufferUsage.UniformBuffer));
             gd.UpdateBuffer<SN.Vector4>(m_materialConstantBuffer, 0, ref diffuseColor);

@@ -43,7 +43,7 @@ namespace Assimp.Test
                     float value = values[(i * 3) + j];
                     //Matrix indices are one-based.
                     m[i + 1, j + 1] = value;
-                    TestHelper.AssertEquals(value, m[i + 1, j + 1], String.Format("Testing [{0},{1}] indexer.", i + 1, j + 1));
+                    TestHelper.AssertEquals(value, m[i + 1, j + 1], $"Testing [{i + 1},{j + 1}] indexer.");
                 }
             }
         }

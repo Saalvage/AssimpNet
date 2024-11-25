@@ -33,24 +33,21 @@ namespace Assimp
     /// </summary>
     public sealed class MaterialProperty : IMarshalable<MaterialProperty, AiMaterialProperty>
     {
-        private String m_name;
+        private string m_name;
         private PropertyType m_type;
         private byte[] m_rawValue;
         private TextureType m_texType;
         private int m_texIndex;
-        private String m_fullyQualifiedName;
+        private string m_fullyQualifiedName;
         private bool m_fullQualifiedNameNeedsUpdate = true;
 
         /// <summary>
         /// Gets or sets the property key name. E.g. $tex.file. This corresponds to the
         /// "AiMatKeys" base name constants.
         /// </summary>
-        public String Name
+        public string Name
         {
-            get
-            {
-                return m_name;
-            }
+            get => m_name;
             set
             {
                 m_name = value;
@@ -65,58 +62,31 @@ namespace Assimp
         /// </summary>
         public PropertyType PropertyType
         {
-            get
-            {
-                return m_type;
-            }
-            set
-            {
-                m_type = value;
-            }
+            get => m_type;
+            set => m_type = value;
         }
 
         /// <summary>
         /// Gets the raw byte data count.
         /// </summary>
-        public int ByteCount
-        {
-            get
-            {
-                return (m_rawValue == null) ? 0 : m_rawValue.Length;
-            }
-        }
+        public int ByteCount => (m_rawValue == null) ? 0 : m_rawValue.Length;
 
         /// <summary>
         /// Checks if the property has data.
         /// </summary>
-        public bool HasRawData
-        {
-            get
-            {
-                return m_rawValue != null;
-            }
-        }
+        public bool HasRawData => m_rawValue != null;
 
         /// <summary>
         /// Gets the raw byte data. To modify/read this data, see the Get/SetXXXValue methods.
         /// </summary>
-        public byte[] RawData
-        {
-            get
-            {
-                return m_rawValue;
-            }
-        }
+        public byte[] RawData => m_rawValue;
 
         /// <summary>
         /// Gets or sets the texture type semantic, for non-texture properties this is always <see cref="Assimp.TextureType.None"/>.
         /// </summary>
         public TextureType TextureType
         {
-            get
-            {
-                return m_texType;
-            }
+            get => m_texType;
             set
             {
                 m_texType = value;
@@ -129,10 +99,7 @@ namespace Assimp
         /// </summary>
         public int TextureIndex
         {
-            get
-            {
-                return m_texIndex;
-            }
+            get => m_texIndex;
             set
             {
                 m_texIndex = value;
@@ -144,7 +111,7 @@ namespace Assimp
         /// Gets the property's fully qualified name. Format: "{base name},{texture type semantic},{texture index}". E.g. "$clr.diffuse,0,0". This
         /// is the key that is used to index the property in the material property map.
         /// </summary>
-        public String FullyQualifiedName
+        public string FullyQualifiedName
         {
             get
             {
@@ -163,7 +130,7 @@ namespace Assimp
         /// </summary>
         public MaterialProperty()
         {
-            m_name = String.Empty;
+            m_name = string.Empty;
             m_type = PropertyType.Buffer;
             m_texIndex = 0;
             m_texType = TextureType.None;
@@ -175,7 +142,7 @@ namespace Assimp
         /// </summary>
         /// <param name="baseName">Base name of the property</param>
         /// <param name="buffer">Property value</param>
-        public MaterialProperty(String baseName, byte[] buffer)
+        public MaterialProperty(string baseName, byte[] buffer)
         {
             m_name = baseName;
             m_type = PropertyType.Buffer;
@@ -191,7 +158,7 @@ namespace Assimp
         /// </summary>
         /// <param name="baseName">Base name of the property</param>
         /// <param name="value">Property value</param>
-        public MaterialProperty(String baseName, float value)
+        public MaterialProperty(string baseName, float value)
         {
             m_name = baseName;
             m_type = PropertyType.Float;
@@ -208,7 +175,7 @@ namespace Assimp
         /// </summary>
         /// <param name="baseName">Base name of the property</param>
         /// <param name="value">Property value</param>
-        public MaterialProperty(String baseName, int value)
+        public MaterialProperty(string baseName, int value)
         {
             m_name = baseName;
             m_type = PropertyType.Integer;
@@ -225,7 +192,7 @@ namespace Assimp
         /// </summary>
         /// <param name="baseName">Name of the property</param>
         /// <param name="value">Property value</param>
-        public MaterialProperty(String baseName, bool value)
+        public MaterialProperty(string baseName, bool value)
         {
             m_name = baseName;
             m_type = PropertyType.Integer;
@@ -242,7 +209,7 @@ namespace Assimp
         /// </summary>
         /// <param name="baseName">Base name of the property</param>
         /// <param name="value">Property value</param>
-        public MaterialProperty(String baseName, String value)
+        public MaterialProperty(string baseName, string value)
         {
             m_name = baseName;
             m_type = PropertyType.String;
@@ -261,7 +228,7 @@ namespace Assimp
         /// <param name="value">Property value</param>
         /// <param name="texType">Texture type</param>
         /// <param name="textureIndex">Texture index</param>
-        public MaterialProperty(String baseName, String value, TextureType texType, int textureIndex)
+        public MaterialProperty(string baseName, string value, TextureType texType, int textureIndex)
         {
             m_name = baseName;
             m_type = PropertyType.String;
@@ -278,7 +245,7 @@ namespace Assimp
         /// </summary>
         /// <param name="baseName">Base name of the property</param>
         /// <param name="values">Property values</param>
-        public MaterialProperty(String baseName, float[] values)
+        public MaterialProperty(string baseName, float[] values)
         {
             m_name = baseName;
             m_type = PropertyType.Float;
@@ -295,7 +262,7 @@ namespace Assimp
         /// </summary>
         /// <param name="baseName">Base name of the property</param>
         /// <param name="values">Property values</param>
-        public MaterialProperty(String baseName, int[] values)
+        public MaterialProperty(string baseName, int[] values)
         {
             m_name = baseName;
             m_type = PropertyType.Integer;
@@ -312,7 +279,7 @@ namespace Assimp
         /// </summary>
         /// <param name="baseName">Base name of the property</param>
         /// <param name="value">Property value</param>
-        public MaterialProperty(String baseName, Vector3 value)
+        public MaterialProperty(string baseName, Vector3 value)
         {
             m_name = baseName;
             m_type = PropertyType.Float;
@@ -329,7 +296,7 @@ namespace Assimp
         /// </summary>
         /// <param name="baseName">Base name of the property</param>
         /// <param name="value">Property value</param>
-        public MaterialProperty(String baseName, Vector4 value)
+        public MaterialProperty(string baseName, Vector4 value)
         {
             m_name = baseName;
             m_type = PropertyType.Float;
@@ -420,7 +387,7 @@ namespace Assimp
         /// Gets the property raw data as a string.
         /// </summary>
         /// <returns>String</returns>
-        public String GetStringValue()
+        public string GetStringValue()
         {
             if(m_type != PropertyType.String)
                 return null;
@@ -433,7 +400,7 @@ namespace Assimp
         /// </summary>
         /// <param name="value">String</param>
         /// <returns>True if successful, false otherwise</returns>
-        public bool SetStringValue(String value)
+        public bool SetStringValue(string value)
         {
             if(m_type != PropertyType.String)
                 return false;
@@ -703,10 +670,10 @@ namespace Assimp
             return true;
         }
 
-        private static unsafe String GetMaterialString(byte[] matPropData)
+        private static unsafe string GetMaterialString(byte[] matPropData)
         {
             if(matPropData == null)
-                return String.Empty;
+                return string.Empty;
 
             fixed(byte* ptr = &matPropData[0])
             {
@@ -715,15 +682,15 @@ namespace Assimp
                 aiString.Length = (uint) MemoryHelper.Read<int>(new IntPtr(ptr));
 
                 //Memcpy starting at dataPtr + sizeof(int) for length + 1 (to account for null terminator)
-                MemoryHelper.CopyMemory(new IntPtr(aiString.Data), MemoryHelper.AddIntPtr(new IntPtr(ptr), sizeof(int)), (int) aiString.Length + 1);
+                MemoryHelper.CopyMemory(new IntPtr(aiString.Data), new IntPtr(ptr) + sizeof(int), (int) aiString.Length + 1);
 
                 return aiString.GetString();
             }
         }
 
-        private static unsafe byte[] SetMaterialString(String value, byte[] existing)
+        private static unsafe byte[] SetMaterialString(string value, byte[] existing)
         {
-            if(String.IsNullOrEmpty(value))
+            if(string.IsNullOrEmpty(value))
                 return null;
 
             int stringSize = Encoding.UTF8.GetByteCount(value);
@@ -762,7 +729,7 @@ namespace Assimp
         /// <summary>
         /// Gets if the native value type is blittable (that is, does not require marshaling by the runtime, e.g. has MarshalAs attributes).
         /// </summary>
-        bool IMarshalable<MaterialProperty, AiMaterialProperty>.IsNativeBlittable { get { return true; } }
+        bool IMarshalable<MaterialProperty, AiMaterialProperty>.IsNativeBlittable => true;
 
         /// <summary>
         /// Writes the managed data to the native value.

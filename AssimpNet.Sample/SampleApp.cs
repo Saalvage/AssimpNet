@@ -60,7 +60,7 @@ namespace Assimp.Sample
             m_cmdList = m_graphicsDevice.ResourceFactory.CreateCommandList();
 
             //NOTICE: This is the duck model we load for the sample, replace this line with a path to your own model to see it imported!
-            String fileName = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Assets", "duck.dae");
+            string fileName = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Assets", "duck.dae");
 
             //Veldrid defaults to Clockwise winding order, assimp defaults to CCW. We also do some processing + generate normals if missing.
             SimpleModel model = SimpleModel.LoadFromFile(fileName, m_graphicsDevice, PostProcessPreset.TargetRealTimeQuality | PostProcessSteps.FlipWindingOrder,

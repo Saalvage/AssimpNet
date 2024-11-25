@@ -21,28 +21,20 @@
 */
 
 using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Runtime.InteropServices;
 
 namespace Assimp.Unmanaged
 {
     internal sealed class UnmanagedWin32LibraryImplementation : UnmanagedLibraryImplementation
     {
-        public override String DllExtension
-        {
-            get
-            {
-                return ".dll";
-            }
-        }
+        public override string DllExtension => ".dll";
 
-        public UnmanagedWin32LibraryImplementation(String defaultLibName, Type[] unmanagedFunctionDelegateTypes)
+        public UnmanagedWin32LibraryImplementation(string defaultLibName, Type[] unmanagedFunctionDelegateTypes)
             : base(defaultLibName, unmanagedFunctionDelegateTypes)
         {
         }
 
-        protected override IntPtr NativeLoadLibrary(String path)
+        protected override IntPtr NativeLoadLibrary(string path)
         {
             IntPtr libraryHandle = WinNativeLoadLibrary(path);
 
@@ -60,15 +52,16 @@ namespace Assimp.Unmanaged
                 catch(Exception) { }
 
                 if(innerException != null)
-                    throw new AssimpException(String.Format("Error loading unmanaged library from path: {0}\n\n{1}", path, innerException.Message), innerException);
+                    throw new AssimpException(
+                        $"Error loading unmanaged library from path: {path}\n\n{innerException.Message}", innerException);
                 else
-                    throw new AssimpException(String.Format("Error loading unmanaged library from path: {0}", path));
+                    throw new AssimpException($"Error loading unmanaged library from path: {path}");
             }
 
             return libraryHandle;
         }
 
-        protected override IntPtr NativeGetProcAddress(IntPtr handle, String functionName)
+        protected override IntPtr NativeGetProcAddress(IntPtr handle, string functionName)
         {
             return GetProcAddress(handle, functionName);
         }
@@ -93,13 +86,13 @@ namespace Assimp.Unmanaged
         #region Native Methods
 
         [DllImport("kernel32.dll", CharSet = CharSet.Ansi, BestFitMapping = false, SetLastError = true, EntryPoint = "LoadLibrary")]
-        private static extern IntPtr WinNativeLoadLibrary(String fileName);
+        private static extern IntPtr WinNativeLoadLibrary(string fileName);
 
         [DllImport("kernel32.dll", SetLastError = true)]
         private static extern bool FreeLibrary(IntPtr hModule);
 
         [DllImport("kernel32.dll")]
-        private static extern IntPtr GetProcAddress(IntPtr hModule, String procName);
+        private static extern IntPtr GetProcAddress(IntPtr hModule, string procName);
 
         #endregion
     }

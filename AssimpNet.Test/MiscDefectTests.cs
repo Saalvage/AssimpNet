@@ -20,7 +20,6 @@
 * THE SOFTWARE.
 */
 
-using System;
 using NUnit.Framework;
 
 namespace Assimp.Test

@@ -23,66 +23,43 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using System.Runtime.InteropServices;
 
 namespace Assimp.Unmanaged
 {
     internal abstract class UnmanagedLibraryImplementation : IDisposable
     {
-        private String m_defaultLibName;
+        private string m_defaultLibName;
         private Type[] m_unmanagedFunctionDelegateTypes;
-        private Dictionary<String, Delegate> m_nameToUnmanagedFunction;
+        private Dictionary<string, Delegate> m_nameToUnmanagedFunction;
         private IntPtr m_libraryHandle;
         private bool m_isDisposed;
         private bool m_throwOnLoadFailure;
 
-        public bool IsLibraryLoaded
-        {
-            get
-            {
-                return m_libraryHandle != IntPtr.Zero;
-            }
-        }
+        public bool IsLibraryLoaded => m_libraryHandle != IntPtr.Zero;
 
-        public bool IsDisposed
-        {
-            get
-            {
-                return m_isDisposed;
-            }
-        }
+        public bool IsDisposed => m_isDisposed;
 
-        public String DefaultLibraryName
-        {
-            get
-            {
-                return m_defaultLibName;
-            }
-        }
+        public string DefaultLibraryName => m_defaultLibName;
 
         public bool ThrowOnLoadFailure
         {
-            get
-            {
-                return m_throwOnLoadFailure;
-            }
-            set
-            {
-                m_throwOnLoadFailure = value;
-            }
+            get => m_throwOnLoadFailure;
+            set => m_throwOnLoadFailure = value;
         }
 
-        public abstract String DllExtension { get; }
+        public abstract string DllExtension { get; }
 
-        public virtual String DllPrefix { get { return String.Empty; } }
+        public virtual string DllPrefix => string.Empty;
 
-        public UnmanagedLibraryImplementation(String defaultLibName, Type[] unmanagedFunctionDelegateTypes)
+        public UnmanagedLibraryImplementation(string defaultLibName, Type[] unmanagedFunctionDelegateTypes)
         {
             m_defaultLibName = DllPrefix + Path.ChangeExtension(defaultLibName, DllExtension);
 
             m_unmanagedFunctionDelegateTypes = unmanagedFunctionDelegateTypes;
 
-            m_nameToUnmanagedFunction = new Dictionary<String, Delegate>();
+            m_nameToUnmanagedFunction = new Dictionary<string, Delegate>();
             m_isDisposed = false;
             m_libraryHandle = IntPtr.Zero;
 
@@ -94,21 +71,21 @@ namespace Assimp.Unmanaged
             Dispose(false);
         }
 
-        public T GetFunction<T>(String functionName) where T : class
+        public T GetFunction<T>(string functionName) where T : class
         {
-            if(String.IsNullOrEmpty(functionName))
+            if(string.IsNullOrEmpty(functionName))
                 return null;
 
             Delegate function;
             if(!m_nameToUnmanagedFunction.TryGetValue(functionName, out function))
                 return null;
 
-            Object obj = (Object) function;
+            object obj = (object) function;
 
             return (T) obj;
         }
 
-        public bool LoadLibrary(String path)
+        public bool LoadLibrary(string path)
         {
             FreeLibrary(true);
 
@@ -145,44 +122,39 @@ namespace Assimp.Unmanaged
         {
             foreach(Type funcType in m_unmanagedFunctionDelegateTypes)
             {
-                String funcName = GetUnmanagedName(funcType);
-                if(String.IsNullOrEmpty(funcName))
+                string funcName = GetUnmanagedName(funcType);
+                if(string.IsNullOrEmpty(funcName))
                 {
-                    System.Diagnostics.Debug.Assert(false, String.Format("No UnmanagedFunctionNameAttribute on {0} type.", funcType.AssemblyQualifiedName));
+                    System.Diagnostics.Debug.Assert(false,
+                        $"No UnmanagedFunctionNameAttribute on {funcType.AssemblyQualifiedName} type.");
                     continue;
                 }
 
                 IntPtr procAddr = NativeGetProcAddress(m_libraryHandle, funcName);
                 if(procAddr == IntPtr.Zero)
                 {
-                    System.Diagnostics.Debug.Assert(false, String.Format("No unmanaged function found for {0} type.", funcType.AssemblyQualifiedName));
+                    System.Diagnostics.Debug.Assert(false,
+                        $"No unmanaged function found for {funcType.AssemblyQualifiedName} type.");
                     continue;
                 }
 
                 Delegate function;
                 if(!m_nameToUnmanagedFunction.TryGetValue(funcName, out function))
                 {
-                    function = PlatformHelper.GetDelegateForFunctionPointer(procAddr, funcType);
+                    function = Marshal.GetDelegateForFunctionPointer(procAddr, funcType);
                     m_nameToUnmanagedFunction.Add(funcName, function);
                 }
             }
         }
 
-        private String GetUnmanagedName(Type funcType)
+        private string GetUnmanagedName(Type funcType)
         {
-            object[] attributes = PlatformHelper.GetCustomAttributes(funcType, typeof(UnmanagedFunctionNameAttribute), false);
-            foreach(object attr in attributes)
-            {
-                if(attr is UnmanagedFunctionNameAttribute)
-                    return (attr as UnmanagedFunctionNameAttribute).UnmanagedFunctionName;
-            }
-
-            return null;
+            return funcType.GetCustomAttribute<UnmanagedFunctionNameAttribute>(false)?.UnmanagedFunctionName;
         }
 
-        protected abstract IntPtr NativeLoadLibrary(String path);
+        protected abstract IntPtr NativeLoadLibrary(string path);
         protected abstract void NativeFreeLibrary(IntPtr handle);
-        protected abstract IntPtr NativeGetProcAddress(IntPtr handle, String functionName);
+        protected abstract IntPtr NativeGetProcAddress(IntPtr handle, string functionName);
 
         public void Dispose()
         {

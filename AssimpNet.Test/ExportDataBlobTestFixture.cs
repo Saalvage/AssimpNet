@@ -20,7 +20,6 @@
 * THE SOFTWARE.
 */
 
-using System;
 using System.IO;
 using NUnit.Framework;
 
@@ -32,7 +31,7 @@ namespace Assimp.Test
         [Test]
         public void TestToStream()
         {
-            String path = Path.Combine(TestHelper.RootPath, "TestFiles/duck.dae");
+            string path = Path.Combine(TestHelper.RootPath, "TestFiles/duck.dae");
 
             AssimpContext importer = new AssimpContext();
             ExportDataBlob blob = importer.ConvertFromFileToBlob(path, "obj");

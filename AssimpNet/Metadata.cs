@@ -21,7 +21,6 @@
 */
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using Assimp.Unmanaged;
 using System.Globalization;
@@ -32,7 +31,7 @@ namespace Assimp
     /// <summary>
     /// Represents a container for holding metadata, representing as key-value pairs.
     /// </summary>
-    public sealed class Metadata : Dictionary<String, Metadata.Entry>, IMarshalable<Metadata, AiMetadata>
+    public sealed class Metadata : Dictionary<string, Metadata.Entry>, IMarshalable<Metadata, AiMetadata>
     {
         /// <summary>
         /// Constructs a new instance of the <see cref="Metadata"/> class.
@@ -44,7 +43,7 @@ namespace Assimp
         /// <summary>
         /// Gets if the native value type is blittable (that is, does not require marshaling by the runtime, e.g. has MarshalAs attributes).
         /// </summary>
-        bool IMarshalable<Metadata, AiMetadata>.IsNativeBlittable { get { return true; } }
+        bool IMarshalable<Metadata, AiMetadata>.IsNativeBlittable => true;
 
         /// <summary>
         /// Writes the managed data to the native value.
@@ -59,7 +58,7 @@ namespace Assimp
             AiString[] keys = new AiString[Count];
             AiMetadataEntry[] entries = new AiMetadataEntry[Count];
             int index = 0;
-            foreach(KeyValuePair<String, Entry> kv in this)
+            foreach(KeyValuePair<string, Entry> kv in this)
             {
                 AiMetadataEntry entry = new AiMetadataEntry();
                 entry.DataType = kv.Value.DataType;
@@ -88,13 +87,13 @@ namespace Assimp
                         break;
                     case MetaDataType.String:
                         entry.Data = MemoryHelper.AllocateMemory(MemoryHelper.SizeOf<AiString>());
-                        AiString aiStringValue = new AiString(kv.Value.Data as String);
+                        AiString aiStringValue = new AiString(kv.Value.Data as string);
                         MemoryHelper.Write<AiString>(entry.Data, aiStringValue);
                         break;
                     case MetaDataType.UInt64:
-                        entry.Data = MemoryHelper.AllocateMemory(sizeof(UInt64));
-                        UInt64 uint64Value = (UInt64) kv.Value.Data;
-                        MemoryHelper.Write<UInt64>(entry.Data, uint64Value);
+                        entry.Data = MemoryHelper.AllocateMemory(sizeof(ulong));
+                        ulong uint64Value = (ulong) kv.Value.Data;
+                        MemoryHelper.Write<ulong>(entry.Data, uint64Value);
                         break;
                     case MetaDataType.Vector3:
                         entry.Data = MemoryHelper.AllocateMemory(MemoryHelper.SizeOf<Vector3>());
@@ -128,13 +127,13 @@ namespace Assimp
 
             for(int i = 0; i < nativeValue.NumProperties; i++)
             {
-                String key = keys[i].GetString();
+                string key = keys[i].GetString();
                 AiMetadataEntry entry = entries[i];
 
-                if(String.IsNullOrEmpty(key) || entry.Data == IntPtr.Zero)
+                if(string.IsNullOrEmpty(key) || entry.Data == IntPtr.Zero)
                     continue;
 
-                Object data = null;
+                object data = null;
                 switch(entry.DataType)
                 {
                     case MetaDataType.Bool:
@@ -154,7 +153,7 @@ namespace Assimp
                         data = aiString.GetString();
                         break;
                     case MetaDataType.UInt64:
-                        data = MemoryHelper.Read<UInt64>(entry.Data);
+                        data = MemoryHelper.Read<ulong>(entry.Data);
                         break;
                     case MetaDataType.Vector3:
                         data = MemoryHelper.Read<Vector3>(entry.Data);
@@ -206,36 +205,24 @@ namespace Assimp
         public struct Entry : IEquatable<Entry>
         {
             private MetaDataType m_dataType;
-            private Object m_data;
+            private object m_data;
 
             /// <summary>
             /// Gets the type of metadata.
             /// </summary>
-            public MetaDataType DataType
-            {
-                get
-                {
-                    return m_dataType;
-                }
-            }
+            public MetaDataType DataType => m_dataType;
 
             /// <summary>
             /// Gets the metadata data stored in this entry.
             /// </summary>
-            public Object Data
-            {
-                get
-                {
-                    return m_data;
-                }
-            }
+            public object Data => m_data;
 
             /// <summary>
             /// Constructs a new instance of the <see cref="Entry"/> struct.
             /// </summary>
             /// <param name="dataType">Type of the data.</param>
             /// <param name="data">The data.</param>
-            public Entry(MetaDataType dataType, Object data)
+            public Entry(MetaDataType dataType, object data)
             {
                 m_dataType = dataType;
                 m_data = data;
@@ -286,10 +273,10 @@ namespace Assimp
                         dataTypeType = typeof(int);
                         break;
                     case MetaDataType.String:
-                        dataTypeType = typeof(String);
+                        dataTypeType = typeof(string);
                         break;
                     case MetaDataType.UInt64:
-                        dataTypeType = typeof(UInt64);
+                        dataTypeType = typeof(ulong);
                         break;
                     case MetaDataType.Vector3:
                         dataTypeType = typeof(Vector3);
@@ -325,7 +312,7 @@ namespace Assimp
                 if(other.DataType != DataType)
                     return false;
 
-                return Object.Equals(other.Data, Data);
+                return object.Equals(other.Data, Data);
             }
 
             /// <summary>
@@ -347,10 +334,10 @@ namespace Assimp
             /// <summary>
             /// Returns the fully qualified type name of this instance.
             /// </summary>
-            /// <returns>A <see cref="T:System.String" /> containing a fully qualified type name.</returns>
-            public override String ToString()
+            /// <returns>A <see cref="T:string" /> containing a fully qualified type name.</returns>
+            public override string ToString()
             {
-                return String.Format(CultureInfo.CurrentCulture, "DataType: {0}, Data: {1}", new Object[] { m_dataType.ToString(), (m_data == null) ? "null" : m_data.ToString() });
+                return string.Format(CultureInfo.CurrentCulture, "DataType: {0}, Data: {1}", new object[] { m_dataType.ToString(), (m_data == null) ? "null" : m_data.ToString() });
             }
         }
     }
