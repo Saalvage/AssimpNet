@@ -1052,6 +1052,12 @@ namespace Assimp.Unmanaged
 
         #endregion
 
+        /// <summary>
+        /// Gets an embedded texture.
+        /// </summary>
+        /// <param name="scene">Input asset.</param>
+        /// <param name="filename">Texture path extracted from <see cref="GetMaterialString"/>.</param>
+        /// <returns>An embedded texture, or nullptr.</returns>
         public IntPtr GetEmbeddedTexture(IntPtr scene, String filename)
         {
             LoadIfNotLoaded();
