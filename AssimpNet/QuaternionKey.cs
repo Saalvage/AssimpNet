@@ -44,6 +44,11 @@ namespace Assimp
         public Quaternion Value;
 
         /// <summary>
+        /// The interpolation setting of this key.
+        /// </summary>
+        public AnimationInterpolation Interpolation = AnimationInterpolation.Linear;
+
+        /// <summary>
         /// Constructs a new QuaternionKey.
         /// </summary>
         /// <param name="time">Time of the key.</param>

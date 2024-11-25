@@ -46,7 +46,7 @@ namespace Assimp
         /// <summary>
         /// The interpolation setting of this key.
         /// </summary>
-        public AnimInterpolation Interpolation = AnimInterpolation.Linear;
+        public AnimationInterpolation Interpolation = AnimationInterpolation.Linear;
 
         /// <summary>
         /// Constructs a new VectorKey.
