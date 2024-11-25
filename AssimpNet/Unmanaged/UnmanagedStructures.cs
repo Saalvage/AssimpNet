@@ -399,25 +399,7 @@ namespace Assimp.Unmanaged
         {
             fixed (sbyte* charPtr = aiTex.FormatHint)
             {
-#if !NETSTANDARD1_3
                 return new string(charPtr);
-#else
-                //Determine how many actual characters there are...
-                int maxLen = s_nullFormat.Length;
-                int nonTerminatorCount = 0;
-                for(int i = 0; i < maxLen; i++)
-                {
-                    if(aiTex.FormatHint[i] == '\0')
-                        break;
-
-                    nonTerminatorCount++;
-                }
-
-                if(nonTerminatorCount == 0)
-                    return String.Empty;
-
-                return Encoding.ASCII.GetString((byte*) charPtr, nonTerminatorCount);
-#endif
             }
         }
     }

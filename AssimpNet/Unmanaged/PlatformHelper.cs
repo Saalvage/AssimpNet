@@ -26,48 +26,6 @@ using System.Runtime.InteropServices;
 
 namespace Assimp.Unmanaged
 {
-  /*
-#if !NETSTANDARD1_3
-    internal enum OSPlatform
-    {
-        Windows = 0,
-        Linux = 1,
-        OSX = 2
-    }
-
-    internal static class RuntimeInformation
-    {
-        private static OSPlatform s_platform;
-
-        static RuntimeInformation()
-        {
-            switch (Environment.OSVersion.Platform)
-            {
-                case PlatformID.Unix:
-                    if (Directory.Exists("/Applications") && Directory.Exists("/System") && Directory.Exists("/Users") && Directory.Exists("/Volumes"))
-                        s_platform = OSPlatform.OSX;
-                    else
-                        s_platform = OSPlatform.Linux;
-                    break;
-                case PlatformID.MacOSX:
-                    s_platform = OSPlatform.OSX;
-                    break;
-                default:
-                    s_platform = OSPlatform.Windows;
-                    break;
-            }
-        }
-
-        public static bool IsOSPlatform(OSPlatform osPlat)
-        {
-            return s_platform == osPlat;
-        }
-
-        // Non-net standard will be windows only
-        public static string OSDescription { get { return "Microsoft Windows"; } }
-    }
-#endif
-  */
     //Helper class for making it easier to access certain reflection methods on types between .Net framework and .Net standard (pre-netstandard 2.0)
     internal class PlatformHelper
     {

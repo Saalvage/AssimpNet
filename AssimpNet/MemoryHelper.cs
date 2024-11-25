@@ -382,11 +382,7 @@ namespace Assimp
                 return;
             }
 
-#if NETSTANDARD1_3
             value = Marshal.PtrToStructure<T>(ptr);
-#else
-            value = (T) Marshal.PtrToStructure(ptr, type);
-#endif
         }
 
         /// <summary>
@@ -407,11 +403,7 @@ namespace Assimp
             if (HasNativeCustomMarshaler(type, out marshaler))
                 return (T) marshaler.MarshalNativeToManaged(ptr);
 
-#if NETSTANDARD1_3
             return Marshal.PtrToStructure<T>(ptr);
-#else
-            return (T) Marshal.PtrToStructure(ptr, type);
-#endif
         }
 
         /// <summary>
@@ -433,11 +425,7 @@ namespace Assimp
                 return;
             }
 
-#if NETSTANDARD1_3
             Marshal.StructureToPtr<T>(value, ptr, true);
-#else
-            Marshal.StructureToPtr((object)value, ptr, true);
-#endif
         }
 
         /// <summary>
@@ -454,11 +442,7 @@ namespace Assimp
             if (HasNativeCustomMarshaler(type, out marshaler))
                 return marshaler.NativeDataSize;
 
-#if NETSTANDARD1_3
             return Marshal.SizeOf<T>();
-#else
-            return Marshal.SizeOf(type);
-#endif
         }
 
         /// <summary>
@@ -836,11 +820,9 @@ namespace Assimp
             if(otherColl != null)
                 return otherColl.Count;
 
-#if NETSTANDARD1_3
             IReadOnlyCollection<T> roColl = source as IReadOnlyCollection<T>;
             if(roColl != null)
                 return roColl.Count;
-#endif
 
             int count = 0;
             using(IEnumerator<T> enumerator = source.GetEnumerator())
