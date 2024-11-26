@@ -1390,7 +1390,7 @@ namespace Assimp
     /// <summary>
     /// Defines the type of interpolation to use.
     /// </summary>
-    public enum AnimInterpolation
+    public enum AnimationInterpolation
     {
         /// <summary>
         /// Step interpolation.

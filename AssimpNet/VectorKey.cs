@@ -32,7 +32,7 @@ namespace Assimp
     /// <param name="Value">The 3D vector value of this key.</param>
     /// <param name="Interpolation">The interpolation setting of this key.</param>
     [StructLayout(LayoutKind.Sequential)]
-    public record struct VectorKey(double Time, Vector3 Value, AnimInterpolation Interpolation = AnimInterpolation.Linear)
+    public record struct VectorKey(double Time, Vector3 Value, AnimationInterpolation Interpolation = AnimationInterpolation.Linear)
     {
         /// <summary>
         /// Tests inequality between two keys.
