@@ -58,7 +58,7 @@ namespace Assimp.Sample
             }
         }
 
-        public static Shader LoadShader(ResourceFactory factory, String set, ShaderStages stage, String entryPoint)
+        public static Shader LoadShader(ResourceFactory factory, string set, ShaderStages stage, string entryPoint)
         {
             string name = $"{set}-{stage.ToString().ToLower()}.{GetExtension(factory.BackendType)}";
             return factory.CreateShader(new ShaderDescription(stage, ReadEmbeddedAssetBytes(name), entryPoint));
@@ -133,7 +133,7 @@ namespace Assimp.Sample
             vOut.Z = vIn.Z;
         }
 
-        public static Texture LoadTextureFromFile(String filePath, GraphicsDevice gd, ResourceFactory factory)
+        public static Texture LoadTextureFromFile(string filePath, GraphicsDevice gd, ResourceFactory factory)
         {
             if(!File.Exists(filePath) || gd == null || factory == null)
                 return null;

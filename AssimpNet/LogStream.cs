@@ -33,7 +33,7 @@ namespace Assimp
   /// </summary>
   /// <param name="msg">Log message</param>
   /// <param name="userData">Supplied user data</param>
-  public delegate void LoggingCallback(String msg, String userData);
+  public delegate void LoggingCallback(string msg, string userData);
 
   /// <summary>
   /// Represents a log stream, which receives all log messages and streams them somewhere.
@@ -41,7 +41,7 @@ namespace Assimp
   [DebuggerDisplay("IsAttached = {IsAttached}")]
   public class LogStream : IDisposable
   {
-    private static Object s_sync = new Object();
+    private static object s_sync = new object();
     private static List<LogStream> s_activeLogstreams = new List<LogStream>();
 
     private LoggingCallback m_logCallback;
@@ -49,7 +49,7 @@ namespace Assimp
     // Don't delete this, holding onto the callbacks prevent them from being GC'ed inappropiately
     private AiLogStreamCallback m_assimpCallback;
     private IntPtr m_logstreamPtr;
-    private String m_userData;
+    private string m_userData;
     private bool m_isDisposed;
     private bool m_isAttached;
 
@@ -58,52 +58,28 @@ namespace Assimp
     /// </summary>
     public static bool IsVerboseLoggingEnabled
     {
-      get
-      {
-        return AssimpLibrary.Instance.GetVerboseLoggingEnabled();
-      }
-      set
-      {
-        AssimpLibrary.Instance.EnableVerboseLogging(value);
-      }
+      get => AssimpLibrary.Instance.GetVerboseLoggingEnabled();
+      set => AssimpLibrary.Instance.EnableVerboseLogging(value);
     }
 
     /// <summary>
     /// Gets or sets the user data to be passed to the callback.
     /// </summary>
-    public String UserData
+    public string UserData
     {
-      get
-      {
-        return m_userData;
-      }
-      set
-      {
-        m_userData = value;
-      }
+      get => m_userData;
+      set => m_userData = value;
     }
 
     /// <summary>
     /// Gets whether the logstream has been disposed or not.
     /// </summary>
-    public bool IsDisposed
-    {
-      get
-      {
-        return m_isDisposed;
-      }
-    }
+    public bool IsDisposed => m_isDisposed;
 
     /// <summary>
     /// Gets whether or not the logstream is currently attached to the library.
     /// </summary>
-    public bool IsAttached
-    {
-      get
-      {
-        return m_isAttached;
-      }
-    }
+    public bool IsAttached => m_isAttached;
 
     /// <summary>
     /// Static constructor.
@@ -128,7 +104,7 @@ namespace Assimp
     /// <param name="userData">User-supplied data</param>
     /// <param name="initialize">True if initialize should be immediately called with the default callbacks. Set this to false
     /// if your subclass requires a different way to setup the function pointers.</param>
-    protected LogStream(String userData, bool initialize = true)
+    protected LogStream(string userData, bool initialize = true)
     {
       if (initialize)
         Initialize(OnAiLogStreamCallback, null, userData);
@@ -148,7 +124,7 @@ namespace Assimp
     /// </summary>
     /// <param name="callback">Logging callback that is called when messages are received by the log stream.</param>
     /// <param name="userData">User-supplied data</param>
-    public LogStream(LoggingCallback callback, String userData)
+    public LogStream(LoggingCallback callback, string userData)
     {
       Initialize(OnAiLogStreamCallback, callback, userData);
     }
@@ -187,6 +163,7 @@ namespace Assimp
     {
       lock (s_sync)
       {
+        //Return a copy to prevent concurrent modification exceptions.
         return s_activeLogstreams.ToArray();
       }
     }
@@ -235,9 +212,9 @@ namespace Assimp
     /// Logs a message.
     /// </summary>
     /// <param name="msg">Message contents</param>
-    public void Log(String msg)
+    public void Log(string msg)
     {
-      if (!m_isAttached || String.IsNullOrEmpty(msg))
+      if (!m_isAttached || string.IsNullOrEmpty(msg))
         return;
 
       OnAiLogStreamCallback(msg, IntPtr.Zero);
@@ -279,7 +256,7 @@ namespace Assimp
     /// </summary>
     /// <param name="msg">Message</param>
     /// <param name="userData">User data</param>
-    protected virtual void LogMessage(String msg, String userData) { }
+    protected virtual void LogMessage(string msg, string userData) { }
 
     /// <summary>
     /// Called when the log stream has been attached to the assimp importer. At this point it may start receiving messages.
@@ -297,7 +274,7 @@ namespace Assimp
     /// </summary>
     /// <param name="msg"></param>
     /// <param name="userData"></param>
-    protected void OnAiLogStreamCallback(String msg, IntPtr userData)
+    protected void OnAiLogStreamCallback(string msg, IntPtr userData)
     {
       if (m_logCallback != null)
       {
@@ -316,11 +293,10 @@ namespace Assimp
     /// <param name="callback">User callback, if any. Defaults to console if null.</param>
     /// <param name="userData">User data, or empty.</param>
     /// <param name="assimpUserData">Additional assimp user data, if any.</param>
-    protected void Initialize(AiLogStreamCallback aiLogStreamCallback, LoggingCallback callback = null, String userData = "", IntPtr assimpUserData = default)
+    protected void Initialize(AiLogStreamCallback aiLogStreamCallback, LoggingCallback callback = null, string userData = "", IntPtr assimpUserData = default)
 
     {
-      if (userData == null)
-        userData = String.Empty;
+      userData ??= string.Empty;
 
       m_assimpCallback = aiLogStreamCallback;
       m_logCallback = callback;
@@ -349,22 +325,22 @@ namespace Assimp
     /// Constructs a new console logstream.
     /// </summary>
     /// <param name="userData">User supplied data</param>
-    public ConsoleLogStream(String userData) : base(userData) { }
+    public ConsoleLogStream(string userData) : base(userData) { }
 
     /// <summary>
     /// Log a message to the console.
     /// </summary>
     /// <param name="msg">Message</param>
     /// <param name="userData">Userdata</param>
-    protected override void LogMessage(String msg, String userData)
+    protected override void LogMessage(string msg, string userData)
     {
-      if (String.IsNullOrEmpty(userData))
+      if (string.IsNullOrEmpty(userData))
       {
         Console.WriteLine(msg);
       }
       else
       {
-        Console.WriteLine(String.Format("{0}: {1}", userData, msg));
+        Console.WriteLine($"{userData}: {msg}");
       }
     }
   }

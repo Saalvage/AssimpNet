@@ -21,10 +21,8 @@
 */
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using Assimp.Unmanaged;
-using System.Globalization;
 using System.Numerics;
 
 namespace Assimp
@@ -32,7 +30,7 @@ namespace Assimp
     /// <summary>
     /// Represents a container for holding metadata, representing as key-value pairs.
     /// </summary>
-    public sealed class Metadata : Dictionary<String, Metadata.Entry>, IMarshalable<Metadata, AiMetadata>
+    public sealed class Metadata : Dictionary<string, Metadata.Entry>, IMarshalable<Metadata, AiMetadata>
     {
         /// <summary>
         /// Constructs a new instance of the <see cref="Metadata"/> class.
@@ -44,7 +42,7 @@ namespace Assimp
         /// <summary>
         /// Gets if the native value type is blittable (that is, does not require marshaling by the runtime, e.g. has MarshalAs attributes).
         /// </summary>
-        bool IMarshalable<Metadata, AiMetadata>.IsNativeBlittable { get { return true; } }
+        bool IMarshalable<Metadata, AiMetadata>.IsNativeBlittable => true;
 
         /// <summary>
         /// Writes the managed data to the native value.
@@ -59,7 +57,7 @@ namespace Assimp
             AiString[] keys = new AiString[Count];
             AiMetadataEntry[] entries = new AiMetadataEntry[Count];
             int index = 0;
-            foreach(KeyValuePair<String, Entry> kv in this)
+            foreach(KeyValuePair<string, Entry> kv in this)
             {
                 AiMetadataEntry entry = new AiMetadataEntry();
                 entry.DataType = kv.Value.DataType;
@@ -88,13 +86,13 @@ namespace Assimp
                         break;
                     case MetaDataType.String:
                         entry.Data = MemoryHelper.AllocateMemory(MemoryHelper.SizeOf<AiString>());
-                        AiString aiStringValue = new AiString(kv.Value.Data as String);
+                        AiString aiStringValue = new AiString(kv.Value.Data as string);
                         MemoryHelper.Write<AiString>(entry.Data, aiStringValue);
                         break;
                     case MetaDataType.UInt64:
-                        entry.Data = MemoryHelper.AllocateMemory(sizeof(UInt64));
-                        UInt64 uint64Value = (UInt64) kv.Value.Data;
-                        MemoryHelper.Write<UInt64>(entry.Data, uint64Value);
+                        entry.Data = MemoryHelper.AllocateMemory(sizeof(ulong));
+                        ulong uint64Value = (ulong) kv.Value.Data;
+                        MemoryHelper.Write<ulong>(entry.Data, uint64Value);
                         break;
                     case MetaDataType.Vector3:
                         entry.Data = MemoryHelper.AllocateMemory(MemoryHelper.SizeOf<Vector3>());
@@ -128,13 +126,13 @@ namespace Assimp
 
             for(int i = 0; i < nativeValue.NumProperties; i++)
             {
-                String key = keys[i].GetString();
+                string key = keys[i].GetString();
                 AiMetadataEntry entry = entries[i];
 
-                if(String.IsNullOrEmpty(key) || entry.Data == IntPtr.Zero)
+                if(string.IsNullOrEmpty(key) || entry.Data == IntPtr.Zero)
                     continue;
 
-                Object data = null;
+                object data = null;
                 switch(entry.DataType)
                 {
                     case MetaDataType.Bool:
@@ -154,7 +152,7 @@ namespace Assimp
                         data = aiString.GetString();
                         break;
                     case MetaDataType.UInt64:
-                        data = MemoryHelper.Read<UInt64>(entry.Data);
+                        data = MemoryHelper.Read<ulong>(entry.Data);
                         break;
                     case MetaDataType.Vector3:
                         data = MemoryHelper.Read<Vector3>(entry.Data);
@@ -203,66 +201,10 @@ namespace Assimp
         /// <summary>
         /// Represents an entry in a metadata container.
         /// </summary>
-        public struct Entry : IEquatable<Entry>
+        /// <param name="DataType">Type of metadata.</param>
+        /// <param name="Data">Metadata data stored in this entry.</param>
+        public readonly record struct Entry(MetaDataType DataType, object Data) : IEquatable<Entry>
         {
-            private MetaDataType m_dataType;
-            private Object m_data;
-
-            /// <summary>
-            /// Gets the type of metadata.
-            /// </summary>
-            public MetaDataType DataType
-            {
-                get
-                {
-                    return m_dataType;
-                }
-            }
-
-            /// <summary>
-            /// Gets the metadata data stored in this entry.
-            /// </summary>
-            public Object Data
-            {
-                get
-                {
-                    return m_data;
-                }
-            }
-
-            /// <summary>
-            /// Constructs a new instance of the <see cref="Entry"/> struct.
-            /// </summary>
-            /// <param name="dataType">Type of the data.</param>
-            /// <param name="data">The data.</param>
-            public Entry(MetaDataType dataType, Object data)
-            {
-                m_dataType = dataType;
-                m_data = data;
-            }
-
-            /// <summary>
-            /// Tests equality between two entries.
-            /// </summary>
-            /// <param name="a">First entry</param>
-            /// <param name="b">Second entry</param>
-            /// <returns>True if the entries are equal, false otherwise</returns>
-            public static bool operator ==(Entry a, Entry b)
-            {
-                return a.Equals(b);
-            }
-
-            /// <summary>
-            /// Tests inequality between two entries.
-            /// </summary>
-            /// <param name="a">First entry</param>
-            /// <param name="b">Second entry</param>
-            /// <returns>True if the entries are not equal, false otherwise</returns>
-            public static bool operator !=(Entry a, Entry b)
-            {
-                return !a.Equals(b);
-            }
-
             /// <summary>
             /// Gets the data as the specified type. If it cannot be casted to the type, then null is returned.
             /// </summary>
@@ -271,7 +213,7 @@ namespace Assimp
             public T? DataAs<T>() where T : struct
             {
                 Type dataTypeType = null;
-                switch(m_dataType)
+                switch(DataType)
                 {
                     case MetaDataType.Bool:
                         dataTypeType = typeof(bool);
@@ -286,10 +228,10 @@ namespace Assimp
                         dataTypeType = typeof(int);
                         break;
                     case MetaDataType.String:
-                        dataTypeType = typeof(String);
+                        dataTypeType = typeof(string);
                         break;
                     case MetaDataType.UInt64:
-                        dataTypeType = typeof(UInt64);
+                        dataTypeType = typeof(ulong);
                         break;
                     case MetaDataType.Vector3:
                         dataTypeType = typeof(Vector3);
@@ -297,60 +239,9 @@ namespace Assimp
                 }
 
                 if(dataTypeType == typeof(T))
-                    return (T) m_data;
+                    return (T) Data;
 
                 return null;
-            }
-
-            /// <summary>
-            /// Determines whether the specified <see cref="System.Object" /> is equal to this instance.
-            /// </summary>
-            /// <param name="obj">The <see cref="System.Object" /> to compare with this instance.</param>
-            /// <returns>True if the specified <see cref="System.Object" /> is equal to this instance; otherwise, false.</returns>
-            public override bool Equals(object obj)
-            {
-                if(obj is Entry)
-                    return Equals((Entry) obj);
-
-                return false;
-            }
-
-            /// <summary>
-            /// Indicates whether the current object is equal to another object of the same type.
-            /// </summary>
-            /// <param name="other">An object to compare with this object.</param>
-            /// <returns>True if the current object is equal to the <paramref name="other" /> parameter; otherwise, false.</returns>
-            public bool Equals(Entry other)
-            {
-                if(other.DataType != DataType)
-                    return false;
-
-                return Object.Equals(other.Data, Data);
-            }
-
-            /// <summary>
-            /// Returns a hash code for this instance.
-            /// </summary>
-            /// <returns>A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. </returns>
-            public override int GetHashCode()
-            {
-                unchecked
-                {
-                    int hash = 17;
-                    hash = (hash * 31) + m_data.GetHashCode();
-                    hash = (hash * 31) + ((m_data == null) ? 0 : m_data.GetHashCode());
-
-                    return hash;
-                }
-            }
-
-            /// <summary>
-            /// Returns the fully qualified type name of this instance.
-            /// </summary>
-            /// <returns>A <see cref="T:System.String" /> containing a fully qualified type name.</returns>
-            public override String ToString()
-            {
-                return String.Format(CultureInfo.CurrentCulture, "DataType: {0}, Data: {1}", new Object[] { m_dataType.ToString(), (m_data == null) ? "null" : m_data.ToString() });
             }
         }
     }

@@ -23,10 +23,8 @@
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
-using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
-using Assimp.Unmanaged;
 using System.Runtime.CompilerServices;
 
 namespace Assimp
@@ -44,23 +42,9 @@ namespace Assimp
     public static class MemoryHelper
     {
         private static Dictionary<Type, INativeCustomMarshaler> s_customMarshalers = new Dictionary<Type, INativeCustomMarshaler>();
-        private static Dictionary<Object, GCHandle> s_pinnedObjects = new Dictionary<Object, GCHandle>();
+        private static Dictionary<object, GCHandle> s_pinnedObjects = new Dictionary<object, GCHandle>();
 
         #region Marshaling Interop
-
-        /// <summary>
-        /// Marshals an array of managed values to a c-style unmanaged array (void*).
-        /// </summary>
-        /// <typeparam name="Managed">Managed type</typeparam>
-        /// <typeparam name="Native">Native type</typeparam>
-        /// <param name="managedArray">Array of managed values</param>
-        /// <returns>Pointer to unmanaged memory</returns>
-        public static IntPtr ToNativeArray<Managed, Native>(Managed[] managedArray)
-            where Managed : class, IMarshalable<Managed, Native>, new()
-            where Native : struct
-        {
-            return ToNativeArray<Managed, Native>(managedArray, false);
-        }
 
         /// <summary>
         /// Marshals an array of managed values to a c-style unmanaged array (void*). This also can optionally marshal to
@@ -68,29 +52,26 @@ namespace Assimp
         /// </summary>
         /// <typeparam name="Managed">Managed type</typeparam>
         /// <typeparam name="Native">Native type</typeparam>
-        /// <param name="managedArray">Array of managed values</param>
+        /// <param name="managedColl">Collection of managed values</param>
         /// <param name="arrayOfPointers">True if the pointer is an array of pointers, false otherwise.</param>
         /// <returns>Pointer to unmanaged memory</returns>
-        public static IntPtr ToNativeArray<Managed, Native>(Managed[] managedArray, bool arrayOfPointers)
+        public static IntPtr ToNativeArray<Managed, Native>(IReadOnlyCollection<Managed> managedColl, bool arrayOfPointers = false)
             where Managed : class, IMarshalable<Managed, Native>, new()
             where Native : struct
         {
-            if(managedArray == null || managedArray.Length == 0)
+            if(managedColl == null || managedColl.Count == 0)
                 return IntPtr.Zero;
 
-            bool isNativeBlittable = IsNativeBlittable<Managed, Native>(managedArray);
+            bool isNativeBlittable = IsNativeBlittable<Managed, Native>(managedColl);
             int sizeofNative = (isNativeBlittable) ? SizeOf<Native>() : MarshalSizeOf<Native>();
 
             //If the pointer is a void** we need to step by the pointer size, otherwise it's just a void* and step by the type size.
             int stride = (arrayOfPointers) ? IntPtr.Size : sizeofNative;
-            IntPtr nativeArray = (arrayOfPointers) ? AllocateMemory(managedArray.Length * IntPtr.Size) : AllocateMemory(managedArray.Length * sizeofNative);
+            IntPtr nativeArray = AllocateMemory(managedColl.Count * (arrayOfPointers ? IntPtr.Size : sizeofNative));
 
-            for(int i = 0; i < managedArray.Length; i++)
+            IntPtr currPos = nativeArray;
+            foreach(Managed managedValue in managedColl)
             {
-                IntPtr currPos = AddIntPtr(nativeArray, stride * i);
-
-                Managed managedValue = managedArray[i];
-
                 //Setup unmanaged data - do the actual ToNative later on, that way we can pass the thisPtr if the object is a pointer type.
                 Native nativeValue = default(Native);
 
@@ -121,9 +102,7 @@ namespace Assimp
                 }
                 else
                 {
-
-                    if(managedArray != null)
-                        managedValue.ToNative(IntPtr.Zero, out nativeValue);
+                    managedValue.ToNative(IntPtr.Zero, out nativeValue);
 
                     if(isNativeBlittable)
                     {
@@ -134,24 +113,11 @@ namespace Assimp
                         MarshalPointer<Native>(nativeValue, currPos);
                     }
                 }
+
+                currPos += stride;
             }
 
             return nativeArray;
-        }
-
-        /// <summary>
-        /// Marshals an array of managed values from a c-style unmanaged array (void*).
-        /// </summary>
-        /// <typeparam name="Managed">Managed type</typeparam>
-        /// <typeparam name="Native">Native type</typeparam>
-        /// <param name="nativeArray">Pointer to unmanaged memory</param>
-        /// <param name="length">Number of elements to marshal</param>
-        /// <returns>Marshaled managed values</returns>
-        public static Managed[] FromNativeArray<Managed, Native>(IntPtr nativeArray, int length)
-            where Managed : class, IMarshalable<Managed, Native>, new()
-            where Native : struct
-        {
-            return FromNativeArray<Managed, Native>(nativeArray, length, false);
         }
 
         /// <summary>
@@ -164,21 +130,20 @@ namespace Assimp
         /// <param name="length">Number of elements to marshal</param>
         /// <param name="arrayOfPointers">True if the pointer is an array of pointers, false otherwise.</param>
         /// <returns>Marshaled managed values</returns>
-        public static Managed[] FromNativeArray<Managed, Native>(IntPtr nativeArray, int length, bool arrayOfPointers)
+        public static Managed[] FromNativeArray<Managed, Native>(IntPtr nativeArray, int length, bool arrayOfPointers = false)
             where Managed : class, IMarshalable<Managed, Native>, new()
             where Native : struct
         {
             if(nativeArray == IntPtr.Zero || length == 0)
-                return new Managed[0];
+                return [];
 
             //If the pointer is a void** we need to step by the pointer size, otherwise it's just a void* and step by the type size.
             int stride = (arrayOfPointers) ? IntPtr.Size : MarshalSizeOf<Native>();
-            Type nativeValueType = typeof(Native);
             Managed[] managedArray = new Managed[length];
 
             for(int i = 0; i < length; i++)
             {
-                IntPtr currPos = AddIntPtr(nativeArray, stride * i);
+                IntPtr currPos = nativeArray + stride * i;
 
                 //If pointer is a void**, read the current position to get the proper pointer
                 if(arrayOfPointers)
@@ -227,6 +192,25 @@ namespace Assimp
         }
 
         /// <summary>
+        /// Marshals a list of blittable structs to a c-style unmanaged array (void*). This should not be used on non-blittable types
+        /// that require marshaling by the runtime (e.g. has MarshalAs attributes).
+        /// </summary>
+        /// <typeparam name="T">Struct type</typeparam>
+        /// <param name="managedArray">Managed list of structs</param>
+        /// <returns>Pointer to unmanaged memory</returns>
+        public static IntPtr ToNativeArray<T>(List<T> managedArray) where T : struct
+        {
+            if(managedArray == null || managedArray.Count == 0)
+                return IntPtr.Zero;
+
+            IntPtr ptr = AllocateMemory(SizeOf<T>() * managedArray.Count);
+
+            Write<T>(ptr, managedArray, 0, managedArray.Count);
+
+            return ptr;
+        }
+
+        /// <summary>
         /// Marshals an array of blittable structs from a c-style unmanaged array (void*). This should not be used on non-blittable types
         /// that require marshaling by the runtime (e.g. has MarshalAs attributes).
         /// </summary>
@@ -237,26 +221,13 @@ namespace Assimp
         public static T[] FromNativeArray<T>(IntPtr nativeArray, int length) where T : struct
         {
             if(nativeArray == IntPtr.Zero || length == 0)
-                return new T[0];
+                return Array.Empty<T>();
 
             T[] managedArray = new T[length];
 
             Read<T>(nativeArray, managedArray, 0, length);
 
             return managedArray;
-        }
-
-        /// <summary>
-        /// Frees an unmanaged array and performs cleanup for each value. This can be used on any type that can be
-        /// marshaled into unmanaged memory.
-        /// </summary>
-        /// <typeparam name="T">Struct type</typeparam>
-        /// <param name="nativeArray">Pointer to unmanaged memory</param>
-        /// <param name="length">Number of elements to free</param>
-        /// <param name="action">Delegate that performs the necessary cleanup</param>
-        public static void FreeNativeArray<T>(IntPtr nativeArray, int length, FreeNativeDelegate action) where T : struct
-        {
-            FreeNativeArray<T>(nativeArray, length, action, false);
         }
 
         /// <summary>
@@ -268,7 +239,7 @@ namespace Assimp
         /// <param name="length">Number of elements to free</param>
         /// <param name="action">Delegate that performs the necessary cleanup</param>
         /// <param name="arrayOfPointers">True if the pointer is an array of pointers, false otherwise.</param>
-        public static void FreeNativeArray<T>(IntPtr nativeArray, int length, FreeNativeDelegate action, bool arrayOfPointers) where T : struct
+        public static void FreeNativeArray<T>(IntPtr nativeArray, int length, FreeNativeDelegate action, bool arrayOfPointers = false) where T : struct
         {
             if(nativeArray == IntPtr.Zero || length == 0 || action == null)
                 return;
@@ -278,7 +249,7 @@ namespace Assimp
 
             for(int i = 0; i < length; i++)
             {
-                IntPtr currPos = AddIntPtr(nativeArray, stride * i);
+                IntPtr currPos = nativeArray + stride * i;
 
                 //If pointer is a void**, read the current position to get the proper pointer
                 if(arrayOfPointers)
@@ -383,11 +354,7 @@ namespace Assimp
                 return;
             }
 
-#if NETSTANDARD1_3
             value = Marshal.PtrToStructure<T>(ptr);
-#else
-            value = (T) Marshal.PtrToStructure(ptr, type);
-#endif
         }
 
         /// <summary>
@@ -408,11 +375,7 @@ namespace Assimp
             if (HasNativeCustomMarshaler(type, out marshaler))
                 return (T) marshaler.MarshalNativeToManaged(ptr);
 
-#if NETSTANDARD1_3
             return Marshal.PtrToStructure<T>(ptr);
-#else
-            return (T) Marshal.PtrToStructure(ptr, type);
-#endif
         }
 
         /// <summary>
@@ -430,15 +393,11 @@ namespace Assimp
             INativeCustomMarshaler marshaler;
             if (HasNativeCustomMarshaler(typeof(T), out marshaler))
             {
-                marshaler.MarshalManagedToNative((Object)value, ptr);
+                marshaler.MarshalManagedToNative((object)value, ptr);
                 return;
             }
 
-#if NETSTANDARD1_3
             Marshal.StructureToPtr<T>(value, ptr, true);
-#else
-            Marshal.StructureToPtr((Object)value, ptr, true);
-#endif
         }
 
         /// <summary>
@@ -455,112 +414,12 @@ namespace Assimp
             if (HasNativeCustomMarshaler(type, out marshaler))
                 return marshaler.NativeDataSize;
 
-#if NETSTANDARD1_3
             return Marshal.SizeOf<T>();
-#else
-            return Marshal.SizeOf(type);
-#endif
-        }
-
-        /// <summary>
-        /// Computes the size of the struct array using Marshal SizeOf. Only use if the type is not blittable, thus requiring marshaling by the runtime,
-        /// (e.g. has MarshalAs attributes), otherwise use the SizeOf methods for blittable types.
-        /// </summary>
-        /// <typeparam name="T">Struct type</typeparam>
-        /// <param name="array">Array of structs</param>
-        /// <returns>Total size, in bytes, of the array's contents.</returns>
-        public static int MarshalSizeOf<T>(T[] array) where T : struct
-        { 
-            return array == null ? 0 : array.Length * MarshalSizeOf<T>();
         }
 
 #endregion
 
         #region Memory Interop (Shared code from other Projects)
-
-        /// <summary>
-        /// Pins an object in memory, which allows a pointer to it to be returned. While the object remains pinned the runtime
-        /// cannot move the object around in memory, which may degrade performance.
-        /// </summary>
-        /// <param name="obj">Object to pin.</param>
-        /// <returns>Pointer to pinned object's memory location.</returns>
-        public static IntPtr PinObject(Object obj)
-        {
-            lock(s_pinnedObjects)
-            {
-                GCHandle handle;
-                if(!s_pinnedObjects.TryGetValue(obj, out handle))
-                {
-                    handle = GCHandle.Alloc(obj, GCHandleType.Pinned);
-                    s_pinnedObjects.Add(obj, handle);
-                }
-
-                return handle.AddrOfPinnedObject();
-            }
-        }
-
-        /// <summary>
-        /// Unpins an object in memory, allowing it to once again freely be moved around by the runtime.
-        /// </summary>
-        /// <param name="obj">Object to unpin.</param>
-        public static void UnpinObject(Object obj)
-        {
-            lock(s_pinnedObjects)
-            {
-                GCHandle handle;
-                if(s_pinnedObjects.TryGetValue(obj, out handle))
-                {
-                    handle.Free();
-                    s_pinnedObjects.Remove(obj);
-                }
-            }
-        }
-
-
-        /// <summary>
-        /// Convienence method to dispose all items in the collection
-        /// </summary>
-        /// <typeparam name="T">IDisposable type</typeparam>
-        /// <param name="collection">Collection of disposables</param>
-        public static void DisposeCollection<T>(ICollection<T> collection) where T : IDisposable
-        {
-            if(collection == null)
-                return;
-
-            //Check if it's a list, so we can avoid having to call the enumerator
-            IList<T> list = collection as IList<T>;
-
-            if(list != null)
-            {
-                for(int i = 0; i < list.Count; i++)
-                {
-                    IDisposable disposable = list[i];
-                    if(disposable != null)
-                        disposable.Dispose();
-                }
-            }
-            else
-            {
-                //Otherwise enumerate the collection
-                foreach(IDisposable disposable in collection)
-                {
-                    if(disposable != null)
-                        disposable.Dispose();
-                }
-            }
-        }
-
-        /// <summary>
-        /// Casts an underlying value type to an enum type, WITHOUT first casting the value to an Object. So this avoid boxing the value.
-        /// </summary>
-        /// <typeparam name="V">Underlying value type.</typeparam>
-        /// <typeparam name="T">Enum type.</typeparam>
-        /// <param name="value">Value to cast.</param>
-        /// <returns>Enum value.</returns>
-        public static T CastToEnum<V, T>(V value) where V : unmanaged where T : struct, Enum
-        {
-            return Unsafe.As<V, T>(ref value);
-        }
 
         /// <summary>
         /// Allocates unmanaged memory. This memory should only be freed by this helper.
@@ -579,19 +438,6 @@ namespace Assimp
         }
 
         /// <summary>
-        /// Allocates unmanaged memory that is cleared to a certain value. This memory should only be freed by this helper.
-        /// </summary>
-        /// <param name="sizeInBytes">Size to allocate</param>
-        /// <param name="alignment">Alignment of the memory, by default aligned along 16-byte boundary.</param>
-        /// <returns>Pointer to the allocated unmanaged memory.</returns>
-        public static unsafe IntPtr AllocateClearedMemory(int sizeInBytes, int alignment = 16)
-        {
-            IntPtr ptr = AllocateMemory(sizeInBytes, alignment);
-            ClearMemory(ptr, sizeInBytes);
-            return ptr;
-        }
-
-        /// <summary>
         /// Frees unmanaged memory that was allocated by this helper.
         /// </summary>
         /// <param name="memoryPtr">Pointer to unmanaged memory to free.</param>
@@ -601,59 +447,6 @@ namespace Assimp
                 return;
 
             Marshal.FreeHGlobal(((IntPtr*) memoryPtr)[-1]);
-        }
-
-        /// <summary>
-        /// Checks if the memory is aligned to the specified alignment.
-        /// </summary>
-        /// <param name="memoryPtr">Pointer to the memory</param>
-        /// <param name="alignment">Alignment value, by defauly 16-byte</param>
-        /// <returns>True if is aligned, false otherwise.</returns>
-        public static bool IsMemoryAligned(IntPtr memoryPtr, int alignment = 16)
-        {
-            int mask = alignment - 1;
-            return (memoryPtr.ToInt64() & mask) == 0;
-        }
-
-        /// <summary>
-        /// Swaps the value between two references.
-        /// </summary>
-        /// <typeparam name="T">Type of data to swap.</typeparam>
-        /// <param name="left">First reference</param>
-        /// <param name="right">Second reference</param>
-        public static void Swap<T>(ref T left, ref T right)
-        {
-            T temp = left;
-            left = right;
-            right = temp;
-        }
-
-        /// <summary>
-        /// Computes a hash code using the <a href="http://bretm.home.comcast.net/~bretm/hash/6.html">FNV modified algorithm</a>m.
-        /// </summary>
-        /// <param name="data">Byte data to hash.</param>
-        /// <returns>Hash code for the data.</returns>
-        public static int ComputeFNVModifiedHashCode(byte[] data)
-        {
-            if(data == null || data.Length == 0)
-                return 0;
-
-            unchecked
-            {
-                uint p = 16777619;
-                uint hash = 2166136261;
-
-                for(int i = 0; i < data.Length; i++)
-                    hash = (hash ^ data[i]) * p;
-
-                hash += hash << 13;
-                hash ^= hash >> 7;
-                hash += hash << 3;
-                hash ^= hash >> 17;
-                hash += hash << 5;
-
-                return (int) hash;
-            }
         }
 
         /// <summary>
@@ -706,32 +499,6 @@ namespace Assimp
         }
 
         /// <summary>
-        /// Compares two arrays of bytes for equivalence. 
-        /// </summary>
-        /// <param name="firstData">First array of data.</param>
-        /// <param name="secondData">Second array of data.</param>
-        /// <returns>True if both arrays contain the same data, false otherwise.</returns>
-        public static bool Compare(byte[] firstData, byte[] secondData)
-        {
-            if(Object.ReferenceEquals(firstData, secondData))
-                return true;
-
-            if(Object.ReferenceEquals(firstData, null) || Object.ReferenceEquals(secondData, null))
-                return false;
-
-            if(firstData.Length != secondData.Length)
-                return false;
-
-            for(int i = 0; i < firstData.Length; i++)
-            {
-                if(firstData[i] != secondData[i])
-                    return false;
-            }
-
-            return true;
-        }
-
-        /// <summary>
         /// Clears the memory to zero.
         /// </summary>
         /// <param name="memoryPtr">Pointer to the memory.</param>
@@ -752,17 +519,6 @@ namespace Assimp
         }
 
         /// <summary>
-        /// Casts the by-ref value into a pointer.
-        /// </summary>
-        /// <typeparam name="T">Struct type.</typeparam>
-        /// <param name="src">By-ref value.</param>
-        /// <returns>Pointer to the value.</returns>
-        public static unsafe IntPtr AsPointer<T>(ref T src) where T : struct
-        {
-            return new IntPtr(Unsafe.AsPointer<T>(ref src));
-        }
-
-        /// <summary>
         /// Casts the pointer into a by-ref value of the specified type.
         /// </summary>
         /// <typeparam name="T">Struct type.</typeparam>
@@ -771,18 +527,6 @@ namespace Assimp
         public static unsafe ref T AsRef<T>(IntPtr pSrc) where T : struct
         {
             return ref Unsafe.AsRef<T>(pSrc.ToPointer());
-        }
-
-        /// <summary>
-        /// Casts one by-ref type to another, unsafely.
-        /// </summary>
-        /// <typeparam name="TFrom">From struct type</typeparam>
-        /// <typeparam name="TTo">To struct type</typeparam>
-        /// <param name="src">Source by-ref value.</param>
-        /// <returns>Reference as the from type.</returns>
-        public static ref TTo As<TFrom, TTo>(ref TFrom src) where TFrom : struct where TTo : struct
-        {
-            return ref Unsafe.As<TFrom, TTo>(ref src);
         }
 
         /// <summary>
@@ -797,17 +541,6 @@ namespace Assimp
         }
 
         /// <summary>
-        /// Adds an offset to the pointer.
-        /// </summary>
-        /// <param name="ptr">Pointer</param>
-        /// <param name="offset">Offset</param>
-        /// <returns>Pointer plus the offset</returns>
-        public static IntPtr AddIntPtr(IntPtr ptr, int offset)
-        {
-            return new IntPtr(ptr.ToInt64() + offset);
-        }
-
-        /// <summary>
         /// Performs a memcopy that copies data from the memory pointed to by the source pointer to the memory pointer by the destination pointer.
         /// </summary>
         /// <param name="pDest">Destination memory location</param>
@@ -816,133 +549,6 @@ namespace Assimp
         public static unsafe void CopyMemory(IntPtr pDest, IntPtr pSrc, int sizeInBytesToCopy)
         {
             Buffer.MemoryCopy(pSrc.ToPointer(), pDest.ToPointer(), (long) sizeInBytesToCopy, (long) sizeInBytesToCopy);
-        }
-
-        /// <summary>
-        /// Returns the number of elements in the enumerable.
-        /// </summary>
-        /// <typeparam name="T">Type of element in collection.</typeparam>
-        /// <param name="source">Enumerable collection</param>
-        /// <returns>The number of elements in the enumerable collection.</returns>
-        public static int Count<T>(IEnumerable<T> source)
-        {
-            if(source == null)
-                throw new ArgumentNullException("source");
-
-            ICollection<T> coll = source as ICollection<T>;
-            if(coll != null)
-                return coll.Count;
-
-            ICollection otherColl = source as ICollection;
-            if(otherColl != null)
-                return otherColl.Count;
-
-#if NETSTANDARD1_3
-            IReadOnlyCollection<T> roColl = source as IReadOnlyCollection<T>;
-            if(roColl != null)
-                return roColl.Count;
-#endif
-
-            int count = 0;
-            using(IEnumerator<T> enumerator = source.GetEnumerator())
-            {
-                while(enumerator.MoveNext())
-                    count++;
-            }
-
-            return count;
-        }
-
-        /// <summary>
-        /// Converts typed element array to a byte array.
-        /// </summary>
-        /// <typeparam name="T">Struct type</typeparam>
-        /// <param name="source">Element array</param>
-        /// <returns>Byte array copy or null if the source array was not valid.</returns>
-        public static unsafe byte[] ToByteArray<T>(T[] source) where T : struct
-        {
-            if(source == null || source.Length == 0)
-                return null;
-
-            byte[] buffer = new byte[Unsafe.SizeOf<T>() * source.Length];
-
-            fixed (void* pBuffer = buffer)
-            {
-                Write<T>((IntPtr) pBuffer, source, 0, source.Length);
-            }
-
-            return buffer;
-        }
-
-        /// <summary>
-        /// Converts a byte array to a typed element array.
-        /// </summary>
-        /// <typeparam name="T">Struct type</typeparam>
-        /// <param name="source">Byte array</param>
-        /// <returns>Typed element array or null if the source array was not valid.</returns>
-        public static unsafe T[] FromByteArray<T>(byte[] source) where T : struct
-        {
-            if(source == null || source.Length == 0)
-                return null;
-
-            T[] buffer = new T[(int) Math.Floor(((double) source.Length) / ((double) Unsafe.SizeOf<T>()))];
-
-            fixed (void* pBuffer = source)
-            {
-                Read<T>((IntPtr) pBuffer, buffer, 0, buffer.Length);
-            }
-
-            return buffer;
-        }
-
-        /// <summary>
-        /// Copies bytes from a byte array to an element array.
-        /// </summary>
-        /// <typeparam name="T">Struct type</typeparam>
-        /// <param name="srcArray">Source byte array</param>
-        /// <param name="srcStartIndex">Starting index in destination array</param>
-        /// <param name="destArray">Destination element array</param>
-        /// <param name="destStartIndex">Starting index in destination array</param>
-        /// <param name="count">Number of elements to copy</param>
-        public static unsafe void CopyBytes<T>(byte[] srcArray, int srcStartIndex, T[] destArray, int destStartIndex, int count) where T : struct
-        {
-            if(srcArray == null || srcArray.Length == 0 || destArray == null || destArray.Length == 0)
-                return;
-
-            int byteCount = Unsafe.SizeOf<T>() * count;
-
-            if(srcStartIndex < 0 || (srcStartIndex + byteCount) > srcArray.Length || destStartIndex < 0 || (destStartIndex + count) > destArray.Length)
-                return;
-
-            fixed (void* pBuffer = &srcArray[srcStartIndex])
-            {
-                Read<T>((IntPtr) pBuffer, destArray, destStartIndex, count);
-            }
-        }
-
-        /// <summary>
-        /// Copies bytes from an element array to a byte array.
-        /// </summary>
-        /// <typeparam name="T">Struct type</typeparam>
-        /// <param name="srcArray">Source element array</param>
-        /// <param name="srcStartIndex">Starting index in source array</param>
-        /// <param name="destArray">Destination byte array</param>
-        /// <param name="destStartIndex">Starting index in destination array</param>
-        /// <param name="count">Number of elements to copy</param>
-        public static unsafe void CopyBytes<T>(T[] srcArray, int srcStartIndex, byte[] destArray, int destStartIndex, int count) where T : struct
-        {
-            if(srcArray == null || srcArray.Length == 0 || destArray == null || destArray.Length == 0)
-                return;
-
-            int byteCount = Unsafe.SizeOf<T>() * count;
-
-            if(srcStartIndex < 0 || (srcStartIndex + count) > srcArray.Length || destStartIndex < 0 || (destStartIndex + byteCount) > destArray.Length)
-                return;
-
-            fixed (void* pBuffer = &destArray[destStartIndex])
-            {
-                Write<T>((IntPtr) pBuffer, srcArray, srcStartIndex, count);
-            }
         }
 
         /// <summary>
@@ -980,7 +586,7 @@ namespace Assimp
         public static unsafe void Read<T>(IntPtr pSrc, out T value) where T : struct
         {
             value = Unsafe.ReadUnaligned<T>(pSrc.ToPointer());
-    }
+        }
 
         /// <summary>
         /// Writes data from the array to the memory location.
@@ -993,6 +599,21 @@ namespace Assimp
         public static unsafe void Write<T>(IntPtr pDest, T[] data, int startIndexInArray, int count) where T : struct
         {
             ReadOnlySpan<T> src = new ReadOnlySpan<T>(data, startIndexInArray, count);
+            Span<T> dst = new Span<T>(pDest.ToPointer(), count);
+            src.CopyTo(dst);
+        }
+
+        /// <summary>
+        /// Writes data from the list to the memory location.
+        /// </summary>
+        /// <typeparam name="T">Struct type</typeparam>
+        /// <param name="pDest">Pointer to memory location</param>
+        /// <param name="data">List containing data to write</param>
+        /// <param name="startIndexInArray">Zero-based element index to start reading data from in the element array.</param>
+        /// <param name="count">Number of elements to copy</param>
+        public static unsafe void Write<T>(IntPtr pDest, List<T> data, int startIndexInArray, int count) where T : struct
+        {
+            ReadOnlySpan<T> src = CollectionsMarshal.AsSpan(data).Slice(startIndexInArray, count);
             Span<T> dst = new Span<T>(pDest.ToPointer(), count);
             src.CopyTo(dst);
         }
@@ -1012,28 +633,17 @@ namespace Assimp
 
         #region Misc
 
-        //Helper for asking if the IMarshalable's native struct is blittable.
-        private static bool IsNativeBlittable<Managed, Native>(Managed managedValue)
-            where Managed : class, IMarshalable<Managed, Native>, new()
-            where Native : struct
-        {
-
-            return (managedValue != null) ? managedValue.IsNativeBlittable : false;
-        }
-
         //Helper for asking if the IMarshalable's in the array have native structs that are blittable.
-        private static bool IsNativeBlittable<Managed, Native>(Managed[] managedArray)
+        private static bool IsNativeBlittable<Managed, Native>(IReadOnlyCollection<Managed> managedColl)
             where Managed : class, IMarshalable<Managed, Native>, new()
             where Native : struct
         {
 
-            if(managedArray == null || managedArray.Length == 0)
+            if(managedColl == null || managedColl.Count == 0)
                 return false;
 
-            for(int i = 0; i < managedArray.Length; i++)
+            foreach(Managed managedValue in managedColl)
             {
-                Managed managedValue = managedArray[i];
-
                 if(managedValue != null)
                     return managedValue.IsNativeBlittable;
             }
@@ -1053,10 +663,7 @@ namespace Assimp
             {
                 if(!s_customMarshalers.TryGetValue(type, out marshaler))
                 {
-                    Object[] customAttributes = PlatformHelper.GetCustomAttributes(type, typeof(NativeCustomMarshalerAttribute), false);
-                    if(customAttributes.Length != 0)
-                        marshaler = (customAttributes[0] as NativeCustomMarshalerAttribute).Marshaler;
-
+                    marshaler = type.GetCustomAttribute<NativeCustomMarshalerAttribute>(false)?.Marshaler;
                     s_customMarshalers.Add(type, marshaler);
                 }
             }

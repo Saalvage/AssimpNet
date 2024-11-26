@@ -36,11 +36,11 @@ namespace Assimp
     public sealed class AssimpContext : IDisposable
     {
         private bool m_isDisposed;
-        private Dictionary<String, PropertyConfig> m_configs;
+        private Dictionary<string, PropertyConfig> m_configs;
         private IOSystem m_ioSystem;
 
         private ExportFormatDescription[] m_exportFormats;
-        private String[] m_importFormats;
+        private string[] m_importFormats;
         private ImporterDescription[] m_importerDescrs;
 
         private float m_scale = 1.0f;
@@ -55,13 +55,7 @@ namespace Assimp
         /// <summary>
         /// Gets if the context has been disposed.
         /// </summary>
-        public bool IsDisposed
-        {
-            get
-            {
-                return m_isDisposed;
-            }
-        }
+        public bool IsDisposed => m_isDisposed;
 
         /// <summary>
         /// Gets or sets the uniform scale for the model. This is multiplied
@@ -69,10 +63,7 @@ namespace Assimp
         /// </summary>
         public float Scale
         {
-            get
-            {
-                return m_scale;
-            }
+            get => m_scale;
             set
             {
                 if(m_scale != value)
@@ -89,10 +80,7 @@ namespace Assimp
         /// </summary>
         public float XAxisRotation
         {
-            get
-            {
-                return m_xAxisRotation;
-            }
+            get => m_xAxisRotation;
             set
             {
                 if(m_xAxisRotation != value)
@@ -109,10 +97,7 @@ namespace Assimp
         /// </summary>
         public float YAxisRotation
         {
-            get
-            {
-                return m_yAxisRotation;
-            }
+            get => m_yAxisRotation;
             set
             {
                 if(m_yAxisRotation != value)
@@ -129,10 +114,7 @@ namespace Assimp
         /// </summary>
         public float ZAxisRotation
         {
-            get
-            {
-                return m_zAxisRotation;
-            }
+            get => m_zAxisRotation;
             set
             {
                 if(m_zAxisRotation != value)
@@ -146,31 +128,19 @@ namespace Assimp
         /// <summary>
         /// Gets whether this context is using a user-defined IO system for file handling.
         /// </summary>
-        public bool UsingCustomIOSystem
-        {
-            get
-            {
-                return m_ioSystem != null && !m_ioSystem.IsDisposed;
-            }
-        }
+        public bool UsingCustomIOSystem => m_ioSystem != null && !m_ioSystem.IsDisposed;
 
         /// <summary>
         /// Gets the property configurations set to this context. This is only used during import.
         /// </summary>
-        public Dictionary<String, PropertyConfig> PropertyConfigurations
-        {
-            get
-            {
-                return m_configs;
-            }
-        }
+        public Dictionary<string, PropertyConfig> PropertyConfigurations => m_configs;
 
         /// <summary>
         /// Constructs a new instance of the <see cref="AssimpContext"/> class.
         /// </summary>
         public AssimpContext()
         {
-            m_configs = new Dictionary<String, PropertyConfig>();
+            m_configs = new Dictionary<string, PropertyConfig>();
         }
 
         #region Import
@@ -189,7 +159,7 @@ namespace Assimp
         /// <returns>The imported scene</returns>
         /// <exception cref="AssimpException">Thrown if the stream is not valid (null or write-only).</exception>
         /// <exception cref="System.ObjectDisposedException">Thrown if the context has already been disposed of.</exception>
-        public Scene ImportFileFromStream(Stream stream, String formatHint = null)
+        public Scene ImportFileFromStream(Stream stream, string formatHint = null)
         {
             return ImportFileFromStream(stream, PostProcessSteps.None, formatHint);
         }
@@ -206,12 +176,12 @@ namespace Assimp
         /// <returns>The imported scene</returns>
         /// <exception cref="AssimpException">Thrown if the stream is not valid (null or write-only).</exception>
         /// <exception cref="System.ObjectDisposedException">Thrown if the context has already been disposed of.</exception>
-        public Scene ImportFileFromStream(Stream stream, PostProcessSteps postProcessFlags, String formatHint = null)
+        public Scene ImportFileFromStream(Stream stream, PostProcessSteps postProcessFlags, string formatHint = null)
         {
             CheckDisposed();
 
             if(stream == null || stream.CanRead != true)
-                throw new AssimpException("stream", "Can't read from the stream it's null or write-only");
+                throw new AssimpException(nameof(stream), "Can't read from the stream it's null or write-only");
 
             IntPtr ptr = IntPtr.Zero;
             PrepareImport();
@@ -253,7 +223,7 @@ namespace Assimp
         /// <exception cref="AssimpException">Thrown if there was a general error in importing the model.</exception>
         /// <exception cref="System.IO.FileNotFoundException">Thrown if the file could not be located.</exception>
         /// <exception cref="System.ObjectDisposedException">Thrown if the context has already been disposed of.</exception>
-        public Scene ImportFile(String file)
+        public Scene ImportFile(string file)
         {
             return ImportFile(file, PostProcessSteps.None);
         }
@@ -268,7 +238,7 @@ namespace Assimp
         /// <exception cref="AssimpException">Thrown if there was a general error in importing the model.</exception>
         /// <exception cref="System.IO.FileNotFoundException">Thrown if the file could not be located.</exception>
         /// <exception cref="System.ObjectDisposedException">Thrown if the context has already been disposed of.</exception>
-        public Scene ImportFile(String file, PostProcessSteps postProcessFlags)
+        public Scene ImportFile(string file, PostProcessSteps postProcessFlags)
         {
             CheckDisposed();
 
@@ -280,7 +250,7 @@ namespace Assimp
             {
                 fileIO = m_ioSystem.AiFileIO;
             }
-            else if(String.IsNullOrEmpty(file) || !File.Exists(file))
+            else if(string.IsNullOrEmpty(file) || !File.Exists(file))
             {
                 throw new FileNotFoundException("Filename was null or could not be found", file);
             }
@@ -328,7 +298,7 @@ namespace Assimp
         /// <returns>True if the scene was exported successfully, false otherwise.</returns>
         /// <exception cref="ArgumentNullException">Thrown if the scene is null.</exception>
         /// <exception cref="System.ObjectDisposedException">Thrown if the context has already been disposed of.</exception>
-        public bool ExportFile(Scene scene, String fileName, String exportFormatId)
+        public bool ExportFile(Scene scene, string fileName, string exportFormatId)
         {
             return ExportFile(scene, fileName, exportFormatId, PostProcessSteps.None);
         }
@@ -343,7 +313,7 @@ namespace Assimp
         /// <returns>True if the scene was exported successfully, false otherwise.</returns>
         /// <exception cref="ArgumentNullException">Thrown if the scene is null.</exception>
         /// <exception cref="System.ObjectDisposedException">Thrown if the context has already been disposed of.</exception>
-        public bool ExportFile(Scene scene, String fileName, String exportFormatId, PostProcessSteps preProcessing)
+        public bool ExportFile(Scene scene, string fileName, string exportFormatId, PostProcessSteps preProcessing)
         {
             CheckDisposed();
 
@@ -351,7 +321,7 @@ namespace Assimp
             IntPtr scenePtr = IntPtr.Zero;
 
             if(scene == null)
-                throw new ArgumentNullException("scene", "Scene must exist.");
+                throw new ArgumentNullException(nameof(scene), "Scene must exist.");
 
             if (!TestIfExportIdIsValid(exportFormatId))
                 return false;
@@ -383,7 +353,7 @@ namespace Assimp
         /// <returns>The resulting data blob, or null if the export failed.</returns>
         /// <exception cref="ArgumentNullException">Thrown if the scene is null.</exception>
         /// <exception cref="System.ObjectDisposedException">Thrown if the context has already been disposed of.</exception>
-        public ExportDataBlob ExportToBlob(Scene scene, String exportFormatId)
+        public ExportDataBlob ExportToBlob(Scene scene, string exportFormatId)
         {
             return ExportToBlob(scene, exportFormatId, PostProcessSteps.None);
         }
@@ -397,7 +367,7 @@ namespace Assimp
         /// <returns>The resulting data blob, or null if the export failed.</returns>
         /// <exception cref="ArgumentNullException">Thrown if the scene is null.</exception>
         /// <exception cref="System.ObjectDisposedException">Thrown if the context has already been disposed of.</exception>
-        public ExportDataBlob ExportToBlob(Scene scene, String exportFormatId, PostProcessSteps preProcessing)
+        public ExportDataBlob ExportToBlob(Scene scene, string exportFormatId, PostProcessSteps preProcessing)
         {
             CheckDisposed();
 
@@ -405,7 +375,7 @@ namespace Assimp
             IntPtr scenePtr = IntPtr.Zero;
 
             if(scene == null)
-                throw new ArgumentNullException("scene", "Scene must exist.");
+                throw new ArgumentNullException(nameof(scene), "Scene must exist.");
 
             if (!TestIfExportIdIsValid(exportFormatId))
                 return null;
@@ -441,7 +411,7 @@ namespace Assimp
         /// <exception cref="AssimpException">Thrown if there was a general error in importing the model.</exception>
         /// <exception cref="System.IO.FileNotFoundException">Thrown if the file could not be located.</exception>
         /// <exception cref="System.ObjectDisposedException">Thrown if the context has already been disposed of.</exception>
-        public bool ConvertFromFileToFile(String inputFilename, String outputFilename, String exportFormatId)
+        public bool ConvertFromFileToFile(string inputFilename, string outputFilename, string exportFormatId)
         {
             return ConvertFromFileToFile(inputFilename, PostProcessSteps.None, outputFilename, exportFormatId, PostProcessSteps.None);
         }
@@ -457,7 +427,7 @@ namespace Assimp
         /// <exception cref="AssimpException">Thrown if there was a general error in importing the model.</exception>
         /// <exception cref="System.IO.FileNotFoundException">Thrown if the file could not be located.</exception>
         /// <exception cref="System.ObjectDisposedException">Thrown if the context has already been disposed of.</exception>
-        public bool ConvertFromFileToFile(String inputFilename, String outputFilename, String exportFormatId, PostProcessSteps exportProcessSteps)
+        public bool ConvertFromFileToFile(string inputFilename, string outputFilename, string exportFormatId, PostProcessSteps exportProcessSteps)
         {
             return ConvertFromFileToFile(inputFilename, PostProcessSteps.None, outputFilename, exportFormatId, exportProcessSteps);
         }
@@ -474,7 +444,7 @@ namespace Assimp
         /// <exception cref="AssimpException">Thrown if there was a general error in importing the model.</exception>
         /// <exception cref="System.IO.FileNotFoundException">Thrown if the file could not be located.</exception>
         /// <exception cref="System.ObjectDisposedException">Thrown if the context has already been disposed of.</exception>
-        public bool ConvertFromFileToFile(String inputFilename, PostProcessSteps importProcessSteps, String outputFilename, String exportFormatId, PostProcessSteps exportProcessSteps)
+        public bool ConvertFromFileToFile(string inputFilename, PostProcessSteps importProcessSteps, string outputFilename, string exportFormatId, PostProcessSteps exportProcessSteps)
         {
             CheckDisposed();
 
@@ -489,7 +459,7 @@ namespace Assimp
             {
                 fileIO = m_ioSystem.AiFileIO;
             }
-            else if(String.IsNullOrEmpty(inputFilename) || !File.Exists(inputFilename))
+            else if(string.IsNullOrEmpty(inputFilename) || !File.Exists(inputFilename))
             {
                 throw new FileNotFoundException("Filename was null or could not be found", inputFilename);
             }
@@ -533,7 +503,7 @@ namespace Assimp
         /// <exception cref="AssimpException">Thrown if there was a general error in importing the model.</exception>
         /// <exception cref="System.IO.FileNotFoundException">Thrown if the file could not be located.</exception>
         /// <exception cref="System.ObjectDisposedException">Thrown if the context has already been disposed of.</exception>
-        public ExportDataBlob ConvertFromFileToBlob(String inputFilename, String exportFormatId)
+        public ExportDataBlob ConvertFromFileToBlob(string inputFilename, string exportFormatId)
         {
             return ConvertFromFileToBlob(inputFilename, PostProcessSteps.None, exportFormatId, PostProcessSteps.None);
         }
@@ -548,7 +518,7 @@ namespace Assimp
         /// <exception cref="AssimpException">Thrown if there was a general error in importing the model.</exception>
         /// <exception cref="System.IO.FileNotFoundException">Thrown if the file could not be located.</exception>
         /// <exception cref="System.ObjectDisposedException">Thrown if the context has already been disposed of.</exception>
-        public ExportDataBlob ConvertFromFileToBlob(String inputFilename, String exportFormatId, PostProcessSteps exportProcessSteps)
+        public ExportDataBlob ConvertFromFileToBlob(string inputFilename, string exportFormatId, PostProcessSteps exportProcessSteps)
         {
             return ConvertFromFileToBlob(inputFilename, PostProcessSteps.None, exportFormatId, exportProcessSteps);
         }
@@ -564,7 +534,7 @@ namespace Assimp
         /// <exception cref="AssimpException">Thrown if there was a general error in importing the model.</exception>
         /// <exception cref="System.IO.FileNotFoundException">Thrown if the file could not be located.</exception>
         /// <exception cref="System.ObjectDisposedException">Thrown if the context has already been disposed of.</exception>
-        public ExportDataBlob ConvertFromFileToBlob(String inputFilename, PostProcessSteps importProcessSteps, String exportFormatId, PostProcessSteps exportProcessSteps)
+        public ExportDataBlob ConvertFromFileToBlob(string inputFilename, PostProcessSteps importProcessSteps, string exportFormatId, PostProcessSteps exportProcessSteps)
         {
             CheckDisposed();
 
@@ -579,7 +549,7 @@ namespace Assimp
             {
                 fileIO = m_ioSystem.AiFileIO;
             }
-            else if(String.IsNullOrEmpty(inputFilename) || !File.Exists(inputFilename))
+            else if(string.IsNullOrEmpty(inputFilename) || !File.Exists(inputFilename))
             {
                 throw new FileNotFoundException("Filename was null or could not be found", inputFilename);
             }
@@ -629,7 +599,7 @@ namespace Assimp
         /// <returns>True if the conversion was successful or not, false otherwise.</returns>
         /// <exception cref="AssimpException">Thrown if the stream is not valid (null or write-only).</exception>
         /// <exception cref="System.ObjectDisposedException">Thrown if the context has already been disposed of.</exception>
-        public bool ConvertFromStreamToFile(Stream inputStream, String importFormatHint, String outputFilename, String exportFormatId)
+        public bool ConvertFromStreamToFile(Stream inputStream, string importFormatHint, string outputFilename, string exportFormatId)
         {
             return ConvertFromStreamToFile(inputStream, importFormatHint, PostProcessSteps.None, outputFilename, exportFormatId, PostProcessSteps.None);
         }
@@ -648,7 +618,7 @@ namespace Assimp
         /// <returns>True if the conversion was successful or not, false otherwise.</returns>
         /// <exception cref="AssimpException">Thrown if the stream is not valid (null or write-only).</exception>
         /// <exception cref="System.ObjectDisposedException">Thrown if the context has already been disposed of.</exception>
-        public bool ConvertFromStreamToFile(Stream inputStream, String importFormatHint, String outputFilename, String exportFormatId, PostProcessSteps exportProcessSteps)
+        public bool ConvertFromStreamToFile(Stream inputStream, string importFormatHint, string outputFilename, string exportFormatId, PostProcessSteps exportProcessSteps)
         {
             return ConvertFromStreamToFile(inputStream, importFormatHint, PostProcessSteps.None, outputFilename, exportFormatId, exportProcessSteps);
         }
@@ -668,7 +638,7 @@ namespace Assimp
         /// <returns>True if the conversion was successful or not, false otherwise.</returns>
         /// <exception cref="AssimpException">Thrown if the stream is not valid (null or write-only).</exception>
         /// <exception cref="System.ObjectDisposedException">Thrown if the context has already been disposed of.</exception>
-        public bool ConvertFromStreamToFile(Stream inputStream, String importFormatHint, PostProcessSteps importProcessSteps, String outputFilename, String exportFormatId, PostProcessSteps exportProcessSteps)
+        public bool ConvertFromStreamToFile(Stream inputStream, string importFormatHint, PostProcessSteps importProcessSteps, string outputFilename, string exportFormatId, PostProcessSteps exportProcessSteps)
         {
             CheckDisposed();
 
@@ -721,7 +691,7 @@ namespace Assimp
         /// <returns>Data blob containing the exported scene in a binary form</returns>
         /// <exception cref="AssimpException">Thrown if the stream is not valid (null or write-only).</exception>
         /// <exception cref="System.ObjectDisposedException">Thrown if the context has already been disposed of.</exception>
-        public ExportDataBlob ConvertFromStreamToBlob(Stream inputStream, String importFormatHint, String exportFormatId)
+        public ExportDataBlob ConvertFromStreamToBlob(Stream inputStream, string importFormatHint, string exportFormatId)
         {
             return ConvertFromStreamToBlob(inputStream, importFormatHint, PostProcessSteps.None, exportFormatId, PostProcessSteps.None);
         }
@@ -739,7 +709,7 @@ namespace Assimp
         /// <returns>Data blob containing the exported scene in a binary form</returns>
         /// <exception cref="AssimpException">Thrown if the stream is not valid (null or write-only).</exception>
         /// <exception cref="System.ObjectDisposedException">Thrown if the context has already been disposed of.</exception>
-        public ExportDataBlob ConvertFromStreamToBlob(Stream inputStream, String importFormatHint, String exportFormatId, PostProcessSteps exportProcessSteps)
+        public ExportDataBlob ConvertFromStreamToBlob(Stream inputStream, string importFormatHint, string exportFormatId, PostProcessSteps exportProcessSteps)
         {
             return ConvertFromStreamToBlob(inputStream, importFormatHint, PostProcessSteps.None, exportFormatId, exportProcessSteps);
         }
@@ -758,7 +728,7 @@ namespace Assimp
         /// <returns>Data blob containing the exported scene in a binary form</returns>
         /// <exception cref="AssimpException">Thrown if the stream is not valid (null or write-only).</exception>
         /// <exception cref="System.ObjectDisposedException">Thrown if the context has already been disposed of.</exception>
-        public ExportDataBlob ConvertFromStreamToBlob(Stream inputStream, String importFormatHint, PostProcessSteps importProcessSteps, String exportFormatId, PostProcessSteps exportProcessSteps)
+        public ExportDataBlob ConvertFromStreamToBlob(Stream inputStream, string importFormatHint, PostProcessSteps importProcessSteps, string exportFormatId, PostProcessSteps exportProcessSteps)
         {
             CheckDisposed();
 
@@ -839,11 +809,11 @@ namespace Assimp
         /// Gets the model formats that are supported for import by Assimp.
         /// </summary>
         /// <returns>Import formats supported</returns>
-        public String[] GetSupportedImportFormats()
+        public string[] GetSupportedImportFormats()
         {
             QueryImportFormatsIfNecessary();
 
-            return (String[]) m_importFormats.Clone();
+            return (string[]) m_importFormats.Clone();
         }
 
         /// <summary>
@@ -863,21 +833,21 @@ namespace Assimp
         /// </summary>
         /// <param name="fileExtension">File extension to query importer support for.</param>
         /// <returns>Importer description or null if it does not exist.</returns>
-        public ImporterDescription GetImporterDescriptionFor(String fileExtension)
+        public ImporterDescription GetImporterDescriptionFor(string fileExtension)
         {
-            if(String.IsNullOrEmpty(fileExtension))
+            if(string.IsNullOrEmpty(fileExtension))
                 return null;
 
             QueryImporterDescriptionsIfNecessary();
 
             if(fileExtension.StartsWith(".") && fileExtension.Length >= 2)
-                fileExtension = fileExtension.Substring(1);
+                fileExtension = fileExtension[1..];
 
             foreach(ImporterDescription descr in m_importerDescrs)
             {
-                foreach(String ext in descr.FileExtensions)
+                foreach(string ext in descr.FileExtensions)
                 {
-                    if(String.Equals(fileExtension, ext, StringComparison.Ordinal))
+                    if(string.Equals(fileExtension, ext, StringComparison.Ordinal))
                         return descr;
                 }
             }
@@ -890,7 +860,7 @@ namespace Assimp
         /// </summary>
         /// <param name="format">Model format</param>
         /// <returns>True if the format is supported, false otherwise</returns>
-        public bool IsImportFormatSupported(String format)
+        public bool IsImportFormatSupported(string format)
         {
             return AssimpLibrary.Instance.IsExtensionSupported(format);
         }
@@ -900,19 +870,19 @@ namespace Assimp
         /// </summary>
         /// <param name="format">Model format</param>
         /// <returns>True if the format is supported, false otherwise</returns>
-        public bool IsExportFormatSupported(String format)
+        public bool IsExportFormatSupported(string format)
         {
-            if(String.IsNullOrEmpty(format))
+            if(string.IsNullOrEmpty(format))
                 return false;
 
             QueryExportFormatsIfNecessary();
 
             if(format.StartsWith(".") && format.Length >= 2)
-                format = format.Substring(1);
+                format = format[1..];
 
             foreach(ExportFormatDescription desc in m_exportFormats)
             {
-                if(String.Equals(desc.FileExtension, format, StringComparison.Ordinal))
+                if(string.Equals(desc.FileExtension, format, StringComparison.Ordinal))
                     return true;
             }
 
@@ -932,7 +902,7 @@ namespace Assimp
             if(config == null)
                 return;
 
-            String name = config.Name;
+            string name = config.Name;
             m_configs[config.Name] = config;
         }
 
@@ -940,14 +910,12 @@ namespace Assimp
         /// Removes a set configuration property by name.
         /// </summary>
         /// <param name="configName">Name of the config property</param>
-        public void RemoveConfig(String configName)
+        public void RemoveConfig(string configName)
         {
-            if(String.IsNullOrEmpty(configName))
+            if(string.IsNullOrEmpty(configName))
                 return;
 
-            PropertyConfig oldConfig;
-            if(m_configs.TryGetValue(configName, out oldConfig))
-                m_configs.Remove(configName);
+            m_configs.Remove(configName);
         }
 
         /// <summary>
@@ -963,9 +931,9 @@ namespace Assimp
         /// </summary>
         /// <param name="configName">Name of the config property</param>
         /// <returns>True if the config is present, false otherwise</returns>
-        public bool ContainsConfig(String configName)
+        public bool ContainsConfig(string configName)
         {
-            if(String.IsNullOrEmpty(configName))
+            if(string.IsNullOrEmpty(configName))
                 return false;
 
             return m_configs.ContainsKey(configName);
@@ -1020,14 +988,12 @@ namespace Assimp
 
         private void QueryImportFormatsIfNecessary()
         {
-            if(m_importFormats == null)
-                m_importFormats = AssimpLibrary.Instance.GetExtensionList();
+            m_importFormats ??= AssimpLibrary.Instance.GetExtensionList();
         }
 
         private void QueryImporterDescriptionsIfNecessary()
         {
-            if(m_importerDescrs == null)
-                m_importerDescrs = AssimpLibrary.Instance.GetImporterDescriptions();
+            m_importerDescrs ??= AssimpLibrary.Instance.GetImporterDescriptions();
         }
 
         //Build import transformation matrix
@@ -1059,7 +1025,7 @@ namespace Assimp
                     if(aiScene.RootNode == IntPtr.Zero)
                         return false;
 
-                    IntPtr matrixPtr = MemoryHelper.AddIntPtr(aiScene.RootNode, MemoryHelper.SizeOf<AiString>()); //Skip over Node Name
+                    IntPtr matrixPtr = aiScene.RootNode + MemoryHelper.SizeOf<AiString>(); //Skip over Node Name
 
                     Matrix4x4 matrix = MemoryHelper.Read<Matrix4x4>(matrixPtr); //Get the root transform
                     matrix = matrix * m_scaleRot; //Transform
@@ -1087,7 +1053,7 @@ namespace Assimp
 
             if(scene == IntPtr.Zero)
             {
-                String error = AssimpLibrary.Instance.GetErrorString();
+                string error = AssimpLibrary.Instance.GetErrorString();
                 throw new AssimpException(error.Length == 0
                     //Postprocessing steps don't usually set the error string when failing
                     ? "Error applying post processing, see log for more info."
@@ -1102,7 +1068,7 @@ namespace Assimp
         {
             m_propStore = AssimpLibrary.Instance.CreatePropertyStore();
 
-            foreach(KeyValuePair<String, PropertyConfig> config in m_configs)
+            foreach(KeyValuePair<string, PropertyConfig> config in m_configs)
             {
                 config.Value.ApplyValue(m_propStore);
             }
@@ -1134,10 +1100,9 @@ namespace Assimp
         }
 
         //Tests if a export format ID matches any in the supported list, and if not logs a warning
-        private bool TestIfExportIdIsValid(String exportFormatId)
+        private bool TestIfExportIdIsValid(string exportFormatId)
         {
-            if (m_exportFormats == null)
-                m_exportFormats = AssimpLibrary.Instance.GetExportFormatDescriptions();
+            m_exportFormats ??= AssimpLibrary.Instance.GetExportFormatDescriptions();
 
             foreach(ExportFormatDescription descr in m_exportFormats)
             {
@@ -1150,7 +1115,7 @@ namespace Assimp
 
             foreach(LogStream logger in loggers)
             {
-                logger.Log(String.Format("Info,  Invalid export format: {0}", exportFormatId));
+                logger.Log($"Info,  Invalid export format: {exportFormatId}");
             }
 
             return false;

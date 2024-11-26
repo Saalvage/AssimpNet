@@ -36,7 +36,7 @@ namespace Assimp
     /// </summary>
     public sealed class MeshAnimationAttachment : IMarshalable<MeshAnimationAttachment, AiAnimMesh>
     {
-        private String m_name;
+        private string m_name;
         private List<Vector3> m_vertices;
         private List<Vector3> m_normals;
         private List<Vector3> m_tangents;
@@ -50,14 +50,8 @@ namespace Assimp
         /// </summary>
         public string Name
         {
-            get
-            {
-                return m_name;
-            }
-            set
-            {
-                m_name = value;
-            }
+            get => m_name;
+            set => m_name = value;
         }
 
         /// <summary>
@@ -66,93 +60,45 @@ namespace Assimp
         /// cannot add or remove per-vertex attributes, therefore the existance
         /// of vertex data will match the existance of data in the mesh.
         /// </summary>
-        public int VertexCount
-        {
-            get
-            {
-                return m_vertices.Count;
-            }
-        }
+        public int VertexCount => m_vertices.Count;
 
         /// <summary>
         /// Checks whether the attachment mesh overrides the vertex positions
         /// of its host mesh.
         /// </summary>
-        public bool HasVertices
-        {
-            get
-            {
-                return m_vertices.Count > 0;
-            }
-        }
+        public bool HasVertices => m_vertices.Count > 0;
 
         /// <summary>
         /// Gets the vertex position list.
         /// </summary>
-        public List<Vector3> Vertices
-        {
-            get
-            {
-                return m_vertices;
-            }
-        }
+        public List<Vector3> Vertices => m_vertices;
 
         /// <summary>
         /// Checks whether the attachment mesh overrides the vertex normals of
         /// its host mesh.
         /// </summary>
-        public bool HasNormals
-        {
-            get
-            {
-                return m_normals.Count > 0;
-            }
-        }
+        public bool HasNormals => m_normals.Count > 0;
 
         /// <summary>
         /// Gets the vertex normal list.
         /// </summary>
-        public List<Vector3> Normals
-        {
-            get
-            {
-                return m_normals;
-            }
-        }
+        public List<Vector3> Normals => m_normals;
 
         /// <summary>
         /// Checks whether the attachment mesh overrides the vertex
         /// tangents and bitangents of its host mesh.
         /// </summary>
-        public bool HasTangentBasis
-        {
-            get
-            {
-                return m_tangents.Count > 0 && m_bitangents.Count > 0;
-            }
-        }
+        public bool HasTangentBasis => m_tangents.Count > 0 && m_bitangents.Count > 0;
 
         /// <summary>
         /// Gets the vertex tangent list.
         /// </summary>
-        public List<Vector3> Tangents
-        {
-            get
-            {
-                return m_tangents;
-            }
-        }
+        public List<Vector3> Tangents => m_tangents;
 
         /// <summary>
         /// Gets the vertex bitangent list.
         /// </summary>
-        public List<Vector3> BiTangents
-        {
-            get
-            {
-                return m_bitangents;
-            }
-        }
+        public List<Vector3> BiTangents => m_bitangents;
 
         /// <summary>
         /// Gets the number of valid vertex color channels contained in the
@@ -198,39 +144,21 @@ namespace Assimp
         /// Gets the array that contains each vertex color channels that override a specific channel in the host mesh, by default all are lists of zero (but can be set to null). 
         /// Each index in the array corresponds to the texture coordinate channel. The length of the array corresponds to Assimp's maximum vertex color channel limit.
         /// </summary>
-        public List<Vector4>[] VertexColorChannels
-        {
-            get
-            {
-                return m_colors;
-            }
-        }
+        public List<Vector4>[] VertexColorChannels => m_colors;
 
         /// <summary>
         /// Gets the array that contains each texture coordinate channel that override a specific channel in the host mesh, by default all are lists of zero (but can be set to null).
         /// Each index in the array corresponds to the texture coordinate channel. The length of the array corresponds to Assimp's maximum UV channel limit.
         /// </summary>
-        public List<Vector3>[] TextureCoordinateChannels
-        {
-            get
-            {
-                return m_texCoords;
-            }
-        }
+        public List<Vector3>[] TextureCoordinateChannels => m_texCoords;
 
         /// <summary>
         /// Gets or sets the weight of the mesh animation.
         /// </summary>
         public float Weight
         {
-            get
-            {
-                return m_weight;
-            }
-            set
-            {
-                m_weight = value;
-            }
+            get => m_weight;
+            set => m_weight = value;
         }
 
         /// <summary>
@@ -339,7 +267,7 @@ namespace Assimp
         /// <summary>
         /// Gets if the native value type is blittable (that is, does not require marshaling by the runtime, e.g. has MarshalAs attributes).
         /// </summary>
-        bool IMarshalable<MeshAnimationAttachment, AiAnimMesh>.IsNativeBlittable { get { return true; } }
+        bool IMarshalable<MeshAnimationAttachment, AiAnimMesh>.IsNativeBlittable => true;
 
         /// <summary>
         /// Writes the managed data to the native value.
@@ -386,7 +314,7 @@ namespace Assimp
                     }
                     else
                     {
-                        nativeValue.Colors[i] = MemoryHelper.ToNativeArray<Vector4>(list.ToArray());
+                        nativeValue.Colors[i] = MemoryHelper.ToNativeArray<Vector4>(list);
                     }
                 }
 

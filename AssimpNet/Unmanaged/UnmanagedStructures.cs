@@ -367,10 +367,10 @@ namespace Assimp.Unmanaged
         /// Sets the format hint.
         /// </summary>
         /// <param name="formatHint">Format hint - must be 3 characters or less</param>
-        public void SetFormatHint(String formatHint)
+        public void SetFormatHint(string formatHint)
         {
             int maxLen = s_nullFormat.Length;
-            char[] hintChars = (String.IsNullOrEmpty(formatHint)) ? s_nullFormat : formatHint.ToLowerInvariant().ToCharArray();
+            char[] hintChars = (string.IsNullOrEmpty(formatHint)) ? s_nullFormat : formatHint.ToLowerInvariant().ToCharArray();
 
             int count = hintChars.Length;
 
@@ -385,7 +385,7 @@ namespace Assimp.Unmanaged
         /// Gets the format hint.
         /// </summary>
         /// <returns>The format hint</returns>
-        public String GetFormatHint()
+        public string GetFormatHint()
         {
             return GetFormatHint(this);
         }
@@ -395,29 +395,11 @@ namespace Assimp.Unmanaged
         /// </summary>
         /// <param name="aiTex">AiTexture</param>
         /// <returns>The format hint</returns>
-        public static String GetFormatHint(in AiTexture aiTex)
+        public static string GetFormatHint(in AiTexture aiTex)
         {
             fixed (sbyte* charPtr = aiTex.FormatHint)
             {
-#if !NETSTANDARD1_3
-                return new String(charPtr);
-#else
-                //Determine how many actual characters there are...
-                int maxLen = s_nullFormat.Length;
-                int nonTerminatorCount = 0;
-                for(int i = 0; i < maxLen; i++)
-                {
-                    if(aiTex.FormatHint[i] == '\0')
-                        break;
-
-                    nonTerminatorCount++;
-                }
-
-                if(nonTerminatorCount == 0)
-                    return String.Empty;
-
-                return Encoding.ASCII.GetString((byte*) charPtr, nonTerminatorCount);
-#endif
+                return new string(charPtr);
             }
         }
     }
@@ -864,7 +846,7 @@ namespace Assimp.Unmanaged
         /// Constructs a new instance of the <see cref="AiString"/> struct.
         /// </summary>
         /// <param name="data">The string data</param>
-        public AiString(String data)
+        public AiString(string data)
         {
             Length = 0;
 
@@ -877,7 +859,7 @@ namespace Assimp.Unmanaged
         /// </summary>
         /// <param name="aiStr">AiString</param>
         /// <returns>AiString string data</returns>
-        public unsafe static String GetString(in AiString aiStr)
+        public unsafe static string GetString(in AiString aiStr)
         {
             int length = (int) aiStr.Length;
 
@@ -893,7 +875,7 @@ namespace Assimp.Unmanaged
             }
             else
             {
-                return String.Empty;
+                return string.Empty;
             }
         }
 
@@ -902,7 +884,7 @@ namespace Assimp.Unmanaged
         /// an empty string rather than garbage.
         /// </summary>
         /// <returns>AiString string data</returns>
-        public String GetString()
+        public string GetString()
         {
             return GetString(this);
         }
@@ -912,9 +894,9 @@ namespace Assimp.Unmanaged
         /// </summary>
         /// <param name="data">String data to set</param>
         /// <returns>True if the operation was successful, false otherwise.</returns>
-        public unsafe bool SetString(String data)
+        public unsafe bool SetString(string data)
         {
-            if(String.IsNullOrEmpty(data))
+            if(string.IsNullOrEmpty(data))
             {
                 Length = 0;
                 fixed(byte* bytePtr = Data)
@@ -946,8 +928,8 @@ namespace Assimp.Unmanaged
         /// <summary>
         /// Returns the fully qualified type name of this instance.
         /// </summary>
-        /// <returns>A <see cref="T:System.String" /> containing a fully qualified type name.</returns>
-        public override String ToString()
+        /// <returns>A <see cref="T:string" /> containing a fully qualified type name.</returns>
+        public override string ToString()
         {
             return GetString();
         }
@@ -1250,7 +1232,7 @@ namespace Assimp.Unmanaged
     /// <param name="msg">Log message</param>
     /// <param name="userData">char* pointer to user data that is passed to the callback</param>
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    public delegate void AiLogStreamCallback([In, MarshalAs(UnmanagedType.LPStr)] String msg, IntPtr userData);
+    public delegate void AiLogStreamCallback([In, MarshalAs(UnmanagedType.LPStr)] string msg, IntPtr userData);
 
     /// <summary>
     /// Callback delegate for a custom file system, to write to a file.
@@ -1307,7 +1289,7 @@ namespace Assimp.Unmanaged
     /// <param name="mode">Read-write permissions to request</param>
     /// <returns>Pointer to an AiFile instance.</returns>
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    public delegate IntPtr AiFileOpenProc(IntPtr fileIO, [In, MarshalAs(UnmanagedType.LPStr)] String pathToFile, [In, MarshalAs(UnmanagedType.LPStr)] String mode);
+    public delegate IntPtr AiFileOpenProc(IntPtr fileIO, [In, MarshalAs(UnmanagedType.LPStr)] string pathToFile, [In, MarshalAs(UnmanagedType.LPStr)] string mode);
 
     /// <summary>
     /// Callback delegate for a custom file system, to close a given file and free its memory.
@@ -1335,13 +1317,7 @@ namespace Assimp.Unmanaged
         /// <summary>
         /// Gets the length of the array.
         /// </summary>
-        public int Length
-        {
-            get
-            {
-                return AiDefines.AI_MAX_NUMBER_OF_COLOR_SETS;
-            }
-        }
+        public int Length => AiDefines.AI_MAX_NUMBER_OF_COLOR_SETS;
 
         /// <summary>
         /// Gets or sets an array value at the specified index.
@@ -1419,13 +1395,7 @@ namespace Assimp.Unmanaged
         /// <summary>
         /// Gets the length of the array.
         /// </summary>
-        public int Length
-        {
-            get
-            {
-                return AiDefines.AI_MAX_NUMBER_OF_TEXTURECOORDS;
-            }
-        }
+        public int Length => AiDefines.AI_MAX_NUMBER_OF_TEXTURECOORDS;
 
         /// <summary>
         /// Gets or sets an array value at the specified index.
@@ -1503,13 +1473,7 @@ namespace Assimp.Unmanaged
         /// <summary>
         /// Gets the length of the array.
         /// </summary>
-        public int Length
-        {
-            get
-            {
-                return AiDefines.AI_MAX_NUMBER_OF_TEXTURECOORDS;
-            }
-        }
+        public int Length => AiDefines.AI_MAX_NUMBER_OF_TEXTURECOORDS;
 
         /// <summary>
         /// Gets or sets an array value at the specified index.

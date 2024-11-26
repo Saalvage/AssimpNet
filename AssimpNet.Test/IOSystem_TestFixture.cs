@@ -20,7 +20,6 @@
 * THE SOFTWARE.
 */
 
-using System;
 using System.IO;
 using NUnit.Framework;
 
@@ -32,8 +31,8 @@ namespace Assimp.Test
         [Test]
         public void TestMultiSearchDirectoryLoad()
         {
-            String fileName = "fenris.lws";
-            String[] searchPaths = { Path.Combine(TestHelper.RootPath, "TestFiles/fenris/scenes"), Path.Combine(TestHelper.RootPath, "TestFiles/fenris/objects") };
+            string fileName = "fenris.lws";
+            string[] searchPaths = { Path.Combine(TestHelper.RootPath, "TestFiles/fenris/scenes"), Path.Combine(TestHelper.RootPath, "TestFiles/fenris/objects") };
             FileIOSystem ioSystem = new FileIOSystem(searchPaths);
 
             AssimpContext importer = new AssimpContext();
@@ -47,23 +46,23 @@ namespace Assimp.Test
         [Test]
         public void TestMultiSearchDirectoryConvert()
         {
-            String fileName = Path.Combine(TestHelper.RootPath, "TestFiles/fenris/scenes/fenris.lws");
-            String[] searchPaths = { Path.Combine(TestHelper.RootPath, "TestFiles/fenris/objects") };
+            string fileName = Path.Combine(TestHelper.RootPath, "TestFiles/fenris/scenes/fenris.lws");
+            string[] searchPaths = { Path.Combine(TestHelper.RootPath, "TestFiles/fenris/objects") };
             FileIOSystem ioSystem = new FileIOSystem(searchPaths);
 
             AssimpContext importer = new AssimpContext();
             importer.SetIOSystem(ioSystem);
 
             //Output path has to be specified fully, since we may be creating the file
-            String outputPath = Path.Combine(TestHelper.RootPath, "TestFiles/fenris/fenris2.obj");
+            string outputPath = Path.Combine(TestHelper.RootPath, "TestFiles/fenris/fenris2.obj");
             importer.ConvertFromFileToFile(fileName, PostProcessSteps.None, outputPath, "obj", PostProcessSteps.None);
         }
 
         [Test]
         public void TestIOSystemError()
         {
-            String fileName = "duckduck.dae"; //GOOSE!
-            String[] searchPaths = { Path.Combine(TestHelper.RootPath, "TestFiles") };
+            string fileName = "duckduck.dae"; //GOOSE!
+            string[] searchPaths = { Path.Combine(TestHelper.RootPath, "TestFiles") };
             FileIOSystem ioSystem = new FileIOSystem(searchPaths);
 
             AssimpContext importer = new AssimpContext();
@@ -77,7 +76,7 @@ namespace Assimp.Test
         [Test]
         public void TestIOSystem_ImportObj()
         {
-            String dir = Path.Combine(TestHelper.RootPath, "TestFiles");
+            string dir = Path.Combine(TestHelper.RootPath, "TestFiles");
             LogStream.IsVerboseLoggingEnabled = true;
             ConsoleLogStream log = new ConsoleLogStream();
             log.Attach();

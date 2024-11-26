@@ -21,9 +21,6 @@
 */
 
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Runtime.InteropServices;
 
 namespace Assimp.Unmanaged
 {
@@ -33,24 +30,18 @@ namespace Assimp.Unmanaged
     [AttributeUsage(AttributeTargets.Delegate)]
     public class UnmanagedFunctionNameAttribute : Attribute
     {
-        private String m_unmanagedFunctionName;
+        private string m_unmanagedFunctionName;
 
         /// <summary>
         /// Name of the unmanaged function.
         /// </summary>
-        public String UnmanagedFunctionName
-        {
-            get
-            {
-                return m_unmanagedFunctionName;
-            }
-        }
+        public string UnmanagedFunctionName => m_unmanagedFunctionName;
 
         /// <summary>
         /// Constructs a new <see cref="UnmanagedFunctionName"/>.
         /// </summary>
         /// <param name="unmanagedFunctionName">Name of the function.</param>
-        public UnmanagedFunctionNameAttribute(String unmanagedFunctionName)
+        public UnmanagedFunctionNameAttribute(string unmanagedFunctionName)
         {
             m_unmanagedFunctionName = unmanagedFunctionName;
         }

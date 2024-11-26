@@ -21,28 +21,20 @@
 */
 
 using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Runtime.InteropServices;
 
 namespace Assimp.Unmanaged
 {
     internal sealed class UnmanagedUwpLibraryImplementation : UnmanagedLibraryImplementation
     {
-        public override String DllExtension
-        {
-            get
-            {
-                return ".dll";
-            }
-        }
+        public override string DllExtension => ".dll";
 
-        public UnmanagedUwpLibraryImplementation(String defaultLibName, Type[] unmanagedFunctionDelegateTypes)
+        public UnmanagedUwpLibraryImplementation(string defaultLibName, Type[] unmanagedFunctionDelegateTypes)
             : base(defaultLibName, unmanagedFunctionDelegateTypes)
         {
         }
 
-        protected override IntPtr NativeLoadLibrary(String path)
+        protected override IntPtr NativeLoadLibrary(string path)
         {
             IntPtr libraryHandle = LoadPackagedLibrary(path);
 
@@ -60,15 +52,16 @@ namespace Assimp.Unmanaged
                 catch(Exception) { }
 
                 if(innerException != null)
-                    throw new AssimpException(String.Format("Error loading unmanaged library from path: {0}\n\n{1}", path, innerException.Message), innerException);
+                    throw new AssimpException(
+                        $"Error loading unmanaged library from path: {path}\n\n{innerException.Message}", innerException);
                 else
-                    throw new AssimpException(String.Format("Error loading unmanaged library from path: {0}", path));
+                    throw new AssimpException($"Error loading unmanaged library from path: {path}");
             }
 
             return libraryHandle;
         }
 
-        protected override IntPtr NativeGetProcAddress(IntPtr handle, String functionName)
+        protected override IntPtr NativeGetProcAddress(IntPtr handle, string functionName)
         {
             return GetProcAddress(handle, functionName);
         }
@@ -100,7 +93,7 @@ namespace Assimp.Unmanaged
         private static extern bool FreeLibrary(IntPtr hModule);
 
         [DllImport("api-ms-win-core-libraryloader-l1-2-0.dll")]
-        private static extern IntPtr GetProcAddress(IntPtr hModule, String procName);
+        private static extern IntPtr GetProcAddress(IntPtr hModule, string procName);
 
         #endregion
     }
