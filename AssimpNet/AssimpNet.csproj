@@ -14,8 +14,8 @@
     <PackageLicenseFile>License.txt</PackageLicenseFile>
     <Copyright>Copyright © 2012-2020 Nicholas Woodfield</Copyright>
     <PackageIcon>logo.png</PackageIcon>
-    <PackageProjectUrl>https://github.com/Saalvage/AssimpNet</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/Saalvage/AssimpNet</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/Saalvage/AssimpNetter</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Saalvage/AssimpNetter</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <IncludeSymbols>true</IncludeSymbols>
@@ -36,6 +36,7 @@
 
   <ItemGroup>
     <Content Include="..\logo.png" Link="nuget\logo.png" PackagePath="" />
+    <Content Include="..\README.md" Link="nuget\README.md" PackagePath="" />
     <Content Include="..\ChangeLog.txt" Link="nuget\ChangeLog.txt" PackagePath="" />
     <Content Include="..\License.txt" Link="nuget\License.txt" PackagePath="" />
     <Content Include="..\Docs\AssimpNet Documentation %28October 2018%29.chm" Link="nuget\AssimpNet Documentation %28October 2018%29.chm" PackagePath="" />
@@ -67,10 +68,6 @@
     <None Include="..\libs\Assimp\osx-arm64\libassimp.dylib">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Link>runtimes\osx-arm64\native\%(Filename)%(Extension)</Link>
-    </None>
-    <None Include="..\README.md">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
     </None>
   </ItemGroup>
 
