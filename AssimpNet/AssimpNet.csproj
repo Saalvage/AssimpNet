@@ -12,7 +12,7 @@
     <Company />
     <Version>5.4.3.0</Version>
     <PackageLicenseFile>License.txt</PackageLicenseFile>
-    <Copyright>Copyright © 2012-2020 Nicholas Woodfield</Copyright>
+    <Copyright>Copyright © 2012-2020 Nicholas Woodfield, © 2024 Salvage</Copyright>
     <PackageIcon>logo.png</PackageIcon>
     <PackageProjectUrl>https://github.com/Saalvage/AssimpNetter</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Saalvage/AssimpNetter</RepositoryUrl>
@@ -23,7 +23,7 @@
     <Description>A .NET Wrapper for the Open Asset Import (Assimp) library. The library is able to import dozens of different 3D model formats (e.g. OBJ, FBX, GLTF, Collada) and export to several formats (e.g. OBJ, GLTF, Collada). Releases target the corresponding version of the native library.</Description>
     <PackageTags>Model 3D Graphics Assimp Mesh Importers Content Assets FBX Collada GLTF OBJ 3DS DXF</PackageTags>
     <RootNamespace>Assimp</RootNamespace>
-    <AssemblyName>AssimpNet</AssemblyName>
+    <AssemblyName>AssimpNetter</AssemblyName>
     <Title>AssimpNet</Title>
     <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>

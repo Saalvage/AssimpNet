@@ -1,4 +1,4 @@
-![alt text](./logo.png "AssimpNet Logo")
+![alt text](https://raw.githubusercontent.com/Saalvage/AssimpNetter/master/logo.png "AssimpNet Logo")
 
 **The latest release can be downloaded via [NuGet](https://www.nuget.org/packages/AssimpNetter/).**
 
