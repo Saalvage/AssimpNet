@@ -314,7 +314,7 @@ namespace Assimp
                     }
                     else
                     {
-                        nativeValue.Colors[i] = MemoryHelper.ToNativeArray<Vector4>(list.ToArray());
+                        nativeValue.Colors[i] = MemoryHelper.ToNativeArray<Vector4>(list);
                     }
                 }
 

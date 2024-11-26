@@ -181,7 +181,7 @@ namespace Assimp
             nativeValue.Parent = parentPtr;
 
             nativeValue.NumMeshes = (uint) node.m_meshes.Count;
-            nativeValue.Meshes = MemoryHelper.ToNativeArray<int>(node.m_meshes.ToArray());
+            nativeValue.Meshes = MemoryHelper.ToNativeArray<int>(node.m_meshes);
             nativeValue.MetaData = IntPtr.Zero;
 
             //If has metadata, create it, otherwise it should be NULL
@@ -252,7 +252,7 @@ namespace Assimp
                 nativeValue.MetaData = MemoryHelper.ToNativePointer<Metadata, AiMetadata>(m_metaData);
 
             if(nativeValue.NumMeshes > 0)
-                nativeValue.Meshes = MemoryHelper.ToNativeArray<int>(m_meshes.ToArray());
+                nativeValue.Meshes = MemoryHelper.ToNativeArray<int>(m_meshes);
 
             //Now descend through the children
             nativeValue.NumChildren = (uint) m_children.Count;

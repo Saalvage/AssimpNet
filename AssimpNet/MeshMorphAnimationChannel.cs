@@ -101,7 +101,7 @@ namespace Assimp
             nativeValue.Keys = IntPtr.Zero;
 
             if(nativeValue.NumKeys > 0)
-                nativeValue.Keys = MemoryHelper.ToNativeArray<MeshMorphKey, AiMeshMorphKey>(m_meshMorphkeys.ToArray(), false);
+                nativeValue.Keys = MemoryHelper.ToNativeArray<MeshMorphKey, AiMeshMorphKey>(m_meshMorphkeys, false);
         }
 
         /// <summary>

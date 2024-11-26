@@ -95,7 +95,7 @@ namespace Assimp
             string fileExts = Marshal.PtrToStringAnsi(descr.FileExtensions);
             if(string.IsNullOrEmpty(fileExts))
             {
-                m_fileExtensions = new string[0];
+                m_fileExtensions = [];
             }
             else
             {

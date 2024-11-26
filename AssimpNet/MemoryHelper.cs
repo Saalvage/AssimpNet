@@ -25,6 +25,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
@@ -53,29 +54,26 @@ namespace Assimp
         /// </summary>
         /// <typeparam name="Managed">Managed type</typeparam>
         /// <typeparam name="Native">Native type</typeparam>
-        /// <param name="managedArray">Array of managed values</param>
+        /// <param name="managedColl">Collection of managed values</param>
         /// <param name="arrayOfPointers">True if the pointer is an array of pointers, false otherwise.</param>
         /// <returns>Pointer to unmanaged memory</returns>
-        public static IntPtr ToNativeArray<Managed, Native>(Managed[] managedArray, bool arrayOfPointers = false)
+        public static IntPtr ToNativeArray<Managed, Native>(IReadOnlyCollection<Managed> managedColl, bool arrayOfPointers = false)
             where Managed : class, IMarshalable<Managed, Native>, new()
             where Native : struct
         {
-            if(managedArray == null || managedArray.Length == 0)
+            if(managedColl == null || managedColl.Count == 0)
                 return IntPtr.Zero;
 
-            bool isNativeBlittable = IsNativeBlittable<Managed, Native>(managedArray);
+            bool isNativeBlittable = IsNativeBlittable<Managed, Native>(managedColl);
             int sizeofNative = (isNativeBlittable) ? SizeOf<Native>() : MarshalSizeOf<Native>();
 
             //If the pointer is a void** we need to step by the pointer size, otherwise it's just a void* and step by the type size.
             int stride = (arrayOfPointers) ? IntPtr.Size : sizeofNative;
-            IntPtr nativeArray = (arrayOfPointers) ? AllocateMemory(managedArray.Length * IntPtr.Size) : AllocateMemory(managedArray.Length * sizeofNative);
+            IntPtr nativeArray = AllocateMemory(managedColl.Count * (arrayOfPointers ? IntPtr.Size : sizeofNative));
 
-            for(int i = 0; i < managedArray.Length; i++)
+            IntPtr currPos = nativeArray;
+            foreach(Managed managedValue in managedColl)
             {
-                IntPtr currPos = nativeArray + stride * i;
-
-                Managed managedValue = managedArray[i];
-
                 //Setup unmanaged data - do the actual ToNative later on, that way we can pass the thisPtr if the object is a pointer type.
                 Native nativeValue = default(Native);
 
@@ -106,9 +104,7 @@ namespace Assimp
                 }
                 else
                 {
-
-                    if(managedArray != null)
-                        managedValue.ToNative(IntPtr.Zero, out nativeValue);
+                    managedValue.ToNative(IntPtr.Zero, out nativeValue);
 
                     if(isNativeBlittable)
                     {
@@ -119,6 +115,8 @@ namespace Assimp
                         MarshalPointer<Native>(nativeValue, currPos);
                     }
                 }
+
+                currPos += stride;
             }
 
             return nativeArray;
@@ -139,11 +137,10 @@ namespace Assimp
             where Native : struct
         {
             if(nativeArray == IntPtr.Zero || length == 0)
-                return new Managed[0];
+                return [];
 
             //If the pointer is a void** we need to step by the pointer size, otherwise it's just a void* and step by the type size.
             int stride = (arrayOfPointers) ? IntPtr.Size : MarshalSizeOf<Native>();
-            Type nativeValueType = typeof(Native);
             Managed[] managedArray = new Managed[length];
 
             for(int i = 0; i < length; i++)
@@ -197,6 +194,25 @@ namespace Assimp
         }
 
         /// <summary>
+        /// Marshals a list of blittable structs to a c-style unmanaged array (void*). This should not be used on non-blittable types
+        /// that require marshaling by the runtime (e.g. has MarshalAs attributes).
+        /// </summary>
+        /// <typeparam name="T">Struct type</typeparam>
+        /// <param name="managedArray">Managed list of structs</param>
+        /// <returns>Pointer to unmanaged memory</returns>
+        public static IntPtr ToNativeArray<T>(List<T> managedArray) where T : struct
+        {
+            if(managedArray == null || managedArray.Count == 0)
+                return IntPtr.Zero;
+
+            IntPtr ptr = AllocateMemory(SizeOf<T>() * managedArray.Count);
+
+            Write<T>(ptr, managedArray, 0, managedArray.Count);
+
+            return ptr;
+        }
+
+        /// <summary>
         /// Marshals an array of blittable structs from a c-style unmanaged array (void*). This should not be used on non-blittable types
         /// that require marshaling by the runtime (e.g. has MarshalAs attributes).
         /// </summary>
@@ -207,7 +223,7 @@ namespace Assimp
         public static T[] FromNativeArray<T>(IntPtr nativeArray, int length) where T : struct
         {
             if(nativeArray == IntPtr.Zero || length == 0)
-                return new T[0];
+                return Array.Empty<T>();
 
             T[] managedArray = new T[length];
 
@@ -590,6 +606,21 @@ namespace Assimp
         }
 
         /// <summary>
+        /// Writes data from the list to the memory location.
+        /// </summary>
+        /// <typeparam name="T">Struct type</typeparam>
+        /// <param name="pDest">Pointer to memory location</param>
+        /// <param name="data">List containing data to write</param>
+        /// <param name="startIndexInArray">Zero-based element index to start reading data from in the element array.</param>
+        /// <param name="count">Number of elements to copy</param>
+        public static unsafe void Write<T>(IntPtr pDest, List<T> data, int startIndexInArray, int count) where T : struct
+        {
+            ReadOnlySpan<T> src = CollectionsMarshal.AsSpan(data).Slice(startIndexInArray, count);
+            Span<T> dst = new Span<T>(pDest.ToPointer(), count);
+            src.CopyTo(dst);
+        }
+
+        /// <summary>
         /// Writes a single element to the memory location.
         /// </summary>
         /// <typeparam name="T">Struct type</typeparam>
@@ -605,18 +636,16 @@ namespace Assimp
         #region Misc
 
         //Helper for asking if the IMarshalable's in the array have native structs that are blittable.
-        private static bool IsNativeBlittable<Managed, Native>(Managed[] managedArray)
+        private static bool IsNativeBlittable<Managed, Native>(IReadOnlyCollection<Managed> managedColl)
             where Managed : class, IMarshalable<Managed, Native>, new()
             where Native : struct
         {
 
-            if(managedArray == null || managedArray.Length == 0)
+            if(managedColl == null || managedColl.Count == 0)
                 return false;
 
-            for(int i = 0; i < managedArray.Length; i++)
+            foreach(Managed managedValue in managedColl)
             {
-                Managed managedValue = managedArray[i];
-
                 if(managedValue != null)
                     return managedValue.IsNativeBlittable;
             }

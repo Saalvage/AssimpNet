@@ -91,7 +91,7 @@ namespace Assimp
             nativeValue.Keys = IntPtr.Zero;
 
             if(nativeValue.NumKeys > 0)
-                nativeValue.Keys = MemoryHelper.ToNativeArray<MeshKey>(m_meshKeys.ToArray());
+                nativeValue.Keys = MemoryHelper.ToNativeArray<MeshKey>(m_meshKeys);
         }
 
         /// <summary>

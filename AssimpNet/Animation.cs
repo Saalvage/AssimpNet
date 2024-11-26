@@ -148,13 +148,13 @@ namespace Assimp
             nativeValue.MeshMorphChannels = IntPtr.Zero;
 
             if(nativeValue.NumChannels > 0)
-                nativeValue.Channels = MemoryHelper.ToNativeArray<NodeAnimationChannel, AiNodeAnim>(m_nodeChannels.ToArray(), true);
+                nativeValue.Channels = MemoryHelper.ToNativeArray<NodeAnimationChannel, AiNodeAnim>(m_nodeChannels, true);
 
             if(nativeValue.NumMeshChannels > 0)
-                nativeValue.MeshChannels = MemoryHelper.ToNativeArray<MeshAnimationChannel, AiMeshAnim>(m_meshChannels.ToArray(), true);
+                nativeValue.MeshChannels = MemoryHelper.ToNativeArray<MeshAnimationChannel, AiMeshAnim>(m_meshChannels, true);
 
             if(nativeValue.NumMeshMorphChannels > 0)
-                nativeValue.MeshMorphChannels = MemoryHelper.ToNativeArray<MeshMorphAnimationChannel, AiMeshMorphAnim>(m_meshMorphChannels.ToArray(), true);
+                nativeValue.MeshMorphChannels = MemoryHelper.ToNativeArray<MeshMorphAnimationChannel, AiMeshMorphAnim>(m_meshMorphChannels, true);
         }
 
         /// <summary>

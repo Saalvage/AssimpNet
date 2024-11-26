@@ -88,8 +88,8 @@ namespace Assimp
             {
                 if(m_weights.Count > 0)
                 {
-                    nativeValue.Values = MemoryHelper.ToNativeArray<int>(m_values.ToArray());
-                    nativeValue.Weights = MemoryHelper.ToNativeArray<double>(m_weights.ToArray());
+                    nativeValue.Values = MemoryHelper.ToNativeArray<int>(m_values);
+                    nativeValue.Weights = MemoryHelper.ToNativeArray<double>(m_weights);
                 }
             }
             else

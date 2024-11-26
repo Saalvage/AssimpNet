@@ -123,7 +123,7 @@ namespace Assimp
             nativeValue.Weights = IntPtr.Zero;
 
             if(nativeValue.NumWeights > 0)
-                nativeValue.Weights = MemoryHelper.ToNativeArray<VertexWeight>(m_weights.ToArray());
+                nativeValue.Weights = MemoryHelper.ToNativeArray<VertexWeight>(m_weights);
         }
 
         /// <summary>

@@ -163,6 +163,7 @@ namespace Assimp
     {
       lock (s_sync)
       {
+        //Return a copy to prevent concurrent modification exceptions.
         return s_activeLogstreams.ToArray();
       }
     }

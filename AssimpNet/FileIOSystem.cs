@@ -23,6 +23,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace Assimp
 {
@@ -74,16 +75,9 @@ namespace Assimp
         /// Gets the search directories the FileIOSystem is using.
         /// </summary>
         /// <returns>Directory paths</returns>
-        public string[] GetSearchDirectories()
+        public IEnumerable<string> GetSearchDirectories()
         {
-            List<string> searchPaths = new List<string>();
-
-            foreach(DirectoryInfo dir in m_searchDirectories)
-            {
-                searchPaths.Add(dir.FullName);
-            }
-
-            return searchPaths.ToArray();
+            return m_searchDirectories.Select(x => x.FullName);
         }
 
         /// <summary>

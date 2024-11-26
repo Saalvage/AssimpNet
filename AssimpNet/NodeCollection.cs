@@ -205,15 +205,6 @@ namespace Assimp
         }
 
         /// <summary>
-        /// Copies elements in the collection to a new array.
-        /// </summary>
-        /// <returns>Array of copied elements</returns>
-        public Node[] ToArray()
-        {
-            return m_children.ToArray();
-        }
-
-        /// <summary>
         /// Returns an enumerator that iterates through the collection.
         /// </summary>
         /// <returns>A <see cref="T:System.Collections.Generic.IEnumerator`1" /> that can be used to iterate through the collection.</returns>

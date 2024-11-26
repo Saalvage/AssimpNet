@@ -22,6 +22,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 using Assimp.Unmanaged;
 
@@ -370,79 +371,50 @@ namespace Assimp
         }
 
         /// <summary>
-        /// Convienence method for accumulating all face indices into a single
+        /// Convenience method for accumulating all face indices into a single
         /// index array.
         /// </summary>
         /// <returns>int index array</returns>
-        public int[] GetIndices()
+        public IEnumerable<int> GetIndices()
         {
-            if(HasFaces)
-            {
-                List<int> indices = new List<int>();
-                foreach(Face face in m_faces)
-                {
-                    if(face.IndexCount > 0 && face.Indices != null)
-                    {
-                        indices.AddRange(face.Indices);
-                    }
-                }
-                return indices.ToArray();
-            }
-            return null;
+            if (!HasFaces)
+                return Enumerable.Empty<int>();
+
+            return m_faces
+                .Where(x => x.IndexCount > 0 && x.Indices != null)
+                .SelectMany(x => x.Indices);
         }
 
         /// <summary>
-        /// Convienence method for accumulating all face indices into a single index
+        /// Convenience method for accumulating all face indices into a single index
         /// array as unsigned integers (the default from Assimp, if you need them).
         /// </summary>
-        /// <returns>uint index array</returns>
-        public uint[] GetUnsignedIndices()
+        /// <returns>uint index enumerable</returns>
+        public IEnumerable<uint> GetUnsignedIndices()
         {
-            if(HasFaces)
-            {
-                List<uint> indices = new List<uint>();
-                foreach(Face face in m_faces)
-                {
-                    if(face.IndexCount > 0 && face.Indices != null)
-                    {
-                        foreach(uint index in face.Indices)
-                        {
-                            indices.Add((uint) index);
-                        }
-                    }
-                }
+            if (!HasFaces)
+                return Enumerable.Empty<uint>();
 
-                return indices.ToArray();
-            }
-
-            return null;
+            return m_faces
+                .Where(x => x.IndexCount > 0 && x.Indices != null)
+                .SelectMany(x => x.Indices)
+                .Select(x => (uint)x);
         }
 
         /// <summary>
-        /// Convienence method for accumulating all face indices into a single
+        /// Convenience method for accumulating all face indices into a single
         /// index array.
         /// </summary>
-        /// <returns>short index array</returns>
-        public short[] GetShortIndices()
+        /// <returns>short index enumerable</returns>
+        public IEnumerable<short> GetShortIndices()
         {
-            if(HasFaces)
-            {
-                List<short> indices = new List<short>();
-                foreach(Face face in m_faces)
-                {
-                    if(face.IndexCount > 0 && face.Indices != null)
-                    {
-                        foreach(uint index in face.Indices)
-                        {
-                            indices.Add((short) index);
-                        }
-                    }
-                }
+            if (!HasFaces)
+                return Enumerable.Empty<short>();
 
-                return indices.ToArray();
-            }
-
-            return null;
+            return m_faces
+                .Where(x => x.IndexCount > 0 && x.Indices != null)
+                .SelectMany(x => x.Indices)
+                .Select(x => (short)x);
         }
 
         private void ClearBuffers()
@@ -552,7 +524,7 @@ namespace Assimp
                     }
                     else
                     {
-                        nativeValue.Colors[i] = MemoryHelper.ToNativeArray<Vector4>(list.ToArray());
+                        nativeValue.Colors[i] = MemoryHelper.ToNativeArray<Vector4>(list);
                     }
                 }
 
@@ -580,15 +552,15 @@ namespace Assimp
 
             //Faces
             if(nativeValue.NumFaces > 0)
-                nativeValue.Faces = MemoryHelper.ToNativeArray<Face, AiFace>(m_faces.ToArray());
+                nativeValue.Faces = MemoryHelper.ToNativeArray<Face, AiFace>(m_faces);
 
             //Bones
             if(nativeValue.NumBones > 0)
-                nativeValue.Bones = MemoryHelper.ToNativeArray<Bone, AiBone>(m_bones.ToArray(), true);
+                nativeValue.Bones = MemoryHelper.ToNativeArray<Bone, AiBone>(m_bones, true);
 
             //Attachment meshes
             if(nativeValue.NumAnimMeshes > 0)
-                nativeValue.AnimMeshes = MemoryHelper.ToNativeArray<MeshAnimationAttachment, AiAnimMesh>(m_meshAttachments.ToArray());
+                nativeValue.AnimMeshes = MemoryHelper.ToNativeArray<MeshAnimationAttachment, AiAnimMesh>(m_meshAttachments);
         }
 
         /// <summary>

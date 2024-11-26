@@ -22,6 +22,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 using Assimp.Unmanaged;
 
@@ -1357,7 +1358,7 @@ namespace Assimp
             int count = GetMaterialTextureCount(type);
 
             if(count == 0)
-                return new TextureSlot[0];
+                return [];
 
             TextureSlot[] textures = new TextureSlot[count];
 
@@ -1375,17 +1376,9 @@ namespace Assimp
         /// Gets all textures in the material.
         /// </summary>
         /// <returns>The array of textures</returns>
-        public TextureSlot[] GetAllMaterialTextures()
+        public IEnumerable<TextureSlot> GetAllMaterialTextures()
         {
-            List<TextureSlot> textures = new List<TextureSlot>();
-            TextureType[] types = Enum.GetValues(typeof(TextureType)) as TextureType[];
-
-            foreach(TextureType texType in types)
-            {
-                textures.AddRange(GetMaterialTextures(texType));
-            }
-
-            return textures.ToArray();
+            return Enum.GetValues<TextureType>().SelectMany(GetMaterialTextures);
         }
 
         #region IMarshalable Implementation

@@ -331,7 +331,7 @@ namespace Assimp
 
             //Write materials
             if (nativeValue.NumMaterials > 0)
-                nativeValue.Materials = MemoryHelper.ToNativeArray<Material, AiMaterial>(m_materials.ToArray(), true);
+                nativeValue.Materials = MemoryHelper.ToNativeArray<Material, AiMaterial>(m_materials, true);
 
             //Write scenegraph
             if(m_rootNode != null)
@@ -339,23 +339,23 @@ namespace Assimp
 
             //Write meshes
             if(nativeValue.NumMeshes > 0)
-                nativeValue.Meshes = MemoryHelper.ToNativeArray<Mesh, AiMesh>(m_meshes.ToArray(), true);
+                nativeValue.Meshes = MemoryHelper.ToNativeArray<Mesh, AiMesh>(m_meshes, true);
 
             //Write lights
             if(nativeValue.NumLights > 0)
-                nativeValue.Lights = MemoryHelper.ToNativeArray<Light, AiLight>(m_lights.ToArray(), true);
+                nativeValue.Lights = MemoryHelper.ToNativeArray<Light, AiLight>(m_lights, true);
 
             //Write cameras
             if(nativeValue.NumCameras > 0)
-                nativeValue.Cameras = MemoryHelper.ToNativeArray<Camera, AiCamera>(m_cameras.ToArray(), true);
+                nativeValue.Cameras = MemoryHelper.ToNativeArray<Camera, AiCamera>(m_cameras, true);
 
             //Write textures
             if(nativeValue.NumTextures > 0)
-                nativeValue.Textures = MemoryHelper.ToNativeArray<EmbeddedTexture, AiTexture>(m_textures.ToArray(), true);
+                nativeValue.Textures = MemoryHelper.ToNativeArray<EmbeddedTexture, AiTexture>(m_textures, true);
 
             //Write animations
             if(nativeValue.NumAnimations > 0)
-                nativeValue.Animations = MemoryHelper.ToNativeArray<Animation, AiAnimation>(m_animations.ToArray(), true);
+                nativeValue.Animations = MemoryHelper.ToNativeArray<Animation, AiAnimation>(m_animations, true);
             
             //Write metadata
             if(m_metadata.Count > 0)

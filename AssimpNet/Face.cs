@@ -92,7 +92,7 @@ namespace Assimp
             nativeValue.Indices = IntPtr.Zero;
 
             if(nativeValue.NumIndices > 0)
-                nativeValue.Indices = MemoryHelper.ToNativeArray<int>(m_indices.ToArray());
+                nativeValue.Indices = MemoryHelper.ToNativeArray<int>(m_indices);
         }
 
         /// <summary>
