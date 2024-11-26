@@ -30,6 +30,7 @@ namespace Assimp
     /// </summary>
     /// <param name="Time">The time of this key.</param>
     /// <param name="Value">The rotation of this key.</param>
+    /// <param name="Interpolation">The interpolation setting of this key.</param>
     [StructLayout(LayoutKind.Sequential)]
     public record struct QuaternionKey(double Time, Quaternion Value, AnimationInterpolation Interpolation = AnimationInterpolation.Linear)
     {

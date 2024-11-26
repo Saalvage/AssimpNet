@@ -28,8 +28,8 @@ namespace Assimp
     /// <summary>
     /// Defines a 3D ray with a point of origin and a direction.
     /// </summary>
-    /// <param name="Origin of the ray in space."></param>
-    /// <param name="Direction of the ray."></param>
+    /// <param name="Position">Origin of the ray in space."></param>
+    /// <param name="Direction">Direction of the ray."></param>
     [StructLayout(LayoutKind.Sequential)]
     public record struct Ray(Vector3 Position, Vector3 Direction);
 }
