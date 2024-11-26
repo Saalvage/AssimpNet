@@ -24,6 +24,7 @@ using System;
 using System.IO;
 using System.Threading;
 using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 using Assimp.Configs;
 using Assimp.Unmanaged;
@@ -384,17 +385,24 @@ namespace Assimp.Test
         {
             LogStream.IsVerboseLoggingEnabled = true;
 
-            Thread threadA = new Thread(new ThreadStart(LoadSceneB));
-            Thread threadB = new Thread(new ThreadStart(LoadSceneB));
-            Thread threadC = new Thread(new ThreadStart(ConvertSceneC));
+            ThreadStart[] actions =
+            [
+                LoadSceneA,
+                LoadSceneB,
+                ConvertSceneC,
+            ];
 
-            threadB.Start();
-            threadA.Start();
-            threadC.Start();
+            var threads = Enumerable.Repeat(actions, 25)
+                .SelectMany(x => x)
+                .OrderBy(_ => Guid.NewGuid())
+                .Select(x => new Thread(x))
+                .ToArray();
 
-            threadC.Join();
-            threadA.Join();
-            threadB.Join();
+            foreach (var thread in threads)
+                thread.Start();
+
+            foreach(var thread in threads)
+                thread.Join();
 
             LogStream.DetachAllLogstreams();
         }
