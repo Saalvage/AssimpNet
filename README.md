@@ -1,15 +1,13 @@
-# This is merely a fork of https://bitbucket.org/Starnick/assimpnet/!
+![alt text](./logo.png "AssimpNet Logo")
 
-![alt text](https://bitbucket.org/Starnick/assimpnet/raw/64485416c27d84b2928ba375d7ae51c8ab24bdb7/logo.png "AssimpNet Logo")
-
-**The latest release can be downloaded via [NuGet](https://www.nuget.org/packages/AssimpNet/).**
+**The latest release can be downloaded via [NuGet](https://www.nuget.org/packages/AssimpNetter/).**
 
 [![Continuous Integration](https://github.com/Saalvage/AssimpNet/actions/workflows/ci.yml/badge.svg)](https://github.com/Saalvage/AssimpNet/actions/workflows/ci.yml)
 
 ## Introduction ##
-This is the **unofficial** repository for **AssimpNet**, the cross-platform .NET wrapper for the Open Asset Import Library (otherwise known as [Assimp](https://github.com/assimp/assimp)), which is a 3D model import-export library. The primary motivation is for this library to power (offline) content pipelines to import and process 3D models into your game engine's internal format, although the wrapper can be used at runtime to enable your users to import custom content. Please see the Assimp website for a full list of supported formats and features. Each version of the managed wrapper tries to maintain parity with the features of the native version.
+This is a maintained, modern fork of [**AssimpNet**](https://bitbucket.org/Starnick/assimpnet/), the cross-platform .NET wrapper for the Open Asset Import Library (otherwise known as [Assimp](https://github.com/assimp/assimp)), which is a 3D model import-export library. The primary motivation is for this library to power (offline) content pipelines to import and process 3D models into your game engine's internal format, although the wrapper can be used at runtime to enable your users to import custom content. Please see the Assimp website for a full list of supported formats and features. Each version of the managed wrapper tries to maintain parity with the features of the native version.
 
-P/Invoke is used to communicate with the C-API of the native library. The managed assembly is compiled as **AnyCpu** and the native binaries are loaded dynamically for either 32 or 64 bit applications.
+P/Invoke is used to communicate with the C-API of the native library. The managed assembly is compiled as **AnyCpu** and the native binaries are loaded dynamically for either 32 or 64 bit x86, as well as ARM64 applications.
 
 The library is split between two parts, a low level and a high level. The intent is to give as much freedom as possible to the developer to work with the native library from managed code.
 
@@ -36,29 +34,26 @@ The NuGet package supports the following Operating Systems and Architectures out
 * **Windows** 
 	* x86, x64 (Tested on Windows 10)
 * **Linux**
-	* x64 (Tested on Ubuntu 18.04 Bionic Beaver)
+	* x64 (Tested on Ubuntu 24.04 Noble Numbat)
 * **MacOS**
-	* x64 (Tested on MacOS 10.13 High Sierra)
+	* x64 (Tested on MacOS 13.7 Ventura), ARM64 (Tested on MacOS 14.7 Sonoma)
 
 You may have to build and provide your own native binaries for a target platform that is not listed. If the library does not support a platform you are targeting, please let us know or contribute an implementation! The logic to dynamically load the native library is abstracted, so new platform implementations can easily be added.
 
+## Questions & Contributing ##
+
+All contributions are welcome! Simply raise an issue or open a pull request with your issue/question or contribution!
+
 ## Unity Users ##
 
-With the release of version 4.1.0, a Unity plugin replicating the NuGet package is outputted to the build folder. You can simply drag and drop the contents into your Unity project. The plugin utilizes a
-runtime initiliazation script to ensure the native binaries are loaded when running in editor or standalone.
+There existed support for a Unity plugin, however, it is currently in a non-functional state. Pull requests to restore this support would be welcomed!
 
 ## Licensing ##
 
 The library is licensed under the [MIT](https://opensource.org/licenses/MIT) license. This means you're free to modify the source and use the library in whatever way you want, as long as you attribute the original authors. The native library is licensed under the [3-Clause BSD](https://opensource.org/licenses/BSD-3-Clause) license. Please be kind enough to include the licensing text file (it contains both licenses).
 
-## Contact ##
+## More Projects by the Original Author ##
 
-Follow project updates and more on [Twitter](https://twitter.com/Tesla3D/).
-
-In addition, check out these other projects from the same author:
-
-[TeximpNet](https://bitbucket.org/Starnick/teximpnet) - A wrapper for the Nvidia Texture Tools and FreeImage libraries, which is a sister library to this one.
-
-[MemoryInterop.ILPatcher](https://bitbucket.org/Starnick/memoryinterop.ilpatcher) - This is the ILPatcher that is required at build time, it uses Mono.Cecil to inject IL code to improve native interop. The ILPatcher is cross-platform, which enables building of AssimpNet on non-windows platforms.
+[TeximpNet](https://bitbucket.org/Starnick/teximpnet) - A wrapper for the Nvidia Texture Tools and FreeImage libraries.
 
 [Tesla Graphics Engine](https://bitbucket.org/Starnick/tesla3d) - A 3D rendering engine written in C# and the primary driver for developing AssimpNet.
