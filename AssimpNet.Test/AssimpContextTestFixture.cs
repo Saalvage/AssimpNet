@@ -380,7 +380,7 @@ namespace Assimp.Test
             Assert.That(success, Is.True);
         }
 
-        [Test]
+        [Test, Repeat(100)]
         public void TestMultipleImportersMultipleThreads()
         {
             LogStream.IsVerboseLoggingEnabled = true;
