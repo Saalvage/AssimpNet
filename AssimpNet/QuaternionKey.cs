@@ -31,7 +31,7 @@ namespace Assimp
     /// <param name="Time">The time of this key.</param>
     /// <param name="Value">The rotation of this key.</param>
     [StructLayout(LayoutKind.Sequential)]
-    public record struct QuaternionKey(double Time, Quaternion Value)
+    public record struct QuaternionKey(double Time, Quaternion Value, AnimationInterpolation Interpolation = AnimationInterpolation.Linear)
     {
         /// <summary>
         /// Tests inequality between two keys.
