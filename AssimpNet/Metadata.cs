@@ -23,7 +23,6 @@
 using System;
 using System.Collections.Generic;
 using Assimp.Unmanaged;
-using System.Globalization;
 using System.Numerics;
 
 namespace Assimp
@@ -202,54 +201,10 @@ namespace Assimp
         /// <summary>
         /// Represents an entry in a metadata container.
         /// </summary>
-        public struct Entry : IEquatable<Entry>
+        /// <param name="DataType">Type of metadata.</param>
+        /// <param name="Data">Metadata data stored in this entry.</param>
+        public readonly record struct Entry(MetaDataType DataType, object Data) : IEquatable<Entry>
         {
-            private MetaDataType m_dataType;
-            private object m_data;
-
-            /// <summary>
-            /// Gets the type of metadata.
-            /// </summary>
-            public MetaDataType DataType => m_dataType;
-
-            /// <summary>
-            /// Gets the metadata data stored in this entry.
-            /// </summary>
-            public object Data => m_data;
-
-            /// <summary>
-            /// Constructs a new instance of the <see cref="Entry"/> struct.
-            /// </summary>
-            /// <param name="dataType">Type of the data.</param>
-            /// <param name="data">The data.</param>
-            public Entry(MetaDataType dataType, object data)
-            {
-                m_dataType = dataType;
-                m_data = data;
-            }
-
-            /// <summary>
-            /// Tests equality between two entries.
-            /// </summary>
-            /// <param name="a">First entry</param>
-            /// <param name="b">Second entry</param>
-            /// <returns>True if the entries are equal, false otherwise</returns>
-            public static bool operator ==(Entry a, Entry b)
-            {
-                return a.Equals(b);
-            }
-
-            /// <summary>
-            /// Tests inequality between two entries.
-            /// </summary>
-            /// <param name="a">First entry</param>
-            /// <param name="b">Second entry</param>
-            /// <returns>True if the entries are not equal, false otherwise</returns>
-            public static bool operator !=(Entry a, Entry b)
-            {
-                return !a.Equals(b);
-            }
-
             /// <summary>
             /// Gets the data as the specified type. If it cannot be casted to the type, then null is returned.
             /// </summary>
@@ -258,7 +213,7 @@ namespace Assimp
             public T? DataAs<T>() where T : struct
             {
                 Type dataTypeType = null;
-                switch(m_dataType)
+                switch(DataType)
                 {
                     case MetaDataType.Bool:
                         dataTypeType = typeof(bool);
@@ -284,60 +239,9 @@ namespace Assimp
                 }
 
                 if(dataTypeType == typeof(T))
-                    return (T) m_data;
+                    return (T) Data;
 
                 return null;
-            }
-
-            /// <summary>
-            /// Determines whether the specified <see cref="System.Object" /> is equal to this instance.
-            /// </summary>
-            /// <param name="obj">The <see cref="System.Object" /> to compare with this instance.</param>
-            /// <returns>True if the specified <see cref="System.Object" /> is equal to this instance; otherwise, false.</returns>
-            public override bool Equals(object obj)
-            {
-                if(obj is Entry)
-                    return Equals((Entry) obj);
-
-                return false;
-            }
-
-            /// <summary>
-            /// Indicates whether the current object is equal to another object of the same type.
-            /// </summary>
-            /// <param name="other">An object to compare with this object.</param>
-            /// <returns>True if the current object is equal to the <paramref name="other" /> parameter; otherwise, false.</returns>
-            public bool Equals(Entry other)
-            {
-                if(other.DataType != DataType)
-                    return false;
-
-                return object.Equals(other.Data, Data);
-            }
-
-            /// <summary>
-            /// Returns a hash code for this instance.
-            /// </summary>
-            /// <returns>A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. </returns>
-            public override int GetHashCode()
-            {
-                unchecked
-                {
-                    int hash = 17;
-                    hash = (hash * 31) + m_data.GetHashCode();
-                    hash = (hash * 31) + ((m_data == null) ? 0 : m_data.GetHashCode());
-
-                    return hash;
-                }
-            }
-
-            /// <summary>
-            /// Returns the fully qualified type name of this instance.
-            /// </summary>
-            /// <returns>A <see cref="T:string" /> containing a fully qualified type name.</returns>
-            public override string ToString()
-            {
-                return string.Format(CultureInfo.CurrentCulture, "DataType: {0}, Data: {1}", new object[] { m_dataType.ToString(), (m_data == null) ? "null" : m_data.ToString() });
             }
         }
     }

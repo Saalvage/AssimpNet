@@ -1019,7 +1019,7 @@ namespace Assimp.Unmanaged
             uint minor = GetVersionMinor();
             uint rev = GetVersionRevision();
 
-            return $"{major.ToString()}.{minor.ToString()}.{rev.ToString()}";
+            return $"{major}.{minor}.{rev}";
         }
 
         /// <summary>

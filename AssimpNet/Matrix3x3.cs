@@ -21,7 +21,6 @@
 */
 
 using System;
-using System.Globalization;
 using System.Numerics;
 using System.Runtime.InteropServices;
 
@@ -32,60 +31,22 @@ namespace Assimp
     /// and it looks like they're only describing the memory layout. Matrices are treated
     /// as column vectors however (X base in the first column, Y base the second, and Z base the third)
     /// </summary>
+    /// <param name="A1">Value at row 1, column 1 of the matrix.</param>
+    /// <param name="A2">Value at row 1, column 2 of the matrix.</param>
+    /// <param name="A3">Value at row 1, column 3 of the matrix.</param>
+    /// <param name="B1">Value at row 2, column 1 of the matrix.</param>
+    /// <param name="B2">Value at row 2, column 2 of the matrix.</param>
+    /// <param name="B3">Value at row 2, column 3 of the matrix.</param>
+    /// <param name="C1">Value at row 3, column 1 of the matrix.</param>
+    /// <param name="C2">Value at row 3, column 2 of the matrix.</param>
+    /// <param name="C3">Value at row 3, column 3 of the matrix.</param>
     [StructLayout(LayoutKind.Sequential)]
-    public struct Matrix3x3 : IEquatable<Matrix3x3>
+    public record struct Matrix3x3(float A1, float A2, float A3, float B1, float B2, float B3, float C1, float C2, float C3)
     {
-        /// <summary>
-        /// Value at row 1, column 1 of the matrix
-        /// </summary>
-        public float A1;
-
-        /// <summary>
-        /// Value at row 1, column 2 of the matrix
-        /// </summary>
-        public float A2;
-
-        /// <summary>
-        /// Value at row 1, column 3 of the matrix
-        /// </summary>
-        public float A3;
-
-        /// <summary>
-        /// Value at row 2, column 1 of the matrix
-        /// </summary>
-        public float B1;
-
-        /// <summary>
-        /// Value at row 2, column 2 of the matrix
-        /// </summary>
-        public float B2;
-
-        /// <summary>
-        /// Value at row 2, column 3 of the matrix
-        /// </summary>
-        public float B3;
-
-        /// <summary>
-        /// Value at row 3, column 1 of the matrix
-        /// </summary>
-        public float C1;
-
-        /// <summary>
-        /// Value at row 3, column 2 of the matrix
-        /// </summary>
-        public float C2;
-
-        /// <summary>
-        /// Value at row 3, column 3 of the matrix
-        /// </summary>
-        public float C3;
-
-        private static Matrix3x3 _identity = new Matrix3x3(1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f);
-
         /// <summary>
         /// Gets the identity matrix.
         /// </summary>
-        public static Matrix3x3 Identity => _identity;
+        public static Matrix3x3 Identity { get; } = new(1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f);
 
         /// <summary>
         /// Gets if this matrix is an identity matrix.
@@ -216,46 +177,12 @@ namespace Assimp
         /// <summary>
         /// Constructs a new Matrix3x3.
         /// </summary>
-        /// <param name="a1">Element at row 1, column 1</param>
-        /// <param name="a2">Element at row 1, column 2</param>
-        /// <param name="a3">Element at row 1, column 3</param>
-        /// <param name="b1">Element at row 2, column 1</param>
-        /// <param name="b2">Element at row 2, column 2</param>
-        /// <param name="b3">Element at row 2, column 3</param>
-        /// <param name="c1">Element at row 3, column 1</param>
-        /// <param name="c2">Element at row 3, column 2</param>
-        /// <param name="c3">Element at row 3, column 3</param>
-        public Matrix3x3(float a1, float a2, float a3, float b1, float b2, float b3, float c1, float c2, float c3)
-        {
-            this.A1 = a1;
-            this.A2 = a2;
-            this.A3 = a3;
-            this.B1 = b1;
-            this.B2 = b2;
-            this.B3 = b3;
-            this.C1 = c1;
-            this.C2 = c2;
-            this.C3 = c3;
-        }
-
-        /// <summary>
-        /// Constructs a new Matrix3x3.
-        /// </summary>
         /// <param name="rotMatrix">A 4x4 matrix to construct from, only taking the rotation/scaling part.</param>
-        public Matrix3x3(Matrix4x4 rotMatrix)
-        {
-            this.A1 = rotMatrix.M11;
-            this.A2 = rotMatrix.M12;
-            this.A3 = rotMatrix.M13;
-
-            this.B1 = rotMatrix.M21;
-            this.B2 = rotMatrix.M22;
-            this.B3 = rotMatrix.M23;
-
-            this.C1 = rotMatrix.M31;
-            this.C2 = rotMatrix.M32;
-            this.C3 = rotMatrix.M33;
-        }
+        public Matrix3x3(Matrix4x4 rotMatrix) : this(
+            rotMatrix.M11, rotMatrix.M12, rotMatrix.M13,
+            rotMatrix.M21, rotMatrix.M22, rotMatrix.M23,
+            rotMatrix.M31, rotMatrix.M32, rotMatrix.M33)
+        { }
 
         /// <summary>
         /// Transposes this matrix (rows become columns, vice versa).
@@ -329,10 +256,7 @@ namespace Assimp
         /// Compute the determinant of this matrix.
         /// </summary>
         /// <returns>The determinant</returns>
-        public float Determinant()
-        {
-            return A1 * B2 * C3 - A1 * B3 * C2 + A2 * B3 * C1 - A2 * B1 * C3 + A3 * B1 * C2 - A3 * B2 * C1;
-        }
+        public float Determinant() => A1 * B2 * C3 - A1 * B3 * C2 + A2 * B3 * C1 - A2 * B1 * C3 + A3 * B1 * C2 - A3 * B2 * C1;
 
         /// <summary>
         /// Creates a rotation matrix from a set of euler angles.
@@ -353,7 +277,7 @@ namespace Assimp
             float srsp = sr * sp;
             float crsp = cr * sp;
 
-            Matrix3x3 m;
+            Matrix3x3 m = default;
             m.A1 = cp * cy;
             m.A2 = cp * sy;
             m.A3 = -sp;
@@ -374,10 +298,7 @@ namespace Assimp
         /// </summary>
         /// <param name="angles">Vector containing the rotation angles about the x, y, z axes, in radians.</param>
         /// <returns>The rotation matrix</returns>
-        public static Matrix3x3 FromEulerAnglesXYZ(Vector3 angles)
-        {
-            return Matrix3x3.FromEulerAnglesXYZ(angles.X, angles.Y, angles.Z);
-        }
+        public static Matrix3x3 FromEulerAnglesXYZ(Vector3 angles) => FromEulerAnglesXYZ(angles.X, angles.Y, angles.Z);
 
         /// <summary>
         /// Creates a rotation matrix for a rotation about the x-axis.
@@ -458,7 +379,7 @@ namespace Assimp
             float xz = x * z;
             float yz = y * z;
 
-            Matrix3x3 m;
+            Matrix3x3 m = default;
             m.A1 = xx + (cos * (1.0f - xx));
             m.B1 = (xy - (cos * xy)) + (sin * z);
             m.C1 = (xz - (cos * xz)) - (sin * y);
@@ -599,33 +520,6 @@ namespace Assimp
         }
 
         /// <summary>
-        /// Tests equality between two matrices.
-        /// </summary>
-        /// <param name="a">First matrix</param>
-        /// <param name="b">Second matrix</param>
-        /// <returns>True if the matrices are equal, false otherwise</returns>
-        public static bool operator ==(Matrix3x3 a, Matrix3x3 b)
-        {
-            return (((a.A1 == b.A1) && (a.A2 == b.A2) && (a.A3 == b.A3))
-                && ((a.B1 == b.B1) && (a.B2 == b.B2) && (a.B3 == b.B3))
-                && ((a.C1 == b.C1) && (a.C2 == b.C2) && (a.C3 == b.C3)));
-        }
-
-        /// <summary>
-        /// Tests inequality between two matrices.
-        /// </summary>
-        /// <param name="a">First matrix</param>
-        /// <param name="b">Second matrix</param>
-        /// <returns>True if the matrices are not equal, false otherwise</returns>
-        public static bool operator !=(Matrix3x3 a, Matrix3x3 b)
-        {
-            return (((a.A1 != b.A1) || (a.A2 != b.A2) || (a.A3 != b.A3))
-                || ((a.B1 != b.B1) || (a.B2 != b.B2) || (a.B3 != b.B3))
-                || ((a.C1 != b.C1) || (a.C2 != b.C2) || (a.C3 != b.C3)));
-        }
-
-
-        /// <summary>
         /// Performs matrix multiplication.Multiplication order is B x A. That way, SRT concatenations
         /// are left to right.
         /// </summary>
@@ -652,7 +546,7 @@ namespace Assimp
         /// <returns>3x3 matrix</returns>
         public static implicit operator Matrix3x3(Matrix4x4 mat)
         {
-            Matrix3x3 m;
+            Matrix3x3 m = default;
             m.A1 = mat.M11;
             m.A2 = mat.M12;
             m.A3 = mat.M13;
@@ -700,58 +594,11 @@ namespace Assimp
         }
 
         /// <summary>
-        /// Tests equality between this matrix and another.
-        /// </summary>
-        /// <param name="other">Other matrix to test</param>
-        /// <returns>True if the matrices are equal, false otherwise</returns>
-        public bool Equals(Matrix3x3 other)
-        {
-            return (((A1 == other.A1) && (A2 == other.A2) && (A3 == other.A3))
-                && ((B1 == other.B1) && (B2 == other.B2) && (B3 == other.B3))
-                && ((C1 == other.C1) && (C2 == other.C2) && (C3 == other.C3)));
-        }
-
-        /// <summary>
-        /// Determines whether the specified <see cref="System.Object"/> is equal to this instance.
-        /// </summary>
-        /// <param name="obj">The <see cref="System.Object"/> to compare with this instance.</param>
-        /// <returns>
-        ///   <c>true</c> if the specified <see cref="System.Object"/> is equal to this instance; otherwise, <c>false</c>.
-        /// </returns>
-        public override bool Equals(object obj)
-        {
-            if(obj is Matrix3x3)
-            {
-                return Equals((Matrix3x3) obj);
-            }
-            return false;
-        }
-
-        /// <summary>
-        /// Returns a hash code for this instance.
-        /// </summary>
-        /// <returns>
-        /// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. 
-        /// </returns>
-        public override int GetHashCode()
-        {
-            return A1.GetHashCode() + A2.GetHashCode() + A3.GetHashCode() + B1.GetHashCode() + B2.GetHashCode() + B3.GetHashCode() +
-                C1.GetHashCode() + C2.GetHashCode() + C3.GetHashCode();
-        }
-
-        /// <summary>
         /// Returns a <see cref="string"/> that represents this instance.
         /// </summary>
         /// <returns>
         /// A <see cref="string"/> that represents this instance.
         /// </returns>
-        public override string ToString()
-        {
-            CultureInfo info = CultureInfo.CurrentCulture;
-            object[] args = new object[] { A1.ToString(info), A2.ToString(info), A3.ToString(info),
-				B1.ToString(info), B2.ToString(info), B3.ToString(info),
-				C1.ToString(info), C2.ToString(info), C3.ToString(info)};
-            return string.Format(info, "{{[A1:{0} A2:{1} A3:{2}] [B1:{3} B2:{4} B3:{5}] [C1:{6} C2:{7} C3:{8}]}}", args);
-        }
+        public override string ToString() => $"{{[A1:{A1} A2:{A2} A3:{A3}] [B1:{B1} B2:{B2} B3:{B3}] [C1:{C1} C2:{C2} C3:{C3}]}}";
     }
 }
