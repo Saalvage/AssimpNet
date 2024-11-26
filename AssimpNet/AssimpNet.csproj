@@ -14,8 +14,8 @@
     <PackageLicenseFile>License.txt</PackageLicenseFile>
     <Copyright>Copyright © 2012-2020 Nicholas Woodfield</Copyright>
     <PackageIcon>logo.png</PackageIcon>
-    <PackageProjectUrl>https://github.com/Saalvage/AssimpNet</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/Saalvage/AssimpNet</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/Saalvage/AssimpNetter</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Saalvage/AssimpNetter</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <IncludeSymbols>true</IncludeSymbols>
