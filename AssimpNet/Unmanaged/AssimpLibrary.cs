@@ -81,7 +81,7 @@ namespace Assimp.Unmanaged
 
             NativeLibrary.SetDllImportResolver(Assembly.GetExecutingAssembly(), (libraryName, assembly, searchPath) => {
                 if (libraryName == DefaultLibName) {
-                    return NativeLibrary.Load($"{AppContext.BaseDirectory}runtimes/{rid}/native/{DefaultLibName}");
+                    return NativeLibrary.Load($"{AppContext.BaseDirectory}runtimes/{rid}/native/{DefaultLibName}", assembly, searchPath);
                 }
 
                 return IntPtr.Zero;
