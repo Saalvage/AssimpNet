@@ -79,13 +79,13 @@ namespace Assimp.Unmanaged
                 _ => "x64",
             };
 
-            NativeLibrary.SetDllImportResolver(Assembly.GetExecutingAssembly(), (libraryName, assembly, searchPath) => {
+            /*NativeLibrary.SetDllImportResolver(Assembly.GetExecutingAssembly(), (libraryName, assembly, searchPath) => {
                 if (libraryName == DefaultLibName) {
                     return NativeLibrary.Load($"{AppContext.BaseDirectory}runtimes/{rid}/native/{DefaultLibName}", assembly, searchPath);
                 }
 
                 return IntPtr.Zero;
-            });
+            });*/
         }
 
         private AssimpLibrary(string defaultLibName, Type[] unmanagedFunctionDelegateTypes)
