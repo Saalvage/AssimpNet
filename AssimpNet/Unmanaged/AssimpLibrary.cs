@@ -23,6 +23,7 @@
 using System;
 using System.IO;
 using System.Numerics;
+using System.Reflection;
 using System.Runtime.InteropServices;
 
 namespace Assimp.Unmanaged
@@ -66,6 +67,27 @@ namespace Assimp.Unmanaged
         /// </summary>
         public bool IsMultithreadingSupported => !((GetCompileFlags() & CompileFlags.SingleThreaded) == CompileFlags.SingleThreaded);
 
+        static AssimpLibrary() {
+            var rid = GetPlatform() switch {
+                Platform.Windows => "win",
+                Platform.Linux => "linux",
+                Platform.Mac => "macos",
+            } + '-' + RuntimeInformation.ProcessArchitecture switch {
+                Architecture.Arm => "arm",
+                Architecture.Arm64 => "arm64",
+                Architecture.X86 => "x86",
+                _ => "x64",
+            };
+
+            NativeLibrary.SetDllImportResolver(Assembly.GetExecutingAssembly(), (libraryName, assembly, searchPath) => {
+                if (libraryName == DefaultLibName) {
+                    return NativeLibrary.Load($"{AppContext.BaseDirectory}runtimes/{rid}/native/{DefaultLibName}");
+                }
+
+                return IntPtr.Zero;
+            });
+        }
+
         private AssimpLibrary(string defaultLibName, Type[] unmanagedFunctionDelegateTypes)
             : base(defaultLibName, unmanagedFunctionDelegateTypes) { }
 
@@ -97,7 +119,7 @@ namespace Assimp.Unmanaged
         /// any associated file the loader needs to open, passing NULL uses the default implementation.</param>
         /// <param name="propStore">Property store containing config name-values, may be null.</param>
         /// <returns>Pointer to the unmanaged data structure.</returns>
-        [LibraryImport("assimp", StringMarshalling = StringMarshalling.Utf8)]
+        [LibraryImport(DefaultLibName, StringMarshalling = StringMarshalling.Utf8)]
         public static unsafe partial AiScene* aiImportFileExWithProperties(string file, PostProcessSteps flags, AiFileIO* fileIO, IntPtr propStore);
 
         /// <summary>
