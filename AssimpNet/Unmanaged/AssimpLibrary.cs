@@ -76,33 +76,16 @@ namespace Assimp.Unmanaged
                 Platform.Mac => "macos",
             } + '-' + RuntimeInformation.ProcessArchitecture.ToString().ToLowerInvariant();
 
-            static IntPtr TryLoadLibraryVariations(string dir, string lib)
+            var binaryFile = GetPlatform() switch
             {
-                // This is not strictly equivalent to the built-in order, but it's good enough.
-                var ext = GetPlatform() switch
-                {
-                    Platform.Windows => "dll",
-                    Platform.Linux => "so",
-                    Platform.Mac => "dylib",
-                };
-
-                foreach (var path in (Span<string>)
-                         [
-                             $"{dir}{lib}.{ext}",
-                             $"{dir}lib{lib}.{ext}",
-                             $"{dir}{lib}",
-                             $"{dir}lib{lib}",
-                         ]) {
-                    if (NativeLibrary.TryLoad(path, out var handle))
-                        return handle;
-                }
-
-                return IntPtr.Zero;
-            }
+                Platform.Windows => $"{DefaultLibName}.dll",
+                Platform.Linux => $"lib{DefaultLibName}.so",
+                Platform.Mac => $"lib{DefaultLibName}.dylib",
+            };
 
             NativeLibrary.SetDllImportResolver(Assembly.GetExecutingAssembly(), (libraryName, _, _) => {
                 if (libraryName == DefaultLibName)
-                    return TryLoadLibraryVariations($"{AppContext.BaseDirectory}runtimes/{rid}/native/", DefaultLibName);
+                    return NativeLibrary.Load($"{AppContext.BaseDirectory}runtimes/{rid}/native/{binaryFile}");
 
                 return IntPtr.Zero;
             });
