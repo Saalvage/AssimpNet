@@ -33,7 +33,7 @@ jobs:
 
       - uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 7.x.x
+          dotnet-version: 8.x.x
         
       - run: dotnet test AssimpNet.Test -c ${{ matrix.configuration }} ${{ matrix.additional_args }}
           
