@@ -73,7 +73,7 @@ namespace Assimp.Unmanaged
             {
                 Platform.Windows => "win",
                 Platform.Linux => "linux",
-                Platform.Mac => "macos",
+                Platform.Mac => "osx",
             } + '-' + RuntimeInformation.ProcessArchitecture.ToString().ToLowerInvariant();
 
             var binaryFile = GetPlatform() switch
