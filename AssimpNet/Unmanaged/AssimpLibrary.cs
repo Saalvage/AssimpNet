@@ -67,25 +67,45 @@ namespace Assimp.Unmanaged
         /// </summary>
         public bool IsMultithreadingSupported => !((GetCompileFlags() & CompileFlags.SingleThreaded) == CompileFlags.SingleThreaded);
 
-        static AssimpLibrary() {
-            var rid = GetPlatform() switch {
+        static AssimpLibrary()
+        {
+            var rid = GetPlatform() switch
+            {
                 Platform.Windows => "win",
                 Platform.Linux => "linux",
                 Platform.Mac => "macos",
-            } + '-' + RuntimeInformation.ProcessArchitecture switch {
-                Architecture.Arm => "arm",
-                Architecture.Arm64 => "arm64",
-                Architecture.X86 => "x86",
-                _ => "x64",
-            };
+            } + '-' + RuntimeInformation.ProcessArchitecture.ToString().ToLowerInvariant();
 
-            /*NativeLibrary.SetDllImportResolver(Assembly.GetExecutingAssembly(), (libraryName, assembly, searchPath) => {
-                if (libraryName == DefaultLibName) {
-                    return NativeLibrary.Load($"{AppContext.BaseDirectory}runtimes/{rid}/native/{DefaultLibName}", assembly, searchPath);
+            static IntPtr TryLoadLibraryVariations(string dir, string lib)
+            {
+                // This is not strictly equivalent to the built-in order, but it's good enough.
+                var ext = GetPlatform() switch
+                {
+                    Platform.Windows => "dll",
+                    Platform.Linux => "so",
+                    Platform.Mac => "dylib",
+                };
+
+                foreach (var path in (Span<string>)
+                         [
+                             $"{dir}{lib}.{ext}",
+                             $"{dir}lib{lib}.{ext}",
+                             $"{dir}{lib}",
+                             $"{dir}lib{lib}",
+                         ]) {
+                    if (NativeLibrary.TryLoad(path, out var handle))
+                        return handle;
                 }
 
                 return IntPtr.Zero;
-            });*/
+            }
+
+            NativeLibrary.SetDllImportResolver(Assembly.GetExecutingAssembly(), (libraryName, _, _) => {
+                if (libraryName == DefaultLibName)
+                    return TryLoadLibraryVariations($"{AppContext.BaseDirectory}runtimes/{rid}/native/", DefaultLibName);
+
+                return IntPtr.Zero;
+            });
         }
 
         private AssimpLibrary(string defaultLibName, Type[] unmanagedFunctionDelegateTypes)
