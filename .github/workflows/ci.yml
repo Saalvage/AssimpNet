@@ -13,15 +13,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        name: [Windows x64, Linux, MacOS x64, MacOS ARM64]
+        name: [Windows x64, Windows x86, Linux, MacOS x64, MacOS ARM64]
         configuration: [Release, Debug]
         include:
           - name: Windows x64
             os: windows-latest
-          # TOOD: setup-dotnet is broken for x86, see https://github.com/actions/setup-dotnet/issues/485
-          #- name: Windows x86
-          #  os: windows-latest
-          #  additional_args: -a x86
+          - name: Windows x86
+            os: windows-latest
+            additional_args: -a x86
           - name: Linux
             os: ubuntu-latest
           - name: MacOS x64
