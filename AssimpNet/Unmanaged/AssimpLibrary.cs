@@ -30,7 +30,7 @@ namespace Assimp.Unmanaged
     /// <summary>
     /// Singleton that governs access to the unmanaged Assimp library functions.
     /// </summary>
-    public sealed class AssimpLibrary : UnmanagedLibrary
+    public sealed partial class AssimpLibrary : UnmanagedLibrary
     {
         private static readonly object s_sync = new object();
 
@@ -83,9 +83,9 @@ namespace Assimp.Unmanaged
         /// <param name="flags">Post process flags specifying what steps are to be run after the import.</param>
         /// <param name="propStore">Property store containing config name-values, may be null.</param>
         /// <returns>Pointer to the unmanaged data structure.</returns>
-        public IntPtr ImportFile(string file, PostProcessSteps flags, IntPtr propStore)
+        public static unsafe IntPtr ImportFile(string file, PostProcessSteps flags, IntPtr propStore)
         {
-            return ImportFile(file, flags, IntPtr.Zero, propStore);
+            return (IntPtr)aiImportFileExWithProperties(file, flags, null, propStore);
         }
 
         /// <summary>
@@ -97,14 +97,8 @@ namespace Assimp.Unmanaged
         /// any associated file the loader needs to open, passing NULL uses the default implementation.</param>
         /// <param name="propStore">Property store containing config name-values, may be null.</param>
         /// <returns>Pointer to the unmanaged data structure.</returns>
-        public IntPtr ImportFile(string file, PostProcessSteps flags, IntPtr fileIO, IntPtr propStore)
-        {
-            LoadIfNotLoaded();
-
-            Functions.aiImportFileExWithProperties func = GetFunction<Functions.aiImportFileExWithProperties>(FunctionNames.aiImportFileExWithProperties);
-
-            return func(file, (uint) flags, fileIO, propStore);
-        }
+        [LibraryImport("assimp", StringMarshalling = StringMarshalling.Utf8)]
+        public static unsafe partial AiScene* aiImportFileExWithProperties(string file, PostProcessSteps flags, AiFileIO* fileIO, IntPtr propStore);
 
         /// <summary>
         /// Imports a scene from a stream. This uses the "aiImportFileFromMemory" function. The stream can be from anyplace,
@@ -1076,7 +1070,6 @@ namespace Assimp.Unmanaged
 
             public const string aiImportFile = "aiImportFile";
             public const string aiImportFileEx = "aiImportFileEx";
-            public const string aiImportFileExWithProperties = "aiImportFileExWithProperties";
             public const string aiImportFileFromMemory = "aiImportFileFromMemory";
             public const string aiImportFileFromMemoryWithProperties = "aiImportFileFromMemoryWithProperties";
             public const string aiReleaseImport = "aiReleaseImport";
@@ -1176,7 +1169,7 @@ namespace Assimp.Unmanaged
         /// <summary>
         /// Defines all of the delegates that represent the unmanaged assimp functions.
         /// </summary>
-        internal static class Functions
+        internal static partial class Functions
         {
 
             #region Import Delegates
@@ -1186,9 +1179,6 @@ namespace Assimp.Unmanaged
 
             [UnmanagedFunctionPointer(CallingConvention.Cdecl), UnmanagedFunctionName(FunctionNames.aiImportFileEx)]
             public delegate IntPtr aiImportFileEx([In, MarshalAs(UnmanagedType.LPUTF8Str)] string file, uint flags, IntPtr fileIO);
-
-            [UnmanagedFunctionPointer(CallingConvention.Cdecl), UnmanagedFunctionName(FunctionNames.aiImportFileExWithProperties)]
-            public delegate IntPtr aiImportFileExWithProperties([In, MarshalAs(UnmanagedType.LPUTF8Str)] string file, uint flag, IntPtr fileIO, IntPtr propStore);
 
             [UnmanagedFunctionPointer(CallingConvention.Cdecl), UnmanagedFunctionName(FunctionNames.aiImportFileFromMemory)]
             public delegate IntPtr aiImportFileFromMemory(byte[] buffer, uint bufferLength, uint flags, [In, MarshalAs(UnmanagedType.LPUTF8Str)] string formatHint);

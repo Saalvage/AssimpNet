@@ -238,11 +238,11 @@ namespace Assimp
         /// <exception cref="AssimpException">Thrown if there was a general error in importing the model.</exception>
         /// <exception cref="System.IO.FileNotFoundException">Thrown if the file could not be located.</exception>
         /// <exception cref="System.ObjectDisposedException">Thrown if the context has already been disposed of.</exception>
-        public Scene ImportFile(string file, PostProcessSteps postProcessFlags)
+        public unsafe Scene ImportFile(string file, PostProcessSteps postProcessFlags)
         {
             CheckDisposed();
 
-            IntPtr ptr = IntPtr.Zero;
+            AiScene* ptr = null;
             IntPtr fileIO = IntPtr.Zero;
 
             //Only do file checks if not using a custom IOSystem
@@ -259,24 +259,24 @@ namespace Assimp
 
             try
             {
-                ptr = AssimpLibrary.Instance.ImportFile(file, PostProcessSteps.None, fileIO, m_propStore);
+                ptr = AssimpLibrary.aiImportFileExWithProperties(file, PostProcessSteps.None, (AiFileIO*)fileIO, m_propStore);
 
-                if(ptr == IntPtr.Zero)
+                if(ptr == null)
                     throw new AssimpException("Error importing file: " + AssimpLibrary.Instance.GetErrorString());
 
-                TransformScene(ptr);
+                TransformScene(new(ptr));
 
-                ptr = ApplyPostProcessing(ptr, postProcessFlags);
+                ptr = (AiScene*)ApplyPostProcessing(new(ptr), postProcessFlags);
 
-                return Scene.FromUnmanagedScene(ptr);
+                return Scene.FromUnmanagedScene(new(ptr));
             }
             finally
             {
                 CleanupImport();
 
-                if(ptr != IntPtr.Zero)
+                if(ptr != null)
                 {
-                    AssimpLibrary.Instance.ReleaseImport(ptr);
+                    AssimpLibrary.Instance.ReleaseImport(new(ptr));
                 }
             }
         }
@@ -444,7 +444,7 @@ namespace Assimp
         /// <exception cref="AssimpException">Thrown if there was a general error in importing the model.</exception>
         /// <exception cref="System.IO.FileNotFoundException">Thrown if the file could not be located.</exception>
         /// <exception cref="System.ObjectDisposedException">Thrown if the context has already been disposed of.</exception>
-        public bool ConvertFromFileToFile(string inputFilename, PostProcessSteps importProcessSteps, string outputFilename, string exportFormatId, PostProcessSteps exportProcessSteps)
+        public unsafe bool ConvertFromFileToFile(string inputFilename, PostProcessSteps importProcessSteps, string outputFilename, string exportFormatId, PostProcessSteps exportProcessSteps)
         {
             CheckDisposed();
 
@@ -468,7 +468,7 @@ namespace Assimp
 
             try
             {
-                ptr = AssimpLibrary.Instance.ImportFile(inputFilename, PostProcessSteps.None, fileIO, m_propStore);
+                ptr = (IntPtr)AssimpLibrary.aiImportFileExWithProperties(inputFilename, PostProcessSteps.None, (AiFileIO*)fileIO, m_propStore);
 
                 if(ptr == IntPtr.Zero)
                     throw new AssimpException("Error importing file: " + AssimpLibrary.Instance.GetErrorString());
@@ -534,7 +534,7 @@ namespace Assimp
         /// <exception cref="AssimpException">Thrown if there was a general error in importing the model.</exception>
         /// <exception cref="System.IO.FileNotFoundException">Thrown if the file could not be located.</exception>
         /// <exception cref="System.ObjectDisposedException">Thrown if the context has already been disposed of.</exception>
-        public ExportDataBlob ConvertFromFileToBlob(string inputFilename, PostProcessSteps importProcessSteps, string exportFormatId, PostProcessSteps exportProcessSteps)
+        public unsafe ExportDataBlob ConvertFromFileToBlob(string inputFilename, PostProcessSteps importProcessSteps, string exportFormatId, PostProcessSteps exportProcessSteps)
         {
             CheckDisposed();
 
@@ -558,7 +558,7 @@ namespace Assimp
 
             try
             {
-                ptr = AssimpLibrary.Instance.ImportFile(inputFilename, PostProcessSteps.None, fileIO, m_propStore);
+                ptr = (IntPtr)AssimpLibrary.aiImportFileExWithProperties(inputFilename, PostProcessSteps.None, (AiFileIO*)fileIO, m_propStore);
 
                 if(ptr == IntPtr.Zero)
                     throw new AssimpException("Error importing file: " + AssimpLibrary.Instance.GetErrorString());
