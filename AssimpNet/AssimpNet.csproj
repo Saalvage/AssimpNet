@@ -40,34 +40,14 @@
     <Content Include="..\ChangeLog.txt" Link="nuget\ChangeLog.txt" PackagePath="" />
     <Content Include="..\License.txt" Link="nuget\License.txt" PackagePath="" />
     <Content Include="..\Docs\AssimpNet Documentation %28October 2018%29.chm" Link="nuget\AssimpNet Documentation %28October 2018%29.chm" PackagePath="" />
-    <Content Include="..\libs\Assimp\win-x64\assimp.dll" Link="nuget\runtimes\win-x64\native\assimp.dll" PackagePath="runtimes\win-x64\native" />
-    <Content Include="..\libs\Assimp\win-x86\assimp.dll" Link="nuget\runtimes\win-x86\native\assimp.dll" PackagePath="runtimes\win-x86\native" />
-    <Content Include="..\libs\Assimp\linux-x64\libassimp.so" Link="nuget\runtimes\linux-x64\native\libassimp.so" PackagePath="runtimes\linux-x64\native" />
-    <Content Include="..\libs\Assimp\osx-x64\libassimp.dylib" Link="nuget\runtimes\osx-x64\native\libassimp.dylib" PackagePath="runtimes\osx-x64\native" />
-    <Content Include="..\libs\Assimp\osx-arm64\libassimp.dylib" Link="nuget\runtimes\osx-arm64\native\libassimp.dylib" PackagePath="runtimes\osx-arm64\native" />
-    <Content Include="AssimpNet.targets" Link="nuget\build\AssimpNet.targets" PackagePath="build" />
+    <Content Include="..\libs\Assimp\**" Link="nuget\runtimes\%(RecursiveDir)\native\%(Filename)%(Extension)" PackagePath="runtimes\%(RecursiveDir)\native" />
+    <Content Include="AssimpNetter.targets" Link="nuget\build\AssimpNetter.targets" PackagePath="build" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="..\libs\Assimp\win-x64\assimp.dll">
+    <None Include="..\libs\Assimp\**">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Link>runtimes\win-x64\native\%(Filename)%(Extension)</Link>
-    </None>
-    <None Include="..\libs\Assimp\win-x86\assimp.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Link>runtimes\win-x86\native\%(Filename)%(Extension)</Link>
-    </None>
-    <None Include="..\libs\Assimp\linux-x64\libassimp.so">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Link>runtimes\linux-x64\native\%(Filename)%(Extension)</Link>
-    </None>
-    <None Include="..\libs\Assimp\osx-x64\libassimp.dylib">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Link>runtimes\osx-x64\native\%(Filename)%(Extension)</Link>
-    </None>
-    <None Include="..\libs\Assimp\osx-arm64\libassimp.dylib">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Link>runtimes\osx-arm64\native\%(Filename)%(Extension)</Link>
+      <Link>runtimes\%(RecursiveDir)\native\%(Filename)%(Extension)</Link>
     </None>
   </ItemGroup>
 
