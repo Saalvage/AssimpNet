@@ -67,30 +67,6 @@ namespace Assimp.Unmanaged
         /// </summary>
         public bool IsMultithreadingSupported => !((GetCompileFlags() & CompileFlags.SingleThreaded) == CompileFlags.SingleThreaded);
 
-        static AssimpLibrary()
-        {
-            var rid = GetPlatform() switch
-            {
-                Platform.Windows => "win",
-                Platform.Linux => "linux",
-                Platform.Mac => "osx",
-            } + '-' + RuntimeInformation.ProcessArchitecture.ToString().ToLowerInvariant();
-
-            var binaryFile = GetPlatform() switch
-            {
-                Platform.Windows => $"{DefaultLibName}.dll",
-                Platform.Linux => $"lib{DefaultLibName}.so",
-                Platform.Mac => $"lib{DefaultLibName}.dylib",
-            };
-
-            NativeLibrary.SetDllImportResolver(Assembly.GetExecutingAssembly(), (libraryName, _, _) => {
-                if (libraryName == DefaultLibName)
-                    return NativeLibrary.Load($"{AppContext.BaseDirectory}runtimes/{rid}/native/{binaryFile}");
-
-                return IntPtr.Zero;
-            });
-        }
-
         private AssimpLibrary(string defaultLibName, Type[] unmanagedFunctionDelegateTypes)
             : base(defaultLibName, unmanagedFunctionDelegateTypes) { }
 
@@ -123,62 +99,41 @@ namespace Assimp.Unmanaged
         /// <param name="propStore">Property store containing config name-values, may be null.</param>
         /// <returns>Pointer to the unmanaged data structure.</returns>
         [LibraryImport(DefaultLibName, StringMarshalling = StringMarshalling.Utf8)]
-        public static unsafe partial AiScene* aiImportFileExWithProperties(string file, PostProcessSteps flags, AiFileIO* fileIO, IntPtr propStore);
+        public static unsafe partial AiScene* aiImportFileExWithProperties(string file, PostProcessSteps flags,
+            AiFileIO* fileIO, IntPtr propStore);
 
         /// <summary>
-        /// Imports a scene from a stream. This uses the "aiImportFileFromMemory" function. The stream can be from anyplace,
-        /// not just a memory stream. It is up to the caller to dispose of the stream.
+        /// Imports a scene from a buffer.
         /// </summary>
-        /// <param name="stream">Stream containing the scene data</param>
-        /// <param name="flags">Post processing flags</param>
-        /// <param name="formatHint">A hint to Assimp to decide which importer to use to process the data</param>
+        /// <param name="buffer">Buffer containing the scene data.</param>
+        /// <param name="length">Length of the buffer.</param>
+        /// <param name="flags">Post processing flags.</param>
+        /// <param name="formatHint">A hint to Assimp to decide which importer to use to process the data.</param>
         /// <param name="propStore">Property store containing the config name-values, may be null.</param>
         /// <returns>Pointer to the unmanaged data structure.</returns>
-        public IntPtr ImportFileFromStream(Stream stream, PostProcessSteps flags, string formatHint, IntPtr propStore)
-        {
-            LoadIfNotLoaded();
-
-            Functions.aiImportFileFromMemoryWithProperties func = GetFunction<Functions.aiImportFileFromMemoryWithProperties>(FunctionNames.aiImportFileFromMemoryWithProperties);
-
-            byte[] buffer = MemoryHelper.ReadStreamFully(stream, 0);
-
-            return func(buffer, (uint) buffer.Length, (uint) flags, formatHint, propStore);
-        }
+        [LibraryImport(DefaultLibName, StringMarshalling = StringMarshalling.Utf8)]
+        public static unsafe partial AiScene* aiImportFileFromMemoryWithProperties(byte* buffer, uint length,
+            PostProcessSteps flags, string formatHint, nint propStore);
 
         /// <summary>
         /// Releases the unmanaged scene data structure. This should NOT be used for unmanaged scenes that were marshaled
         /// from the managed scene structure - only for scenes whose memory was allocated by the native library!
         /// </summary>
         /// <param name="scene">Pointer to the unmanaged scene data structure.</param>
-        public void ReleaseImport(IntPtr scene)
-        {
-            LoadIfNotLoaded();
-
-            if(scene == IntPtr.Zero)
-                return;
-
-            Functions.aiReleaseImport func = GetFunction<Functions.aiReleaseImport>(FunctionNames.aiReleaseImport);
-
-            func(scene);
-        }
+        [LibraryImport(DefaultLibName)]
+        public static unsafe partial void aiReleaseImport(AiScene* scene);
 
         /// <summary>
         /// Applies a post-processing step on an already imported scene.
         /// </summary>
+        /// <remarks>This is strictly equivalent to calling <see cref="aiImportFile"/>/<see cref="aiImportFileEx"/> with the
+        /// same flags.However, you can use this separate function to inspect the imported
+        /// scene first to fine-tune your post-processing setup.</remarks>
         /// <param name="scene">Pointer to the unmanaged scene data structure.</param>
         /// <param name="flags">Post processing steps to run.</param>
         /// <returns>Pointer to the unmanaged scene data structure.</returns>
-        public IntPtr ApplyPostProcessing(IntPtr scene, PostProcessSteps flags)
-        {
-            LoadIfNotLoaded();
-
-            if(scene == IntPtr.Zero)
-                return IntPtr.Zero;
-
-            Functions.aiApplyPostProcessing func = GetFunction<Functions.aiApplyPostProcessing>(FunctionNames.aiApplyPostProcessing);
-
-            return func(scene, (uint) flags);
-        }
+        [LibraryImport(DefaultLibName)]
+        public static unsafe partial AiScene* aiApplyPostProcessing(AiScene* scene, PostProcessSteps flags);
 
         #endregion
 
