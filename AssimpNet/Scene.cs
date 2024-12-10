@@ -273,9 +273,9 @@ namespace Assimp
         /// </summary>
         /// <param name="scenePtr">The unmanaged scene data</param>
         /// <returns>The managed scene, or null if the pointer is NULL</returns>
-        public static Scene FromUnmanagedScene(IntPtr scenePtr)
+        public static unsafe Scene FromUnmanagedScene(AiScene* scenePtr)
         {
-            if(scenePtr == IntPtr.Zero)
+            if(scenePtr == null)
                 return null;
 
             return MemoryHelper.FromNativePointer<Scene, AiScene>(scenePtr);

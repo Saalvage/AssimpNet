@@ -408,7 +408,7 @@ namespace Assimp.Unmanaged
     /// Represents an aiFace struct.
     /// </summary>
     [StructLayout(LayoutKind.Sequential)]
-    public struct AiFace
+    public unsafe struct AiFace
     {
         /// <summary>
         /// Number of indices in the face.
@@ -418,14 +418,14 @@ namespace Assimp.Unmanaged
         /// <summary>
         /// unsigned int*, array of indices.
         /// </summary>
-        public IntPtr Indices;
+        public uint* Indices;
     }
 
     /// <summary>
     /// Represents an aiBone struct.
     /// </summary>
     [StructLayout(LayoutKind.Sequential)]
-    public struct AiBone
+    public unsafe struct AiBone
     {
         /// <summary>
         /// Name of the bone.
@@ -450,7 +450,7 @@ namespace Assimp.Unmanaged
         /// <summary>
         /// VertexWeight*, array of vertex weights.
         /// </summary>
-        public IntPtr Weights;
+        public VertexWeight* Weights;
 
         /// <summary>
         /// Matrix that transforms the vertex from mesh to bone space in bind pose
@@ -1137,7 +1137,7 @@ namespace Assimp.Unmanaged
     /// blobs represent auxillary files produced by the exporter (e.g. material files) and are named accordingly.
     /// </summary>
     [StructLayout(LayoutKind.Sequential)]
-    public struct AiExportDataBlob
+    public unsafe struct AiExportDataBlob
     {
         /// <summary>
         /// size_t, size of the data in bytes.
@@ -1147,7 +1147,7 @@ namespace Assimp.Unmanaged
         /// <summary>
         /// void*, the data.
         /// </summary>
-        public IntPtr Data;
+        public void* Data;
 
         /// <summary>
         /// AiString, name of the blob.
@@ -1157,7 +1157,7 @@ namespace Assimp.Unmanaged
         /// <summary>
         /// aiExportDataBlob*, pointer to the next blob in the chain.
         /// </summary>
-        public IntPtr NextBlob;
+        public AiExportDataBlob* NextBlob;
     }
 
     /// <summary>

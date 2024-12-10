@@ -63,7 +63,7 @@ namespace Assimp
                 return IntPtr.Zero;
 
             bool isNativeBlittable = IsNativeBlittable<Managed, Native>(managedColl);
-            int sizeofNative = (isNativeBlittable) ? SizeOf<Native>() : MarshalSizeOf<Native>();
+            int sizeofNative = SizeOf<Native>();
 
             //If the pointer is a void** we need to step by the pointer size, otherwise it's just a void* and step by the type size.
             int stride = (arrayOfPointers) ? IntPtr.Size : sizeofNative;
@@ -218,9 +218,9 @@ namespace Assimp
         /// <param name="nativeArray">Pointer to unmanaged memory</param>
         /// <param name="length">Number of elements to read</param>
         /// <returns>Managed array</returns>
-        public static T[] FromNativeArray<T>(IntPtr nativeArray, int length) where T : struct
+        public static unsafe T[] FromNativeArray<T>(void* nativeArray, int length) where T : struct
         {
-            if(nativeArray == IntPtr.Zero || length == 0)
+            if(nativeArray == null || length == 0)
                 return Array.Empty<T>();
 
             T[] managedArray = new T[length];
@@ -305,116 +305,20 @@ namespace Assimp
         /// <typeparam name="Native">Unmanaged type</typeparam>
         /// <param name="ptr">Pointer to unmanaged memory</param>
         /// <returns>The marshaled managed value</returns>
-        public static Managed FromNativePointer<Managed, Native>(IntPtr ptr)
+        public static unsafe Managed FromNativePointer<Managed, Native>(Native* ptr)
             where Managed : class, IMarshalable<Managed, Native>, new()
             where Native : struct
         {
 
-            if(ptr == IntPtr.Zero)
+            if(ptr == null)
                 return null;
 
             Managed managedValue = Activator.CreateInstance<Managed>();
 
-            //Marshal pointer to structure
-            Native nativeValue;
-
-            if(managedValue.IsNativeBlittable)
-            {
-                Read<Native>(ptr, out nativeValue);
-            }
-            else
-            {
-                MarshalStructure<Native>(ptr, out nativeValue);
-            }
-
             //Populate managed value
-            managedValue.FromNative(nativeValue);
+            managedValue.FromNative(*ptr);
 
             return managedValue;
-        }
-
-        /// <summary>
-        /// Convienence method for marshaling a pointer to a structure. Only use if the type is not blittable, otherwise
-        /// use the read methods for blittable types.
-        /// </summary>
-        /// <typeparam name="T">Struct type</typeparam>
-        /// <param name="ptr">Pointer to marshal</param>
-        /// <param name="value">The marshaled structure</param>
-        public static void MarshalStructure<T>(IntPtr ptr, out T value) where T : struct
-        {
-            if(ptr == IntPtr.Zero)
-                value = default(T);
-
-            Type type = typeof(T);
-
-            INativeCustomMarshaler marshaler;
-            if (HasNativeCustomMarshaler(type, out marshaler))
-            {
-                value = (T)marshaler.MarshalNativeToManaged(ptr);
-                return;
-            }
-
-            value = Marshal.PtrToStructure<T>(ptr);
-        }
-
-        /// <summary>
-        /// Convienence method for marshaling a pointer to a structure. Only use if the type is not blittable, otherwise
-        /// use the read methods for blittable types.
-        /// </summary>
-        /// <typeparam name="T">Struct type</typeparam>
-        /// <param name="ptr">Pointer to marshal</param>
-        /// <returns>The marshaled structure</returns>
-        public static T MarshalStructure<T>(IntPtr ptr) where T : struct
-        {
-            if(ptr == IntPtr.Zero)
-                return default(T);
-
-            Type type = typeof(T);
-
-            INativeCustomMarshaler marshaler;
-            if (HasNativeCustomMarshaler(type, out marshaler))
-                return (T) marshaler.MarshalNativeToManaged(ptr);
-
-            return Marshal.PtrToStructure<T>(ptr);
-        }
-
-        /// <summary>
-        /// Convienence method for marshaling a structure to a pointer. Only use if the type is not blittable, otherwise
-        /// use the write methods for blittable types.
-        /// </summary>
-        /// <typeparam name="T">Struct type</typeparam>
-        /// <param name="value">Struct to marshal</param>
-        /// <param name="ptr">Pointer to unmanaged chunk of memory which must be allocated prior to this call</param>
-        public static void MarshalPointer<T>(in T value, IntPtr ptr) where T : struct
-        {
-            if (ptr == IntPtr.Zero)
-                return;
-
-            INativeCustomMarshaler marshaler;
-            if (HasNativeCustomMarshaler(typeof(T), out marshaler))
-            {
-                marshaler.MarshalManagedToNative((object)value, ptr);
-                return;
-            }
-
-            Marshal.StructureToPtr<T>(value, ptr, true);
-        }
-
-        /// <summary>
-        /// Computes the size of the struct type using Marshal SizeOf. Only use if the type is not blittable, thus requiring marshaling by the runtime,
-        /// (e.g. has MarshalAs attributes), otherwise use the SizeOf methods for blittable types.
-        /// </summary>
-        /// <typeparam name="T">Struct type</typeparam>
-        /// <returns>Size of the struct in bytes.</returns>
-        public static unsafe int MarshalSizeOf<T>() where T : struct
-        {
-            Type type = typeof(T);
-
-            INativeCustomMarshaler marshaler;
-            if (HasNativeCustomMarshaler(type, out marshaler))
-                return marshaler.NativeDataSize;
-
-            return Marshal.SizeOf<T>();
         }
 
 #endregion
@@ -559,9 +463,9 @@ namespace Assimp
         /// <param name="data">Array to store the copied data</param>
         /// <param name="startIndexInArray">Zero-based element index to start writing data to in the element array.</param>
         /// <param name="count">Number of elements to copy</param>
-        public static unsafe void Read<T>(IntPtr pSrc, T[] data, int startIndexInArray, int count) where T : struct
+        public static unsafe void Read<T>(void* pSrc, T[] data, int startIndexInArray, int count) where T : struct
         {
-            ReadOnlySpan<T> src = new ReadOnlySpan<T>(pSrc.ToPointer(), count);
+            ReadOnlySpan<T> src = new ReadOnlySpan<T>(pSrc, count);
             Span<T> dst = new Span<T>(data, startIndexInArray, count);
             src.CopyTo(dst);
         }
@@ -583,9 +487,9 @@ namespace Assimp
         /// <typeparam name="T">Struct type</typeparam>
         /// <param name="pSrc">Pointer to memory location</param>
         /// <param name="value">The read value.</param>
-        public static unsafe void Read<T>(IntPtr pSrc, out T value) where T : struct
+        public static unsafe void Read<T>(T* pSrc, out T value) where T : struct
         {
-            value = Unsafe.ReadUnaligned<T>(pSrc.ToPointer());
+            value = Unsafe.ReadUnaligned<T>(pSrc);
         }
 
         /// <summary>

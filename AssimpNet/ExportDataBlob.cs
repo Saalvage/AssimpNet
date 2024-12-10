@@ -77,18 +77,18 @@ namespace Assimp
         /// Creates a new ExportDataBlob.
         /// </summary>
         /// <param name="dataBlob">Unmanaged structure.</param>
-        internal ExportDataBlob(ref AiExportDataBlob dataBlob)
+        internal unsafe ExportDataBlob(ref AiExportDataBlob dataBlob)
         {
             m_name = dataBlob.Name.GetString();
 
-            if(dataBlob.Size.ToUInt32() > 0 && dataBlob.Data != IntPtr.Zero)
-                m_data = MemoryHelper.FromNativeArray<byte>(dataBlob.Data, (int) dataBlob.Size.ToUInt32());
+            if(dataBlob.Size.ToUInt32() > 0 && dataBlob.Data != null)
+                m_data = MemoryHelper.FromNativeArray<byte>(dataBlob.Data, (int)dataBlob.Size.ToUInt32());
 
             m_next = null;
 
-            if(dataBlob.NextBlob != IntPtr.Zero)
+            if(dataBlob.NextBlob != null)
             {
-                AiExportDataBlob nextBlob = MemoryHelper.MarshalStructure<AiExportDataBlob>(dataBlob.NextBlob);
+                AiExportDataBlob nextBlob = *dataBlob.NextBlob;
                 m_next = new ExportDataBlob(ref nextBlob);
             }
         }

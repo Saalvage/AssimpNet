@@ -176,21 +176,27 @@ namespace Assimp
         /// <returns>The imported scene</returns>
         /// <exception cref="AssimpException">Thrown if the stream is not valid (null or write-only).</exception>
         /// <exception cref="System.ObjectDisposedException">Thrown if the context has already been disposed of.</exception>
-        public Scene ImportFileFromStream(Stream stream, PostProcessSteps postProcessFlags, string formatHint = null)
+        public unsafe Scene ImportFileFromStream(Stream stream, PostProcessSteps postProcessFlags, string formatHint = null)
         {
             CheckDisposed();
 
             if(stream == null || stream.CanRead != true)
                 throw new AssimpException(nameof(stream), "Can't read from the stream it's null or write-only");
 
-            IntPtr ptr = IntPtr.Zero;
+            AiScene* ptr = null;
             PrepareImport();
+
+            var bytes = MemoryHelper.ReadStreamFully(stream, 0);
 
             try
             {
-                ptr = AssimpLibrary.Instance.ImportFileFromStream(stream, PostProcessSteps.None, formatHint, m_propStore);
+                fixed (byte* buffer = bytes)
+                {
+                    ptr = AssimpLibrary.aiImportFileFromMemoryWithProperties(buffer, (uint)bytes.Length, PostProcessSteps.None,
+                        formatHint, m_propStore);
+                }
 
-                if(ptr == IntPtr.Zero)
+                if (ptr == null)
                     throw new AssimpException("Error importing file: " + AssimpLibrary.Instance.GetErrorString());
 
                 TransformScene(ptr);
@@ -203,9 +209,9 @@ namespace Assimp
             {
                 CleanupImport();
 
-                if(ptr != IntPtr.Zero)
+                if(ptr != null)
                 {
-                    AssimpLibrary.Instance.ReleaseImport(ptr);
+                    AssimpLibrary.aiReleaseImport(ptr);
                 }
             }
         }
@@ -264,11 +270,11 @@ namespace Assimp
                 if(ptr == null)
                     throw new AssimpException("Error importing file: " + AssimpLibrary.Instance.GetErrorString());
 
-                TransformScene(new(ptr));
+                TransformScene(ptr);
 
-                ptr = (AiScene*)ApplyPostProcessing(new(ptr), postProcessFlags);
+                ptr = (AiScene*)ApplyPostProcessing(ptr, postProcessFlags);
 
-                return Scene.FromUnmanagedScene(new(ptr));
+                return Scene.FromUnmanagedScene(ptr);
             }
             finally
             {
@@ -276,7 +282,7 @@ namespace Assimp
 
                 if(ptr != null)
                 {
-                    AssimpLibrary.Instance.ReleaseImport(new(ptr));
+                    AssimpLibrary.aiReleaseImport(ptr);
                 }
             }
         }
@@ -1013,7 +1019,7 @@ namespace Assimp
         }
 
         //Transforms the root node of the scene and writes it back to the native structure
-        private bool TransformScene(IntPtr scene)
+        private unsafe bool TransformScene(AiScene* scene)
         {
             BuildMatrix();
 
@@ -1021,11 +1027,10 @@ namespace Assimp
             {
                 if(!m_scaleRot.IsIdentity)
                 {
-                    AiScene aiScene = MemoryHelper.MarshalStructure<AiScene>(scene);
-                    if(aiScene.RootNode == IntPtr.Zero)
+                    if(scene->RootNode == IntPtr.Zero)
                         return false;
 
-                    IntPtr matrixPtr = aiScene.RootNode + MemoryHelper.SizeOf<AiString>(); //Skip over Node Name
+                    IntPtr matrixPtr = scene->RootNode + MemoryHelper.SizeOf<AiString>(); //Skip over Node Name
 
                     Matrix4x4 matrix = MemoryHelper.Read<Matrix4x4>(matrixPtr); //Get the root transform
                     matrix = matrix * m_scaleRot; //Transform
@@ -1044,14 +1049,14 @@ namespace Assimp
             return false;
         }
 
-        private IntPtr ApplyPostProcessing(IntPtr scene, PostProcessSteps postProcessFlags)
+        private unsafe AiScene* ApplyPostProcessing(AiScene* scene, PostProcessSteps postProcessFlags)
         {
-            if(postProcessFlags == PostProcessSteps.None || scene == IntPtr.Zero)
+            if(postProcessFlags == PostProcessSteps.None || scene == null)
                 return scene;
 
-            scene = AssimpLibrary.Instance.ApplyPostProcessing(scene, postProcessFlags);
+            scene = AssimpLibrary.aiApplyPostProcessing(scene, postProcessFlags);
 
-            if(scene == IntPtr.Zero)
+            if(scene == null)
             {
                 string error = AssimpLibrary.Instance.GetErrorString();
                 throw new AssimpException(error.Length == 0
